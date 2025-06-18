@@ -16,23 +16,62 @@ Projeto-TP2
 └── docs/                     # documentação Doxygen
 
 
-# Cabeçalhos de função
+# Formatação e documentação de código
 
-###########################################
-# Função:
+Diretórios:   kebab-case
+Arquivos:     snake_case
+
+Formatação e estilo (PEP8):
+Módulos:      lowercase, snake_case
+Classes:      PascalCase
+Funções:      snake_case
+Variáveis:    snake_case
+Constantes:   SCREAMING_SNAKE_CASE
+
+
+> Cabeçalho de módulo
+
+Exemplo:
+## @package feedmodule
+# Documentação desse módulo do projeto.
+#
 # Descrição
-# Parâmetros
-#   param0    - descrição
-# Valor retornado
-#   valor0    - descrição
+
+
+> Cabeçalho de classe
+
+Exemplo:
+## Lista de produtos
+#
+# Descrição
+class ProductList:
+
+
+> Cabeçalhos de função
+
+Exemplos:
+## Função de listagem de produtos
+#
+# Descrição
+#
+# Parâmetros:
+#   @param    param0      descrição       # argumentos da função
+#   @param    param1      descrição       # argumentos da função
+#
+# Valor de retorno:
+#   @return   retorno0    descrição
+#
 # Assertivas de entrada
-#   cond0
+#   condicao0
 # Assertivas de saída
-#   cond1
-###########################################
+#   condicao1
+def ListProducts():
+
+## Construtor da classe
+def __init__(self):
 
 
-# Assertivas de entrada e saída
+> Assertivas de entrada e saída
 
 (condição)
 
@@ -40,7 +79,19 @@ Exs.: !GetAccount()
       len(productList) >= 0
 
 
+> Descrição de variáveis de classe
+Antes ou depois de todas as definições dos métodos de classe.
+
+Exemplos:
+## @var sumPrices
+# Soma dos preços dos produtos da lista.
+
+## @var distCloserMarket
+# Distância do mercado
+
+
 # Laudo de revisão
+
 
 
 # Relatórios
