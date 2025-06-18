@@ -1,0 +1,88 @@
+# Estrutura do projeto
+
+Projeto-TP2
+│
+├── README.md
+├── LEIAME.txt
+├── LICENSE
+├── Doxyfile
+│
+├── artefatos/
+│   ├── Especificação.txt
+│   │
+│   ├── diagramas/
+│   └── revisões/             # laudos de revisão
+│
+└── docs/                     # documentação Doxygen
+
+
+# Cabeçalhos de função
+
+###########################################
+# Função:
+# Descrição
+# Parâmetros
+#   param0    - descrição
+# Valor retornado
+#   valor0    - descrição
+# Assertivas de entrada
+#   cond0
+# Assertivas de saída
+#   cond1
+###########################################
+
+
+# Assertivas de entrada e saída
+
+(condição)
+
+Exs.: !GetAccount()
+      len(productList) >= 0
+
+
+# Laudo de revisão
+
+
+# Relatórios
+DATA        | HORAS |  TIPO TAREFA   |  DESCRIÇÃO DA TAREFA REALIZADA
+AAAA.MM.DD  |  HHh  |  tipo          |  descrição
+
+
+Exemplo:
+
+DATA        | HORAS |  TIPO TAREFA             |  DESCRIÇÃO DA TAREFA REALIZADA
+2025.06.17  |  02h  |  revisar especificações  |  função de listar produtos não precisa de
+            |       |                          |  
+            |       |                          |  
+            |  01h  |  fazer diagramas         |  modelar o subsistema de pesquisa de produto
+            |       |                          |  
+2025.06.18  |  10h  |  revisar projetos        |  paradas
+
+
+Tipos de tarefa:
+  Geral
+  - estudar aulas e laboratórios relacionados
+  - gerenciar a construção do software
+
+  Modelagem e especificação
+  - projetar
+  - revisar projetos
+  - fazer diagramas
+  - especificar os módulos
+  - especificar as funções
+  - revisar especificações
+
+  Implementação
+  - codificar módulo
+  - revisar código do módulo
+  - rodar o verificador estático e retirar warnings
+
+  Testes
+  - redigir casos de teste
+  - revisar casos de teste
+  - realizar os testes
+
+  Cobertura e documentação
+  - instrumentar verificando a cobertura
+  - documentar com Doxygen
+
