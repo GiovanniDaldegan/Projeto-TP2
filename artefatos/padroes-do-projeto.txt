@@ -8,6 +8,7 @@ Projeto-TP2
 ├── Doxyfile
 │
 ├── artefatos/
+│   │
 │   ├── Especificação.txt
 │   │
 │   ├── diagramas/
@@ -137,3 +138,39 @@ Tipos de tarefa:
   - instrumentar verificando a cobertura
   - documentar com Doxygen
 
+
+
+# Especificação e descrição do projeto
+
+"Estórias" de usuário (EUs):
+- perspectiva do usuário
+- numeradas no formato EU001
+
+Diagramas de caso de uso
+- detalham ações do usuário e respostas do sistema a ele
+- <<include>>: casos de uso utilizados
+- <<extends>>: casos de uso englobados
+- interfaces: interfaces utilizadas
+
+Detalhamento de cada caso de uso
+- nome, tipo (primário, secundário, opcional), descrição
+- atores
+- referências (EUs)
+- pré-condições: assertivas prévias ao caso de uso
+- fluxo de eventos:
+  - principal (típico),
+  - alternativos (esperado mas variante do típico),
+  - atípicos (erros, cancelamento pelo usuário, etc.)
+- pós-condições: assertivas posteriores ao caso de uso
+- pontos de extensão: casos de uso que que são englobados pelo caso de uso em questão
+- casos de uso incluídos: casos de uso utilizados <<include>>
+- outros requisitos (interfaces)
+- ações do ator VS resposta do sistema (colunas separadas)
+
+Diagramas de fluxo de dados (DFD)
+- entidades externas (retângulo): podem ser duplicados para evitar cruzamento de linhas
+- fluxo de dados (setas unilaterais com nome do dado): contém só um tipo de dado
+- armazenamento de dados (retângulo com lado direito aberto)
+- processos (elipses ou retangulos arredondados):
+  - precisam de um fluxo de dados chegando e outro saindo
+  - nomeados como "<verbo> <objeto>", "Valida ingresso"
