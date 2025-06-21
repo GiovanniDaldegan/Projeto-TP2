@@ -6,15 +6,21 @@ Projeto-TP2
 ├── LEIAME.txt
 ├── LICENSE
 ├── Doxyfile
+├── main.py                 # main do servidor
 │
-├── artefatos/
-│   │
-│   ├── Especificação.txt
-│   │
-│   ├── diagramas/
-│   └── revisões/             # laudos de revisão
+├── templates/              # páginas HTML fornecidas pelo servidor
 │
-└── docs/                     # documentação Doxygen
+├── static/                 # elementos estáticos para o cliente requisitar (códigos, imagens, etc.)
+│
+└── artefatos/
+    │
+    ├── Especificação.txt
+    │
+    ├── diagramas/
+    │
+    ├── revisões/           # laudos de revisão
+    │
+    └── docs/               # documentação Doxygen
 
 
 # Formatação e documentação de código
