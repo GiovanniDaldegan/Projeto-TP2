@@ -6,11 +6,18 @@ Projeto-TP2
 ├── LEIAME.txt
 ├── LICENSE
 ├── Doxyfile
-├── main.py                 # main do servidor
 │
-├── templates/              # páginas HTML fornecidas pelo servidor
-│
-├── static/                 # elementos estáticos para o cliente requisitar (códigos, imagens, etc.)
+├── app/
+│   │
+│   ├── main.py             # main do servidor
+│   │
+│   ├── templates/          # páginas HTML fornecidas pelo servidor
+│   │
+│   ├── static/             # elementos estáticos requisitados pelo cliente (códigos, imagens, etc.)
+│   │
+│   ├── modules/            # módulos do servidor
+│   │
+│   └── test-modules/       # módulos de teste do servidor
 │
 └── artefatos/
     │
@@ -109,8 +116,8 @@ AAAA.MM.DD  |  HHh  |  tipo          |  descrição
 Exemplo:
 
 DATA        | HORAS |  TIPO TAREFA             |  DESCRIÇÃO DA TAREFA REALIZADA
-2025.06.17  |  02h  |  revisar especificações  |  função de listar produtos não precisa de
-            |       |                          |  
+2025.06.17  |  02h  |  revisar especificações  |  função de pesquisar produtos não precisa de
+            |       |                          |  adivinhar nomes escrito errado
             |       |                          |  
             |  01h  |  fazer diagramas         |  modelar o subsistema de pesquisa de produto
             |       |                          |  
