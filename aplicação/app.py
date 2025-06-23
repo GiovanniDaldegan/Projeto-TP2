@@ -18,6 +18,10 @@ def create_app():
     app.config["SECRET_KEY"] = "tp2"
 
     socketio.init_app(app)
+    
+    set_routes(app)
+
+    # inicialização de módulos essenciais
 
     return app
 
@@ -25,8 +29,4 @@ def create_app():
 if __name__ == "__main__":
     app = create_app()
 
-    set_routes(app)
-
-
     socketio.run(app=app, port=5000)
-
