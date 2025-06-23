@@ -1,2 +1,2 @@
-## @package test_product_list
+##! \test
 # Testes do módulo da lista de produtos.
