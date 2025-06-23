@@ -14,7 +14,13 @@ Projeto-TP2
 │   │
 │   ├── templates/              # páginas HTML fornecidas pelo servidor
 │   │
-│   ├── static/                 # elementos estáticos requisitados pelo cliente (códigos, imagens, etc.)
+│   ├── static/                 # elementos do cliente que serão requisitados (códigos, imagens, etc.)
+│   │   │
+│   │   ├── style.css
+│   │   │
+│   │   ├── scripts/
+│   │   ├── img/
+│   │   └── fonts/
 │   │
 │   ├── modules/                # módulos do servidor
 │   │
