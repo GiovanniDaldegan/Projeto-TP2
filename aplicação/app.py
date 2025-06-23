@@ -5,6 +5,9 @@ from routes import set_routes
 
 socketio = SocketIO()
 
+# controladores
+from modules.db_controller import DBController
+
 # listeners
 from modules import product_list
 
@@ -26,6 +29,8 @@ if __name__ == "__main__":
     app = create_app()
 
     set_routes(app)
+
+    db_controller = DBController()
 
 
     socketio.run(app=app, port=5000)
