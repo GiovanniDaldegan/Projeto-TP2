@@ -7,27 +7,29 @@ Projeto-TP2
 ├── LICENSE
 ├── Doxyfile
 │
-├── app/
+├── aplicação/
 │   │
-│   ├── main.py             # main do servidor
+│   ├── app.py                  # setup da aplicação (servidor)
+│   ├── routes.py               # definição de rotas e páginas HTML
 │   │
-│   ├── templates/          # páginas HTML fornecidas pelo servidor
+│   ├── templates/              # páginas HTML fornecidas pelo servidor
 │   │
-│   ├── static/             # elementos estáticos requisitados pelo cliente (códigos, imagens, etc.)
+│   ├── static/                 # elementos estáticos requisitados pelo cliente (códigos, imagens, etc.)
 │   │
-│   ├── modules/            # módulos do servidor
+│   ├── modules/                # módulos do servidor
 │   │
-│   └── test/               # módulos de teste do servidor
+│   └── test/                   # módulos de teste do servidor
 │
 └── artefatos/
     │
-    ├── Especificação.txt
+    ├── Especificação.pdf
+    ├── padroes_do_projeto.txt  # padrões utilizados  
     │
     ├── diagramas/
     │
-    ├── revisões/           # laudos de revisão
+    ├── revisões/               # laudos de revisão
     │
-    └── docs/               # documentação Doxygen
+    └── docs/                   # documentação Doxygen
 
 
 # Formatação e documentação de código
