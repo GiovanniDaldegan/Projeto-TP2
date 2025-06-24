@@ -14,8 +14,8 @@ Projeto-TP2
 │   │
 │   ├── templates/              # páginas HTML fornecidas pelo servidor
 │   │
-│   ├── static/                 # elementos do cliente que serão requisitados (códigos, imagens, etc.)
-│   │   │
+│   ├── static/                 # elementos do cliente que serão requisitados
+│   │   │                       # (códigos, imagens, etc.)
 │   │   ├── style.css
 │   │   │
 │   │   ├── scripts/
@@ -105,8 +105,7 @@ Cada módulo do servidor deve estar na pasta "modules" e ser devidamente
 importado pelo app.py.
 
 - Se for um módulo interno e essencial no setup da aplicação, como o módulo de
-  BD, deve ser inicializado de alguma forma no app.py no create_app(), depois da
-  chamada do set_routes(app)
+  BD, deve ser inicializado antes dos listeners
 
 - Se for um módulo com listeners, deve ser importado depois da criação do
   socketio.
