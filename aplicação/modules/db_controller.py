@@ -9,8 +9,9 @@ class DBController:
 
     def __init__(self):
         """! Construtor da classe"""
+        self.tables_ok = False
     
-    def create_tables():
+    def create_tables(self):
         """! Cria todas as tabelas da aplicação.
 
         Cria as tabelas:
@@ -22,3 +23,4 @@ class DBController:
         """
 
         print("Criando tabelas...")
+        self.tables_ok = True
