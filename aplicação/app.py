@@ -5,6 +5,9 @@ from routes import set_routes
 
 socketio = SocketIO()
 
+# inicialização de módulos essenciais
+
+
 # listeners
 from modules import product_list
 
@@ -20,8 +23,6 @@ def create_app():
     socketio.init_app(app)
     
     set_routes(app)
-
-    # inicialização de módulos essenciais
 
     return app
 
