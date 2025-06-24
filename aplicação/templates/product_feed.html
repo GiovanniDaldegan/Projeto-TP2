@@ -5,17 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pesquisar produtos</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js" integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA==" crossorigin="anonymous"></script>
-    <script type="text/javascript" src="{{ url_for('static', filename='scripts/product_feed.js') }}"></script>
+    <script type="module" src="{{ url_for('static', filename='scripts/product_feed.js') }}"></script>
+    <script type="module" src="{{ url_for('static', filename='scripts/client_events.js') }}"></script>
 </head>
 <body>
-    <form class="search-form">
-        <input type="text" >
-        <select name="filters" id="filters" multiple> <!-- Fazer uma requisição dos filtros existentes -->
+    <form id="search-form">
+        <input type="text" id="product-name" placeholder="Nome do produto">
+        <select name="filters" id="search-filters" multiple> <!-- Fazer uma requisição dos filtros existentes -->
             <option value="Limpeza">Limpeza</option>
             <option value="Laticínios">Laticínios</option>
             <option value="Eletrodomésticos">Eletrodomésticos</option>
         </select>
-        <button type="submit">Pesquisar</button>
+        <button type="submit" id="search-button">Pesquisar</button>
     </form>
 </body>
 </html>
