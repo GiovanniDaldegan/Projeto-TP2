@@ -23,6 +23,8 @@ def create_app():
     db_controller = DBController(app.root_path)
 
     db_controller.create_tables()
+    if not db_controller.is_db_ok():
+        print("ERRO: falha no banco de dados!")
 
     socketio.init_app(app)
 
