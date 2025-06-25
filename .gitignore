@@ -197,4 +197,6 @@ cython_debug/
 .venv
 .vscode
 
+*.db
+
 artefatos/docs

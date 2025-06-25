@@ -20,10 +20,9 @@ def create_app():
     app = Flask(__name__)
     app.config["SECRET_KEY"] = "tp2"
 
-    db_controller = DBController()
+    db_controller = DBController(app.root_path)
 
-    if not db_controller.tables_ok:
-        db_controller.create_tables()
+    db_controller.create_tables()
 
     socketio.init_app(app)
 
