@@ -1,3 +1,10 @@
+"""! @package db_controller
+    Módulo gerenciador do BD,
+
+    Cria e monitora tabelas do banco de dados, além de consultá-las em busca de
+    itens requisitados pelo cliente.
+"""
+
 import os
 import sqlite3
 
