@@ -28,6 +28,7 @@ class DBController:
 
         self.cursor_ok = False
         self.path_databases = os.path.join(app_root_dir, "databases")
+        self.populated = False  # variável exclusiva para testes e demonstração
 
 
     def set_cursor(self):
@@ -84,9 +85,9 @@ class DBController:
             """
             CREATE TABLE IF NOT EXISTS CATEGORY(
             id_category  INTEGER  PRIMARY KEY,
-            category     TEXT     NOT NULL,
+            name         TEXT     NOT NULL,
 
-            UNIQUE (category)
+            UNIQUE (name)
             );
             """)
 
@@ -112,6 +113,9 @@ class DBController:
             FOREIGN KEY (id_category)  REFERENCES  CATEGORY(id_category)
             );
             """)
+
+        # TODO: gerar id único para cada linha de tabela (tabela 
+        #       específica com autoincrement?)
 
 
     def is_db_ok(self):
@@ -141,8 +145,63 @@ class DBController:
             if len(result) != 0:
                 present_tables += 1
 
-
         if len(table_names) != present_tables:
+            print("[BD] ERRO: falta(m) tabela(s).")
             return False
-        
         return True
+
+
+    def populate(self):
+        """! Popula as tabelas para fins de teste e demonstração."""
+        if not self.is_db_ok() or self.populated:
+            return
+
+        self.cursor.execute(
+            """
+            INSERT INTO PRODUCT (id_product, name, price, rating)
+            VALUES
+                (00, "Veja Multiuso", 799, 45),
+                (01, "Serenata do Amor", 327, 50),
+                (02, "DVD Pirata vindo do Caribe", 1799, 25)
+            """)
+        
+        self.cursor.execute(
+            """
+            INSERT INTO MARKET (id_market, name, latitude, longitude, rating)
+            VALUES
+                (03, "G Barbosa", 3887191112792959, -7705624540977456, 00)
+            """)
+
+        self.cursor.execute(
+            """
+            INSERT INTO CATEGORY (id_category, name)
+            VALUES
+                (04, "Limpeza"),
+                (05, "Mídia"),
+                (06, "Zero Lactose"),
+                (07, "Gostoso")
+            """)
+
+        self.cursor.execute(
+            """
+            INSERT INTO _MARKET_PRODUCT (id_market, id_product)
+            VALUES
+                (03, 00),
+                (03, 01),
+                (03, 02)
+            """)
+
+        self.cursor.execute(
+            """
+            INSERT INTO _PRODUCT_CATEGORY (id_product, id_category)
+            VALUES
+                (00, 04),
+                (00, 06),
+                (00, 07),
+                (01, 07),
+                (02, 05),
+                (02, 07)
+            """)
+
+        self.populated = True
+
