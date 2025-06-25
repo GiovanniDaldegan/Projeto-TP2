@@ -20,11 +20,27 @@ class DBController:
     ## @var cursor_ok
     # Flag que indica se o cursor foi inicializado ou não.
 
-    ## @var path_databases:str
+
+    ## @var path_databases
     # String que guarda o caminho do diretório dos bancos de dados.
 
     ## @var cursor
     # Cursor (SQLite3) do BD.
+
+    ## @var tables_dict
+    # Dicionário com informações para a criação de todas as tabelas e
+    # registros para popular o BD para demonstrações.
+    #
+    # Sua estrutura é a seguinte:
+    # tables_dict = {
+    #     "tabela" : {
+    #         "columns" : ["nome_coluna0", "nome_coluna1"],
+    #         "entries" : [
+    #             (item0_coluna0, item0_coluna1),
+    #             (item1_coluna0, item1_coluna1)
+    #         ]
+    #     }
+    # }
 
     def __init__(self, app_root_dir):
         """! Construtor de DBController
