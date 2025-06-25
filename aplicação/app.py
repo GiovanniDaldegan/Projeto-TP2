@@ -1,3 +1,5 @@
+import os
+
 from flask import Flask
 from flask_socketio import SocketIO
 
@@ -5,11 +7,17 @@ from routes import set_routes
 
 socketio = SocketIO()
 
-# controladores
-from modules.db_controller import DBController
-
 # listeners
 from modules import product_list
+
+# módulos básicos
+from modules.db_controller import DBController
+
+db_controller = DBController(os.path.dirname(os.path.realpath(__file__)))
+
+db_controller.create_tables()
+db_controller.populate()
+
 
 
 def create_app():
@@ -19,11 +27,6 @@ def create_app():
     """
     app = Flask(__name__)
     app.config["SECRET_KEY"] = "tp2"
-
-    db_controller = DBController(app.root_path)
-
-    db_controller.create_tables()
-    db_controller.populate()
 
     socketio.init_app(app)
 
