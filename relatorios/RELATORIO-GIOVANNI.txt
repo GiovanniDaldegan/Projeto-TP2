@@ -1,2 +1,17 @@
-DATA        | HORAS |  TIPO TAREFA  |  DESCRIÇÃO DA TAREFA REALIZADA
-
+DATA        | HORAS | TIPO TAREFA                         | DESCRIÇÃO DA TAREFA REALIZADA
+2025.06.18  |  1h   | gerenciar a construção do software  | estudar a especificação e redigir padrões para o projeto
+            |       |                                     |
+2025.06.22  |  2h   | gerenciar a construção do software  | estudar a especificação e redigir padrões para o projeto
+            |       |                                     |
+2025.06.23  |  1h   | gerenciar a construção do software  | estruturar o projeto (diretórios para a aplicação, módulos
+            |       |                                     | rotas)
+            |       |                                     |
+            |  1h   | projetar                            | script principal da aplicação Flask e projetar as interações
+            |       |                                     | da aplicação
+            |       |                                     |
+            |  2h   | codificar módulo                    | requisição da lista de produtos
+            |       |                                     |
+2025.06.24  |  4h   | codificar módulo                    | controlador do BD
+            |       |                                     |
+            |  1h   | documentar com Doxygen              |
+            |       |                                     |
