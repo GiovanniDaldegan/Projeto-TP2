@@ -5,17 +5,38 @@ import sqlite3
 class DBController:
     """! Controlador do banco de dados.
 
-        Fornece a interface com o banco de dados.\n
-        Cria e administra as tabelas da aplicação.
+    Fornece a interface com o banco de dados.\n
+    Cria e administra as tabelas da aplicação utilizando a biblioteca SQLite3
+    para Python.
     """
 
+    ## @var cursor_ok
+    # Flag que indica se o cursor foi inicializado ou não.
+
+    ## @var path_databases:str
+    # String que guarda o caminho do diretório dos bancos de dados.
+
+    ## @var cursor
+    # Cursor (SQLite3) do BD.
+
     def __init__(self, app_root_dir):
-        """! Construtor de DBController"""
+        """! Construtor de DBController
+        
+        Inicialza o atributo cursor_ok como falso e guarda o caminho do
+        diretório dos banco de dados no atributo path_databases.
+        """
+
         self.cursor_ok = False
         self.path_databases = os.path.join(app_root_dir, "databases")
 
 
     def set_cursor(self):
+        """! Define o cursor do BD.
+        
+        Checa se existem o diretório "databases" e o arquivo "tables.db" dentro
+        dele e os cria se não existirem. Após isso, conecta o BD e guarda seu
+        cursor no atributo cursor da classe.
+        """
         if not os.path.isdir(self.path_databases):
             os.mkdir(self.path_databases)
 
@@ -98,6 +119,7 @@ class DBController:
         
         Checa se todas as tabelas estão presentes no banco de dados.
         """
+
         if not self.cursor_ok:
             self.set_cursor()
         
