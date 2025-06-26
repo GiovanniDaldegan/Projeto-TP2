@@ -138,50 +138,74 @@ class DBController:
         """! Cria todas as tabelas da aplicação.
 
         Cria as tabelas (nomes precedidos por _ são relacionamentos):
-        - PRODUCT (id_product:PK, name, price, rating)
-        - MARKET (id_market:PK, name, location, rating)
-        - CATEGORY (id_category:PK, category)
-        - _MARKET_PRODUCT (id_market:PK:FK, id_product:PK:FK)
+        - PRODUCT (id_product:PK, name, rating)
+        - MARKET (id_market:PK, name, latitude, longitude, rating)
+        - CATEGORY (name: PK)
+        - _MARKET_PRODUCT (id_market:PK:FK, id_product:PK:FK, price)
         - _PRODUCT_CATEGORY (id_product:PK:FK, id_category:PK:FK)
         """
 
         if not self.cursor_ok:
             self.set_cursor()
-
+        '''
         for table_name, table in self.tables_dict.items():
             column_names = [i.split()[0] for i in table["columns"]]
 
             self.cursor.execute(
                 f"CREATE TABLE IF NOT EXISTS {table_name} ({str(column_names)[1:-1]})"
             )
-        
-        # tabelas de relacionamentos
+        '''
+        # script cria todas as tabelas do banco
 
-        self.cursor.execute(
+        self.cursor.executescript(
             """
-            CREATE TABLE IF NOT EXISTS _MARKET_PRODUCT(
-            id_market   INTEGER,
-            id_product  INTEGER,
-            
-            PRIMARY KEY (id_market, id_product),
-            FOREIGN KEY (id_market)  REFERENCES  MARKET(id_market)
+            DROP TABLE IF EXISTS _PRODUCT_CATEGORY;
+            DROP TABLE IF EXISTS _MARKET_PRODUCT;
+            DROP TABLE IF EXISTS PRODUCT;
+            DROP TABLE IF EXISTS MARKET;
+            DROP TABLE IF EXISTS CATEGORY;
+
+            CREATE TABLE "CATEGORY" (
+                "name"	TEXT NOT NULL UNIQUE,
+                PRIMARY KEY("name")
+            );
+
+            CREATE TABLE "MARKET" (
+                "id_market"	INTEGER,
+                "name"	TEXT NOT NULL,
+                "latitude"	REAL,
+                "longitude"	REAL,
+                "rating"	REAL,
+                PRIMARY KEY("id_market" AUTOINCREMENT)
+            );
+
+            CREATE TABLE "PRODUCT" (
+                "id_product"	INTEGER,
+                "name"	TEXT NOT NULL,
+                "rating"	REAL,
+                PRIMARY KEY("id_product" AUTOINCREMENT),
+            );
+
+            CREATE TABLE "_MARKET_PRODUCT" (
+                "id_market"	INTEGER NOT NULL,
+                "id_product"	INTEGER NOT NULL,
+                "price"	REAL NOT NULL,
+                PRIMARY KEY("id_market","id_product"),
+                FOREIGN KEY("id_market") REFERENCES "MARKET"("id_market"),
+                FOREIGN KEY("id_product") REFERENCES "PRODUCT"("id_product")
+            );
+
+            CREATE TABLE "_PRODUCT_CATEGORY" (
+                "id_product"	INTEGER NOT NULL,
+                "category_name"	TEXT NOT NULL,
+                PRIMARY KEY("id_product","category_name"),
+                FOREIGN KEY("category_name") REFERENCES "CATEGORY"("name"),
+                FOREIGN KEY("id_product") REFERENCES "PRODUCT"("id_product")
             );
             """)
 
-        self.cursor.execute(
-            """
-            CREATE TABLE IF NOT EXISTS _PRODUCT_CATEGORY(
-            id_product   INTEGER,
-            id_category  TEXT,
-            
-            PRIMARY KEY (id_product, id_category),
-            FOREIGN KEY (id_product)   REFERENCES  PRODUCT(id_product),
-            FOREIGN KEY (id_category)  REFERENCES  CATEGORY(id_category)
-            );
-            """)
 
-        # TODO: gerar id único para cada linha de tabela (tabela 
-        #       específica com autoincrement?)
+        # TODO: adicionar atributo de imagens ao produto
 
 
     def is_db_ok(self):
@@ -221,7 +245,7 @@ class DBController:
         if not self.is_db_ok() or self.populated:
             return
 
-
+        '''
         for tab_name, table in self.tables_dict.items():
             for entry in table["entries"]:
                 column_names = [i.split()[0] for i in table["columns"]]
@@ -231,6 +255,30 @@ class DBController:
                     INSERT INTO {tab_name} ({str(column_names)[1:-1].replace('\'', '')})
                     VALUES ({str(entry)[1:-1]})
                     """)
+        '''
+        inserts = [
+        """INSERT INTO "CATEGORY" ("name") VALUES 
+           ('Limpeza'), ('Mídia'), ('Zero Lactose'), ('Gostoso')""",
+        
+        """INSERT INTO "MARKET" ("name", "latitude", "longitude", "rating") VALUES
+           ('G Barbosa', 38.87191112792959, -77.05624540977456, 0.0)""",
+        
+        """INSERT INTO "PRODUCT" ("name", "rating") VALUES
+           ('Veja Multiuso', 45.0),
+           ('Serenata do Amor', 50.0),
+           ('DVD Pirata vindo do Caribe', 25.0)""",
+        
+        """INSERT INTO "_MARKET_PRODUCT" ("id_market", "id_product", "price") VALUES
+           (1, 1, 7.99), (1, 2, 3.27), (1, 3, 17.99)""",
+        
+        """INSERT INTO "_PRODUCT_CATEGORY" ("id_product", "category_name") VALUES
+           (1, 'Limpeza'), (1, 'Zero Lactose'), (1, 'Gostoso'),
+           (2, 'Gostoso'), (3, 'Mídia'), (3, 'Gostoso')"""
+        ]
 
+        for q in inserts:
+            self.cursor.execute(q)
+
+        self.connection.commit() #sobe os inserts para o arquivo .db, se quiser manter apenas em memoria reova
         self.populated = True
 
