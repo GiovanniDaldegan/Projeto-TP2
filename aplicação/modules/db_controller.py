@@ -49,8 +49,9 @@ class DBController:
         diretório dos banco de dados no atributo path_databases.
         """
 
-        self.cursor_ok = False
+        self.cursor = None
         self.path_databases = os.path.join(app_root_dir, "databases")
+        self.connection = None
         self.populated = False  # variável exclusiva para testes e demonstração
         
         self.tables_dict = {
@@ -119,19 +120,25 @@ class DBController:
         }
 
 
-    def set_cursor(self):
-        """! Define o cursor do BD.
+    def connect(self):
+        """! Define o cursor e a conexão do BD.
         
-        Checa se existem o diretório "databases" e o arquivo "tables.db" dentro
-        dele e os cria se não existirem. Após isso, conecta o BD e guarda seu
-        cursor no atributo cursor da classe.
+        Verifica se há conexão, caso não, inicializa o diretorio caso ele não exista,
+        bem como a conexão e o cursor
         """
-        if not os.path.isdir(self.path_databases):
-            os.mkdir(self.path_databases)
+        if self.connection is None:
+            if not os.path.isdir(self.path_databases):
+                os.mkdir(self.path_databases)
+            self.connection = sqlite3.connect(os.path.join(self.path_databases, "tables.db"))
+            self.cursor = self.connection.cursor()
 
-        db_connection = sqlite3.connect(os.path.join(self.path_databases, "tables.db"))
-        self.cursor = db_connection.cursor()
-        self.cursor_ok = True
+    def initialize(self):
+        """! Inicializa o Banco de dados caso não exista"""
+        self.connect()
+
+        if not os.path.exists(self.db_path):  # Identifica primeira execução
+            self.create_tables()
+            self.populate()
 
 
     def create_tables(self):
@@ -145,8 +152,8 @@ class DBController:
         - _PRODUCT_CATEGORY (id_product:PK:FK, id_category:PK:FK)
         """
 
-        if not self.cursor_ok:
-            self.set_cursor()
+        if self.cursor is None:
+            self.connect()
         '''
         for table_name, table in self.tables_dict.items():
             column_names = [i.split()[0] for i in table["columns"]]
@@ -183,7 +190,7 @@ class DBController:
                 "id_product"	INTEGER,
                 "name"	TEXT NOT NULL,
                 "rating"	REAL,
-                PRIMARY KEY("id_product" AUTOINCREMENT),
+                PRIMARY KEY("id_product" AUTOINCREMENT)
             );
 
             CREATE TABLE "_MARKET_PRODUCT" (
@@ -203,6 +210,8 @@ class DBController:
                 FOREIGN KEY("id_product") REFERENCES "PRODUCT"("id_product")
             );
             """)
+        
+        self.connection.commit() #sobe o banco para o arquivo .db, se quiser manter apenas em memoria reova
 
 
         # TODO: adicionar atributo de imagens ao produto
@@ -214,8 +223,8 @@ class DBController:
         Checa se todas as tabelas estão presentes no banco de dados.
         """
 
-        if not self.cursor_ok:
-            self.set_cursor()
+        if self.cursor is None:
+            self.connect()
 
         # TODO: centralizar o registro de quais tabelas devem existir pra evitar
         #       inconsistências
@@ -272,8 +281,8 @@ class DBController:
            (1, 1, 7.99), (1, 2, 3.27), (1, 3, 17.99)""",
         
         """INSERT INTO "_PRODUCT_CATEGORY" ("id_product", "category_name") VALUES
-           (1, 'Limpeza'), (1, 'Zero Lactose'), (1, 'Gostoso'),
-           (2, 'Gostoso'), (3, 'Mídia'), (3, 'Gostoso')"""
+           (1, 'Limpeza'), (1, 'Zero Lactose'),
+           (2, 'Gostoso'), (3, 'Mídia') """
         ]
 
         for q in inserts:
@@ -282,3 +291,9 @@ class DBController:
         self.connection.commit() #sobe os inserts para o arquivo .db, se quiser manter apenas em memoria reova
         self.populated = True
 
+    def close(self):
+        """Fecha a conexão, evitando vazamentos e acesso indevido"""
+        if self.connection:
+            self.connection.close()
+            self.connection = None
+            self.cursor = None
