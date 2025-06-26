@@ -1,8 +1,23 @@
-import { request_product_list } from "./client_events.js";
+import { request_product_list, request_filters } from "./client_events.js";
 
 var socketio = io();
 
+// inserção dos filtros fornecidos pelo servidor no select de filtros de pesquisa
+socketio.on("filters", (filters) => {
+    const searchSelect = document.getElementById("search-filters")
+    var filtersHTML = "";
+
+    filters.forEach(element => {
+        filtersHTML += `<option value="${element}">${element}</option>\n`
+    });
+    console.log(filtersHTML);
+
+    searchSelect.innerHTML = filtersHTML;
+});
+
 document.addEventListener("DOMContentLoaded", () => {
+    request_filters(socketio);
+
 
     document.getElementById("search-form").addEventListener("submit", (e) => {
         e.preventDefault();
