@@ -211,6 +211,31 @@ class DBController:
             );
             """)
         
+        """cria indices que auxiliam em joins e em querrys"""
+        self.cusor.executescript(
+            """
+            CREATE INDEX IF NOT EXISTS idx_productcategory_product ON _PRODUCT_CATEGORY(id_product);
+            CREATE INDEX IF NOT EXISTS idx_productcategory_category ON _PRODUCT_CATEGORY(category_name);
+            """)
+
+        """cria Views"""
+        self.cusor.executescript(
+            """
+            CREATE VIEW IF NOT EXISTS v_product_details AS
+            SELECT 
+                p.id_product,
+                p.name,
+                p.rating,
+                GROUP_CONCAT(DISTINCT pc.category_name) AS categories,
+                MIN(mp.price) AS min_price,
+                MAX(mp.price) AS max_price,
+                AVG(mp.price) AS avg_price
+            FROM PRODUCT p
+            LEFT JOIN _PRODUCT_CATEGORY pc ON p.id_product = pc.id_product
+            LEFT JOIN _MARKET_PRODUCT mp ON p.id_product = mp.id_product
+            GROUP BY p.id_product  
+            """)
+        
         self.connection.commit() #sobe o banco para o arquivo .db, se quiser manter apenas em memoria reova
 
 
