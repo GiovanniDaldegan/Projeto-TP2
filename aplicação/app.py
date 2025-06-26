@@ -39,5 +39,5 @@ if __name__ == "__main__":
     set_routes(app)
 
 
-    socketio.run(app=app, port=5000)
+    socketio.run(app=app, allow_unsafe_werkzeug=True, port=5000)
 
