@@ -380,7 +380,11 @@ class DBController:
         if conditions:
             query += " WHERE " + " AND ".join(conditions)
 
-
+        if filters and "sort" in filters:
+            query += f" ORDER BY {filters['sort']}"
+        else:
+            query += " ORDER BY name"
+    
         self.connect()
         self.cursor.execute(query, params)
         return self.format_results(self.cursor.fetchall())

@@ -35,6 +35,9 @@ def test_database():
     #filtros["min_price"] = 3
     #filtros["max_price"] = 5
     #filtros["min_rating"] = 4.8
+    #filtros["sort"] = "rating"
+    #filtros["sort"] = "min_price"
+
 
     resultados = db.search_products(filters=filtros)
     print("Resultados da busca por ---:", resultados)
