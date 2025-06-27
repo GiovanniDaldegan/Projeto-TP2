@@ -15,9 +15,8 @@ from modules.db_controller import DBController
 
 db_controller = DBController(os.path.dirname(os.path.realpath(__file__)))
 
-db_controller.create_tables()
-db_controller.populate()
-
+db_controller.connect()
+db_controller.initialize()
 
 
 def create_app():
