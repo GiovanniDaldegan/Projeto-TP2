@@ -7,6 +7,9 @@ from routes import set_routes
 
 socketio = SocketIO()
 
+# inicialização de módulos essenciais
+
+
 # listeners
 from modules import product_list
 
@@ -29,6 +32,8 @@ def create_app():
     app.config["SECRET_KEY"] = "tp2"
 
     socketio.init_app(app)
+    
+    set_routes(app)
 
     return app
 
@@ -38,6 +43,4 @@ if __name__ == "__main__":
 
     set_routes(app)
 
-
     socketio.run(app=app, allow_unsafe_werkzeug=True, port=5000)
-

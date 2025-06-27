@@ -17,3 +17,7 @@ def set_routes(app):
     @app.route("/")
     def index():
         return render_template("index.html")
+
+    @app.route("/pesquisar")
+    def product_feed():
+        return render_template("product_feed.html")

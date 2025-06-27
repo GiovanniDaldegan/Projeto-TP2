@@ -9,11 +9,14 @@
 
 from __main__ import socketio
 
-# ! EXEMPLO !
-# listener do servidor: ativado quando recebe connect do cliente
-@socketio.on("connect")
-def send_product_list():
-    print("DAMN")
-
-    # servidor envia um evento "get-product-list" com um dicionário que vai ser serializado para JSON
-    socketio.emit("get-product-list", {"product0" : {"name": "shampoo", "price": "R$$111111111.00000,00000"}})
+@socketio.on("get-product-list")
+def send_product_list(data):
+    """! Envia a lista de produtos de acordo com o nome pesquisado e os filtros
+    aplicados pelo usuário.
+    
+    Ao receber essas informações do usuário, chama a função que busca os
+    produtos que os atendem no BD, formata os dados e envia a lista de produtos
+    para o cliente.
+    """
+    
+    print(f"nome: {data["product_name"]}\nfiltros: {data["filters"]}\n")
