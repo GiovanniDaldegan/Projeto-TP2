@@ -341,16 +341,36 @@ class DBController:
             self.cursor = None
 
 
-    def search_products(self, search_term=None, filters=None, limit = 10):
-        """
-        Busca produtos baseado em filtros ou palavras de pesquisa
-        lida com multiplos preços 
-        lida com multiplas categorias
-        Filtros incluem:
-            min_price
-            max_price
-            min_rating
-            category
+    def search_products(self, search_term=None, filters=None, limit = 20):
+        """!
+        @brief brief Busca produtos com filtros avançados
+        
+        @param search_term: String de busca (Opcional) - busca por correspondência no nome do produto
+
+        @param filters: Dicionario de filtros (Opcional) - com os seguintes parâmetros:
+            - min_price: float - preço mínimo
+            - max_price: float - preço máximo
+            - min_rating: float - avaliação mínima (0-5)
+            - category: string - nome exato da categoria
+            - sort: string - nome exato do atributo de ordenação
+
+        @param limit: int - limite de resultados (padrão: 20)
+
+        @return Lista de dicionários contendo:
+            - id: int - ID do produto
+            - name: str - Nome do produto
+            - rating: float - Avaliação
+            - categories: list[str] - Lista de categorias
+            - price_range: tuple(min, max) - Faixa de preços
+            - avg_price: float - Preço médio
+        
+        @note
+        **Atributos de Ordenação Validos**
+        - min_price
+        - max_price
+        - rating
+        - categories
+        - name
         """
 
         query = "SELECT * FROM v_products_general"
@@ -384,6 +404,8 @@ class DBController:
             query += f" ORDER BY {filters['sort']}"
         else:
             query += " ORDER BY name"
+
+        query += f" LIMIT {abs(int(limit))}"
     
         self.connect()
         self.cursor.execute(query, params)
