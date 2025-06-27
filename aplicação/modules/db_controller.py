@@ -48,29 +48,29 @@ class DBController:
 
         self.tables_dict = {
             "PRODUCT" : [
-                    "id_product INTEGER PRIMARY KEY",
-                    "name TEXT NOT NULL",
-                    "price INTEGER",
-                    "rating INTEGER"
+                "id_product",
+                "name",
+                "price",
+                "rating"
             ],
             "MARKET" : [
-                    "id_market INTEGER PRIMARY KEY",
-                    "name TEXT NOT NULL",
-                    "latitude INTEGER",
-                    "longitude INTEGER",
-                    "rating INTEGER"
+                "id_market",
+                "name",
+                "latitude",
+                "longitude",
+                "rating"
             ],
             "CATEGORY" : [
-                    "id_category INTEGER PRIMARY KEY",
-                    "name TEXT NOT NULL"
+                "id_category",
+                "name"
             ],
             "_MARKET_PRODUCT" : [
-                    "id_market INTEGER",
-                    "id_product INTEGER"
+                "id_market",
+                "id_product"
             ],
             "_PRODUCT_CATEGORY" : [
-                    "id_product INTEGER",
-                    "id_category INTEGER"
+                "id_product",
+                "id_category"
             ],
         }
 
