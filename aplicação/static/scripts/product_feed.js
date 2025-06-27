@@ -1,37 +1,51 @@
-import { request_product_list, request_filters } from "./client_events.js";
+import { request_product_list, request_categories } from "./client_events.js";
 
 var socketio = io();
 
 // inserção dos filtros fornecidos pelo servidor no select de filtros de pesquisa
-socketio.on("filters", (filters) => {
-    const searchSelect = document.getElementById("search-filters")
-    var filtersHTML = "";
+socketio.on("categories", (categories) => {
+    const categorySelect = document.getElementById("category-filters");
+    var categoriesHTML = "";
 
-    filters.forEach(element => {
-        filtersHTML += `<option value="${element}">${element}</option>\n`
+    categories["categories"].forEach(element => {
+        categoriesHTML += `<option value="${element}">${element}</option>\n`
     });
-    console.log(filtersHTML);
 
-    searchSelect.innerHTML = filtersHTML;
+    categorySelect.innerHTML = categoriesHTML;
 });
 
 document.addEventListener("DOMContentLoaded", () => {
-    request_filters(socketio);
 
+    /*
+    document.getElementById("search-screen-button").addEventListener("click", () => {
+        request_categories(socketio);
+
+        // mostrar tela de pesquisa e lista de produtos
+    });
+    */
 
     document.getElementById("search-form").addEventListener("submit", (e) => {
         e.preventDefault();
 
-        const productName = document.getElementById("product-name").value;
-        const filterOptions = document.getElementById("search-filters").options;
+        const categoryFilters = document.getElementById("category-filters").options;
 
-        var activeFilters = []
-
-        for (var i = 0; i < filterOptions.length; i++) {
-            if (filterOptions[i].selected)
-                activeFilters.push(filterOptions[i].value);
+        var activeFilters = {
+            "product_name"    : document.getElementById("product-name").value,
+            "price_range"     : [
+                document.getElementById("min-price").value,
+                document.getElementById("max-price").value
+            ],
+            "min_rating"      : document.getElementById("min-rating").value,
+            "categories"      : []
         }
 
-        request_product_list(socketio, productName, activeFilters);
+        for (var i = 0; i < categoryFilters.length; i++) {
+            if (categoryFilters[i].selected)
+                activeFilters["categories"].push(categoryFilters[i].value);
+        }
+
+        console.log(activeFilters);
+
+        request_product_list(socketio, activeFilters);
     });
 });
