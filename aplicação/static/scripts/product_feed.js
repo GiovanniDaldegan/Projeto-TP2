@@ -7,7 +7,7 @@ socketio.on("categories", (categories) => {
     const categorySelect = document.getElementById("category-filters");
     var categoriesHTML = "";
 
-    categories["categories"].forEach(element => {
+    categories.forEach(element => {
         categoriesHTML += `<option value="${element}">${element}</option>\n`
     });
 
@@ -16,6 +16,8 @@ socketio.on("categories", (categories) => {
 
 document.addEventListener("DOMContentLoaded", () => {
 
+    request_categories(socketio);
+    
     /*
     document.getElementById("search-screen-button").addEventListener("click", () => {
         request_categories(socketio);
