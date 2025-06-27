@@ -17,29 +17,21 @@ class DBController:
     para Python.
     """
 
-    ## @var cursor_ok
-    # Flag que indica se o cursor foi inicializado ou não.
+    ## @var cursor
+    # Cursor (SQLite3) do BD.
 
+    ## @var connection
+    # Conexão com o BD para enviar as mudanças para o arquivo de banco de dados.
 
     ## @var path_databases
     # String que guarda o caminho do diretório dos bancos de dados.
 
-    ## @var cursor
-    # Cursor (SQLite3) do BD.
-
     ## @var tables_dict
-    # Dicionário com informações para a criação de todas as tabelas e
-    # registros para popular o BD para demonstrações.
+    # Dicionário com os nomes das tabelas e o nome de suas colunas.
     #
     # Sua estrutura é a seguinte:
     # tables_dict = {
-    #     "tabela" : {
-    #         "columns" : ["nome_coluna0", "nome_coluna1"],
-    #         "entries" : [
-    #             (item0_coluna0, item0_coluna1),
-    #             (item1_coluna0, item1_coluna1)
-    #         ]
-    #     }
+    #     "nome_tabela" : ["nome_coluna0", "nome_coluna1"],
     # }
 
     def __init__(self, app_root_dir):
@@ -53,76 +45,39 @@ class DBController:
         self.path_databases = os.path.join(app_root_dir, "databases")
         self.connection = None
         self.populated = False  # variável exclusiva para testes e demonstração
-        
+
         self.tables_dict = {
-            "PRODUCT" : {
-                "columns" : [
-                    "id_product INTEGER PRIMARY KEY",
-                    "name TEXT NOT NULL",
-                    "price INTEGER",
-                    "rating INTEGER"
-                ],
-                "entries" : [
-                    (0, "Veja Multiuso", 799, 45),
-                    (1, "Serenata do Amor", 327, 50),
-                    (2, "DVD Pirata vindo do Caribe", 1799, 25)
-                ]
-            },
-            "MARKET" : {
-                "columns" : [
-                    "id_market INTEGER PRIMARY KEY",
-                    "name TEXT NOT NULL",
-                    "latitude INTEGER",
-                    "longitude INTEGER",
-                    "rating INTEGER"
-                ],
-                "entries" : [
-                    (3, "G Barbosa", 3887191112792959, -7705624540977456, 00)
-                ]
-            },
-            "CATEGORY" : {
-                "columns" : [
-                    "id_category INTEGER PRIMARY KEY",
-                    "name TEXT NOT NULL"
-                ],
-                "entries" : [
-                    (4, "Limpeza"),
-                    (5, "Mídia"),
-                    (6, "Zero Lactose"),
-                    (7, "Gostoso")
-                ]
-            },
-            "_MARKET_PRODUCT" : {
-                "columns" : [
-                    "id_market INTEGER",
-                    "id_product INTEGER"
-                ],
-                "entries" : [
-                    (3, 0),
-                    (3, 1),
-                    (3, 2)
-                ]
-            },
-            "_PRODUCT_CATEGORY" : {
-                "columns" : [
-                    "id_product INTEGER",
-                    "id_category INTEGER"
-                ],
-                "entries" : [
-                    (0, 4),
-                    (0, 6),
-                    (0, 7),
-                    (1, 7),
-                    (2, 5),
-                    (2, 7)
-                ]
-            },
+            "PRODUCT" : [
+                "id_product",
+                "name",
+                "price",
+                "rating"
+            ],
+            "MARKET" : [
+                "id_market",
+                "name",
+                "latitude",
+                "longitude",
+                "rating"
+            ],
+            "CATEGORY" : [
+                "id_category",
+                "name"
+            ],
+            "_MARKET_PRODUCT" : [
+                "id_market",
+                "id_product"
+            ],
+            "_PRODUCT_CATEGORY" : [
+                "id_product",
+                "id_category"
+            ],
         }
 
 
     def connect(self):
         """! Define o cursor e a conexão do BD.
-        
+
         Verifica se há conexão, caso não, inicializa o diretorio caso ele não exista,
         bem como a conexão e o cursor
         """
@@ -166,16 +121,8 @@ class DBController:
 
         if self.cursor is None:
             self.connect()
-        '''
-        for table_name, table in self.tables_dict.items():
-            column_names = [i.split()[0] for i in table["columns"]]
 
-            self.cursor.execute(
-                f"CREATE TABLE IF NOT EXISTS {table_name} ({str(column_names)[1:-1]})"
-            )
-        '''
         # script cria todas as tabelas do banco
-
         self.cursor.executescript(
             """
             DROP TABLE IF EXISTS _PRODUCT_CATEGORY;
@@ -222,7 +169,7 @@ class DBController:
                 FOREIGN KEY("id_product") REFERENCES "PRODUCT"("id_product")
             );
             """)
-        
+
         """cria indices que auxiliam em joins e em querrys"""
         self.cursor.executescript(
             """
@@ -263,9 +210,6 @@ class DBController:
         if self.cursor is None:
             self.connect()
 
-        # TODO: centralizar o registro de quais tabelas devem existir pra evitar
-        #       inconsistências
-
         present_tables = 0
 
         for table_name in self.tables_dict.keys():
@@ -291,17 +235,6 @@ class DBController:
         if  self.populated:
             return
 
-        '''
-        for tab_name, table in self.tables_dict.items():
-            for entry in table["entries"]:
-                column_names = [i.split()[0] for i in table["columns"]]
-
-                self.cursor.execute(
-                    f"""
-                    INSERT INTO {tab_name} ({str(column_names)[1:-1].replace('\'', '')})
-                    VALUES ({str(entry)[1:-1]})
-                    """)
-        '''
         inserts = [
         """
         INSERT INTO "CATEGORY" ("name") VALUES 
@@ -398,6 +331,7 @@ class DBController:
 
         self.connection.commit() #sobe os inserts para o arquivo .db, se quiser manter apenas em memoria reova
         self.populated = True
+
 
     def close(self):
         """Fecha a conexão, evitando vazamentos e acesso indevido"""

@@ -14,7 +14,13 @@ Projeto-TP2
 │   │
 │   ├── templates/              # páginas HTML fornecidas pelo servidor
 │   │
-│   ├── static/                 # elementos estáticos requisitados pelo cliente (códigos, imagens, etc.)
+│   ├── static/                 # elementos do cliente que serão requisitados
+│   │   │                       # (códigos, imagens, etc.)
+│   │   ├── style.css
+│   │   │
+│   │   ├── scripts/
+│   │   ├── img/
+│   │   └── fonts/
 │   │
 │   ├── modules/                # módulos do servidor
 │   │
@@ -32,7 +38,81 @@ Projeto-TP2
     └── docs/                   # documentação Doxygen
 
 
-# Formatação e documentação de código
+
+# Desenvolvimento web com SocketIO
+
+Os clientes e o servidor se comunicam através de objetos SocketIO
+(Flask-SocketIO no servidor, SocketIO em JS nos clientes), que permitem enviar
+eventos customizados e objetos e receber esses eventos por listeners para se
+comunicar.
+
+- Para enviar apenas o evento:
+  socketio.send("evento-customizado")
+
+- Para enviar o evento e um objeto (precisa ser serializável para JSON):
+  socketio.emit("evento-customizado", {
+    product_name  : "Miojo",
+    filters       : ["Construção", "Comida instantânea"]
+  })
+
+  obs: em Python as chaves dos elementos deve estar entre "aspas".
+
+
+- Em Python, o servidor precisa de um listener assim para receber o evento
+  @socketio.on("evento-customizado")
+  def funcao_do_evento(data):
+      # processar o evento
+
+  obs: o "data" recebido é um dicionário (data["product_name"] = "Miojo")
+
+- Em JavaScript, o cliente recebe o evento com
+  socketio.on("evento-customizado", (product_list) => {
+      // proessar o evento
+  });
+
+  obs: acesse os atributos do elemento recebido por seus nomes, como
+       product_list["product0"].
+
+
+> Frontend
+Todas as páginas da aplicação devem importar o seguinte script do SocketIO:
+https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js
+
+Cada página deve ter um script JS de mesmo nome. Esse script próprio deve criar
+uma instância do SocketIO (socketio = io()), o que significa que é criada uma
+conexão do SocketIO para cada página que o cliente acessa.
+Por isso, vamos precisar implementar alguma forma do cliente se identificar para
+o servidor, por cookies ou outra forma de armazenamento de sessão.
+
+Todo arquivo (imagem, estilo CSS, até os scripts usados na página) que o front
+precisar ele precisa fazer uma requisição ao servidor usando a função url_for().
+Todos esses arquivos, incluindo todos os scripts do cliente, devem ficar na
+pasta "static" (cada um na sua devida sub-pasta)
+
+Exemplo:
+<script src="{{ url_for('static', filename='scripts/index.js') }}><script/>
+
+
+> Backend
+Toda página HTML da aplicação deve ser incluída na pasta "templates" e deve ter
+uma rota definida no script routes.py, dessa forma:
+
+@app.route("/url/relativo/da/página")
+def funcao_da_pagina():
+    return render_template("página.html")
+
+Cada módulo do servidor deve estar na pasta "modules" e ser devidamente
+importado pelo app.py.
+
+- Se for um módulo interno e essencial no setup da aplicação, como o módulo de
+  BD, deve ser inicializado antes dos listeners
+
+- Se for um módulo com listeners, deve ser importado depois da criação do
+  socketio.
+
+
+
+# Formatação e documentação de código (apenas Python)
 
 Diretórios:   kebab-case
 Arquivos:     snake_case
