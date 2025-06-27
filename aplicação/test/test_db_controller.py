@@ -39,7 +39,7 @@ def test_database():
     #filtros["sort"] = "min_price"
 
 
-    resultados = db.search_products(filters=filtros)
+    resultados = db.search_products(filters=filtros, limit = 5)
     print("Resultados da busca por ---:", resultados)
     
     # 5. Fechamento
