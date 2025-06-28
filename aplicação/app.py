@@ -18,9 +18,8 @@ from modules.db_controller import DBController
 
 db_controller = DBController(os.path.dirname(os.path.realpath(__file__)))
 
-db_controller.create_tables()
-db_controller.populate()
-
+db_controller.connect()
+db_controller.initialize()
 
 
 def create_app():
@@ -41,4 +40,6 @@ def create_app():
 if __name__ == "__main__":
     app = create_app()
 
-    socketio.run(app=app, port=5000)
+    set_routes(app)
+
+    socketio.run(app=app, allow_unsafe_werkzeug=True, port=5000)

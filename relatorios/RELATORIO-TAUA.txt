@@ -1,2 +1,13 @@
-DATA        | HORAS |  TIPO TAREFA  |  DESCRIÇÃO DA TAREFA REALIZADA
+DATA        | HORAS |        TIPO TAREFA        |  DESCRIÇÃO DA TAREFA REALIZADA
+2025.06.24  |  3h   | Estudo sobre ferramentas  | Estudo básico sobre flask, socketio e sqlite3
+            |       |                           |                          
+2025.06.25  |  1h   | Estudo sobre ferramentas  | Revisão de boas praticas para Bancos de dados
+            |       |                           |  
+            |  2H   |          Projetar         | Projeto de refatoração do Banco de dados
+            |       |                           |  
+2025.06.26  |  1H   |         Codificar         | Ajuste do codigo SQL para criar e popular tabelas
+            |       |                           |  
+            |  1H   |         Codificar         | ajuste do modulo para novo SQL
+            |       |                           |  
+            |  1H   |        Refatoração        | Refatoração do modulo db_controler para seguir uma estrutura mais organizada 
 
