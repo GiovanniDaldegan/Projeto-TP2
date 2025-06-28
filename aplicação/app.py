@@ -40,6 +40,4 @@ def create_app():
 if __name__ == "__main__":
     app = create_app()
 
-    set_routes(app)
-
     socketio.run(app=app, allow_unsafe_werkzeug=True, port=5000)
