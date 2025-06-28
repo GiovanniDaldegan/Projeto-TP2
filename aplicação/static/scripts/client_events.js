@@ -1,6 +1,10 @@
-export function request_product_list(socketio, product_name, filters) {
+export function request_product_list(socketio, searchTerm, filters) {
     socketio.emit("get-product-list", {
-        product_name : product_name,
-        filters      : filters
+        "search_term"   : searchTerm,
+        "filters"       : filters
     });
+}
+
+export function request_categories(socketio) {
+    socketio.emit("get-categories");
 }
