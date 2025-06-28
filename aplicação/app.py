@@ -10,9 +10,6 @@ socketio = SocketIO()
 # inicialização de módulos essenciais
 
 
-# listeners
-from modules import product_list
-
 # módulos básicos
 from modules.db_controller import DBController
 
@@ -20,6 +17,10 @@ db_controller = DBController(os.path.dirname(os.path.realpath(__file__)))
 
 db_controller.connect()
 db_controller.initialize()
+
+
+# listeners
+from modules import product_feed_events
 
 
 def create_app():
