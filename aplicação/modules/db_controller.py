@@ -341,6 +341,10 @@ class DBController:
             self.cursor = None
 
 
+    def get_categories(self):
+        return [i[0] for i in self.cursor.execute("SELECT * FROM CATEGORY").fetchall()]
+
+
     def search_products(self, search_term=None, filters=None, limit = 20):
         """!
         @brief brief Busca produtos com filtros avançados
