@@ -1,4 +1,4 @@
-"""! @package product_feed_events
+"""! @package product_search
     Fornece dados à tela de pesquisa de produtos por meio de eventos SocketIO.
     
     Envia as categorias cadastradas no BD para filtragem de produtos, e envia o

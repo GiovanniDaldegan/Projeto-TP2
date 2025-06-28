@@ -20,7 +20,7 @@ db_controller.initialize()
 
 
 # listeners
-from modules import product_feed_events
+from modules import product_search
 
 
 def create_app():
