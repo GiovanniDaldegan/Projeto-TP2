@@ -2,6 +2,7 @@ import { request_product_list, request_categories } from "./client_events.js";
 
 var socketio = io();
 
+
 // inserção dos filtros fornecidos pelo servidor no select de filtros de pesquisa
 socketio.on("categories", (categories) => {
     const categorySelect = document.getElementById("category-filters");
@@ -14,8 +15,14 @@ socketio.on("categories", (categories) => {
     categorySelect.innerHTML = categoriesHTML;
 });
 
+socketio.on("get-product-list", (productList) => {
+    console.log(productList);
+});
+
+
 document.addEventListener("DOMContentLoaded", () => {
 
+    // TODO: mover para o evento que ativa a tela de pesquisa
     request_categories(socketio);
     
     /*
@@ -29,16 +36,15 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("search-form").addEventListener("submit", (e) => {
         e.preventDefault();
 
+        const searchTerm = document.getElementById("product-name").value;
         const categoryFilters = document.getElementById("category-filters").options;
 
         var activeFilters = {
-            "product_name"    : document.getElementById("product-name").value,
-            "price_range"     : [
-                document.getElementById("min-price").value,
-                document.getElementById("max-price").value
-            ],
-            "min_rating"      : document.getElementById("min-rating").value,
-            "categories"      : []
+            "min_price"     : document.getElementById("min-price").value,
+            "max_price"     : document.getElementById("max-price").value,
+            "rating"        : document.getElementById("min-rating").value,
+            "categories"    : [],
+            "sort"          : ""
         }
 
         for (var i = 0; i < categoryFilters.length; i++) {
@@ -48,6 +54,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
         console.log(activeFilters);
 
-        request_product_list(socketio, activeFilters);
+        request_product_list(socketio, searchTerm, activeFilters);
     });
 });
