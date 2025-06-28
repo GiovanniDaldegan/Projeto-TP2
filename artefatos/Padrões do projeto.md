@@ -1,5 +1,6 @@
-# Estrutura do projeto
+## Estrutura do projeto
 
+```
 Projeto-TP2
 │
 ├── README.md
@@ -36,113 +37,109 @@ Projeto-TP2
     ├── revisões/               # laudos de revisão
     │
     └── docs/                   # documentação Doxygen
+```
 
 
-
-# Desenvolvimento web com SocketIO
+## Desenvolvimento web com SocketIO
 
 Os clientes e o servidor se comunicam através de objetos SocketIO
 (Flask-SocketIO no servidor, SocketIO em JS nos clientes), que permitem enviar
 eventos customizados e objetos e receber esses eventos por listeners para se
 comunicar.
 
-- Para enviar apenas o evento:
-  socketio.send("evento-customizado")
-
-- Para enviar o evento e um objeto (precisa ser serializável para JSON):
-  socketio.emit("evento-customizado", {
-    product_name  : "Miojo",
-    filters       : ["Construção", "Comida instantânea"]
-  })
-
-  obs: em Python as chaves dos elementos deve estar entre "aspas".
+Para enviar um evento  um objeto (precisa ser serializável para JSON):
+```py
+socketio.emit("evento-customizado", {
+  "search_term"   : "Miojo",
+  "filters"       : ["Construção", "Comida instantânea"]
+})
+```
 
 
-- Em Python, o servidor precisa de um listener assim para receber o evento
-  @socketio.on("evento-customizado")
-  def funcao_do_evento(data):
-      # processar o evento
+Em Python, o servidor precisa de um listener assim para receber o evento
+```py
+@socketio.on("evento-customizado")
+def funcao_do_evento(data):
+    # processar o evento
+```
 
-  obs: o "data" recebido é um dicionário (data["product_name"] = "Miojo")
-
-- Em JavaScript, o cliente recebe o evento com
-  socketio.on("evento-customizado", (product_list) => {
-      // proessar o evento
-  });
-
-  obs: acesse os atributos do elemento recebido por seus nomes, como
-       product_list["product0"].
+Em JavaScript, o cliente recebe o evento com
+```js
+socketio.on("evento-customizado", (product_list) => {
+    // proessar o evento
+});
+```
 
 
-> Frontend
-Todas as páginas da aplicação devem importar o seguinte script do SocketIO:
+### Frontend
+O índice da aplicação (`templates/index.html`) precisa importar esse script do
+SocketIO:
 https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js
 
-Cada página deve ter um script JS de mesmo nome. Esse script próprio deve criar
-uma instância do SocketIO (socketio = io()), o que significa que é criada uma
-conexão do SocketIO para cada página que o cliente acessa.
-Por isso, vamos precisar implementar alguma forma do cliente se identificar para
-o servidor, por cookies ou outra forma de armazenamento de sessão.
-
-Todo arquivo (imagem, estilo CSS, até os scripts usados na página) que o front
-precisar ele precisa fazer uma requisição ao servidor usando a função url_for().
-Todos esses arquivos, incluindo todos os scripts do cliente, devem ficar na
-pasta "static" (cada um na sua devida sub-pasta)
+Todo arquivo (imagem, estilo CSS, até os scripts JS usados na página) que o
+front precisar ele precisa fazer uma requisição ao servidor usando a função
+`url_for()`. Todos esses arquivos, incluindo todos os scripts do cliente, devem
+ficar na pasta `static` (cada um na sua devida sub-pasta).
 
 Exemplo:
-<script src="{{ url_for('static', filename='scripts/index.js') }}><script/>
+```html
+<script src="{{ url_for('static', filename='scripts/index.js') }}"><script/>
+```
 
+### Backend
+O índice da aplicação fica na pasta "templates" e deve ter uma rota definida
+para o Flask, da seguinte forma:
 
-> Backend
-Toda página HTML da aplicação deve ser incluída na pasta "templates" e deve ter
-uma rota definida no script routes.py, dessa forma:
-
-@app.route("/url/relativo/da/página")
-def funcao_da_pagina():
-    return render_template("página.html")
+```py
+@app.route("/")
+def index():
+    return render_template("index.html")
+```
 
 Cada módulo do servidor deve estar na pasta "modules" e ser devidamente
 importado pelo app.py.
 
 - Se for um módulo interno e essencial no setup da aplicação, como o módulo de
-  BD, deve ser inicializado antes dos listeners
+  BD, deve ser inicializado **antes dos listeners**
 
 - Se for um módulo com listeners, deve ser importado depois da criação do
   socketio.
 
 
 
-# Formatação e documentação de código (apenas Python)
+## Formatação e documentação de código (apenas Python)
 
-Diretórios:   kebab-case
-Arquivos:     snake_case
+Diretórios:   `kebab-case` <br>
+Arquivos:     `snake_case` <br>
+<br>
+Formatação e estilo (PEP8): <br>
+Módulos:      `snake_case` <br>
+Classes:      `PascalCase` <br>
+Funções:      `snake_case` <br>
+Variáveis:    `snake_case` <br>
+Constantes:   `SCREAMING_SNAKE_CASE`
 
-Formatação e estilo (PEP8):
-Módulos:      snake_case
-Classes:      PascalCase
-Funções:      snake_case
-Variáveis:    snake_case
-Constantes:   SCREAMING_SNAKE_CASE
 
-
-> Cabeçalho de módulo
-
+#### Cabeçalho de módulo
+```py
 """! @package nome_modulo
-  Descrição breve.
+    Descrição breve.
 
-  Descrição detalhada
+    Descrição detalhada
 """
+```
 
-
-> Cabeçalho de classe
-
+#### Cabeçalho de classe
+```py
 class ProductList:
     """! Descrição breve.
 
     Descrição detalhada.
     """
+```
 
-> Cabeçalhos de função
+#### Cabeçalhos de função
+```py
 def nome_funcao(arg0, arg1):
     """! Descrição breve
 
@@ -159,26 +156,30 @@ def nome_funcao(arg0, arg1):
       - condicao1
       - condicao2
     """
+```
 
 Exemplos:
+```py
 def ListProducts(nome, filtros):
     """! Envia para o cliente uma lista de os produtos cadastrados.
     
     @param  nome     Nome pesquisado.
     @param  filtros  Filtros aplicados.
     """
-
+```
+```py
 def __init__(self):
     """! Construtor da classe"""
+```
 
-
-> Assertivas de entrada e saída
+### Assertivas de entrada e saída
 
 (condição)
 
-Exs.: !GetAccount()
-      len(productList) >= 0
-      key é uma chave válida.   # pode ser que precise ser mais descritiva
+Exs.:
+- !GetAccount()
+- len(productList) >= 0
+- key é uma chave válida.   # pode ser que precise ser mais descritiva
 
 
 
@@ -187,12 +188,13 @@ Exs.: !GetAccount()
 
 
 # Relatórios
+```
 DATA        | HORAS |  TIPO TAREFA   |  DESCRIÇÃO DA TAREFA REALIZADA
 AAAA.MM.DD  |  HHh  |  tipo          |  descrição
-
+```
 
 Exemplo:
-
+```
 DATA        | HORAS |  TIPO TAREFA             |  DESCRIÇÃO DA TAREFA REALIZADA
 2025.06.17  |  02h  |  revisar especificações  |  função de pesquisar produtos não precisa de
             |       |                          |  adivinhar nomes escrito errado
@@ -200,38 +202,38 @@ DATA        | HORAS |  TIPO TAREFA             |  DESCRIÇÃO DA TAREFA REALIZAD
             |  01h  |  fazer diagramas         |  modelar o subsistema de pesquisa de produto
             |       |                          |  
 2025.06.18  |  10h  |  revisar projetos        |  paradas
-
+```
 
 Tipos de tarefa:
-  Geral
-  - estudar aulas e laboratórios relacionados
-  - gerenciar a construção do software
+  - Geral
+    - estudar aulas e laboratórios relacionados
+    - gerenciar a construção do software
 
-  Modelagem e especificação
-  - projetar
-  - revisar projetos
-  - fazer diagramas
-  - especificar os módulos
-  - especificar as funções
-  - revisar especificações
+  - Modelagem e especificação
+    - projetar
+    - revisar projetos
+    - fazer diagramas
+    - especificar os módulos
+    - especificar as funções
+    - revisar especificações
 
-  Implementação
-  - codificar módulo
-  - revisar código do módulo
-  - rodar o verificador estático e retirar warnings
+  - Implementação
+    - codificar módulo
+    - revisar código do módulo
+    - rodar o verificador estático e retirar warnings
 
-  Testes
-  - redigir casos de teste
-  - revisar casos de teste
-  - realizar os testes
+  - Testes
+    - redigir casos de teste
+    - revisar casos de teste
+    - realizar os testes
 
-  Cobertura e documentação
-  - instrumentar verificando a cobertura
-  - documentar com Doxygen
+  - Cobertura e documentação
+    - instrumentar verificando a cobertura
+    - documentar com Doxygen
 
 
 
-# Especificação e descrição do projeto
+## Especificação e descrição do projeto
 
 "Estórias" de usuário (EUs):
 - perspectiva do usuário
@@ -239,8 +241,8 @@ Tipos de tarefa:
 
 Diagramas de caso de uso
 - detalham ações do usuário e respostas do sistema a ele
-- <<include>>: casos de uso utilizados
-- <<extends>>: casos de uso englobados
+- `<<include>>`: casos de uso utilizados
+- `<<extends>>`: casos de uso englobados
 - interfaces: interfaces utilizadas
 
 Detalhamento de cada caso de uso
@@ -253,15 +255,17 @@ Detalhamento de cada caso de uso
   - alternativos (esperado mas variante do típico),
   - atípicos (erros, cancelamento pelo usuário, etc.)
 - pós-condições: assertivas posteriores ao caso de uso
-- pontos de extensão: casos de uso que que são englobados pelo caso de uso em questão
-- casos de uso incluídos: casos de uso utilizados <<include>>
+- pontos de extensão: casos de uso que que são englobados pelo caso de uso em
+  questão
+- casos de uso incluídos: casos de uso utilizados `<<include>>`
 - outros requisitos (interfaces)
 - ações do ator VS resposta do sistema (colunas separadas)
 
 Diagramas de fluxo de dados (DFD)
-- entidades externas (retângulo): podem ser duplicados para evitar cruzamento de linhas
+- entidades externas (retângulo): podem ser duplicados para evitar cruzamento de
+  linhas
 - fluxo de dados (setas unilaterais com nome do dado): contém só um tipo de dado
 - armazenamento de dados (retângulo com lado direito aberto)
 - processos (elipses ou retangulos arredondados):
   - precisam de um fluxo de dados chegando e outro saindo
-  - nomeados como "<verbo> <objeto>", "Valida ingresso"
+  - nomeados como "`<verbo> <objeto>`", "Valida ingresso"
