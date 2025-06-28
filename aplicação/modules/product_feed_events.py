@@ -17,6 +17,6 @@ def send_product_list(data):
     informações de um produto; vide db_controller.DBController.search_products()).
     """
     
-    product_list = db_controller.search_products(data["product_name"], data["filters"])
+    product_list = db_controller.search_products(data["search_term"], data["filters"])
 
     socketio.emit("product-list", product_list)
