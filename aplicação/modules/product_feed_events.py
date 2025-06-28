@@ -20,3 +20,7 @@ def send_product_list(data):
     product_list = db_controller.search_products(data["search_term"], data["filters"])
 
     socketio.emit("product-list", product_list)
+
+@socketio.on("get-categories")
+def send_categories():
+    socketio.emit("categories", db_controller.get_categories())
