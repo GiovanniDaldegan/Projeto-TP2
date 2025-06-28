@@ -84,7 +84,7 @@ class DBController:
         if self.connection is None:
             if not os.path.isdir(self.path_databases):
                 os.mkdir(self.path_databases)
-            self.connection = sqlite3.connect(os.path.join(self.path_databases, "tables.db"))
+            self.connection = sqlite3.connect(os.path.join(self.path_databases, "tables.db"), check_same_thread=False)
             self.cursor = self.connection.cursor()
 
     def initialize(self):
