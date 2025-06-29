@@ -35,14 +35,14 @@ function createProductCard(product) {
 // Renderização do Feed
 function renderFeed(products) {
   const productFeedContainer = document.getElementById("product-feed");
-  const filterToggleBtn = document.getElementById("filter-toggle");
+  //const filterToggleBtn = document.getElementById("filter-toggle");
   const filterPanel = document.getElementById("filter-panel");
 
   productFeedContainer.innerHTML = "";
 
   if (products.length === 0) {
     //filterToggleBtn.style.display = "none";
-    filterPanel.classList.remove("active");
+    //filterPanel.classList.remove("active");
 
     const noResults = document.createElement("p");
     noResults.classList.add("no-results");
