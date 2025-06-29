@@ -1,9 +1,8 @@
 import os
 
-from flask import Flask
+from flask import Flask, render_template
 from flask_socketio import SocketIO
 
-from routes import set_routes
 
 socketio = SocketIO()
 
@@ -33,7 +32,10 @@ def create_app():
 
     socketio.init_app(app)
     
-    set_routes(app)
+    # índice da aplicação
+    @app.route("/")
+    def index():
+        return render_template("index.html")
 
     return app
 
@@ -41,4 +43,4 @@ def create_app():
 if __name__ == "__main__":
     app = create_app()
 
-    socketio.run(app=app, allow_unsafe_werkzeug=True, port=5000)
+    socketio.run(app=app, host="0.0.0.0", port=5000, allow_unsafe_werkzeug=True)
