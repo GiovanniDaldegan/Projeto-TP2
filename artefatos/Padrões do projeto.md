@@ -11,7 +11,6 @@ Projeto-TP2
 ├── aplicação/
 │   │
 │   ├── app.py                  # setup da aplicação (servidor)
-│   ├── routes.py               # definição de rotas e páginas HTML
 │   │
 │   ├── templates/              # páginas HTML fornecidas pelo servidor
 │   │
@@ -30,7 +29,7 @@ Projeto-TP2
 └── artefatos/
     │
     ├── Especificação.pdf
-    ├── padroes_do_projeto.txt  # padrões utilizados  
+    ├── Padrões do projeto.md   # padrões utilizados
     │
     ├── diagramas/
     │

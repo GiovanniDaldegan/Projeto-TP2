@@ -11,7 +11,15 @@ DATA        | HORAS | TIPO TAREFA                         | DESCRIÇÃO DA TAREF
             |       |                                     |
             |  2h   | codificar módulo                    | requisição da lista de produtos
             |       |                                     |
-2025.06.24  |  4h   | codificar módulo                    | controlador do BD
+2025.06.24  |  3h   | codificar módulo                    | controlador do BD
             |       |                                     |
             |  1h   | documentar com Doxygen              |
+            |       |                                     |
+2025.06.27  |  2h   | codificar módulo                    | refatorar requisição de lista de categorias e de lista de 
+            |       |                                     | produtos
+            |       |                                     |
+2025.06.28  |  1h   | codificar módulo                    | implementar envio de lista de categorias, refatorar
+            |       |                                     | comunicação cliente-servidor
+            |       |                                     |
+2025.06.29  |  3h   | codificar módulo                    | integrar back-end e front-end
             |       |                                     |
