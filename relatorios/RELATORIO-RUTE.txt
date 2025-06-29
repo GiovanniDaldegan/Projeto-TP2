@@ -1,2 +1,6 @@
-DATA        | HORAS |  TIPO TAREFA  |  DESCRIÇÃO DA TAREFA REALIZADA
-
+DATA        | HORAS |  TIPO TAREFA                      |  DESCRIÇÃO DA TAREFA REALIZADA
+2025.06.24  |   1h  | projetar                          | criação de protótipo de design para o site
+            |       |                                   |
+2025.06.26  |   2h  ! codificar(Interface)              | montagem da estrutura básica da interface com HTML e CSS
+            |       |                                   |         
+2025.06.27  |   2h  | codificar (funcionalidades)       | implementação de funcionalidades interativas com JavaScript                                                  

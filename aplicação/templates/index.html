@@ -1,13 +1,96 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gerenciador de compras</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js" integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA==" crossorigin="anonymous"></script>
-    <script type="text/javascript" src="{{ url_for('static', filename='scripts/index.js') }}"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Gerenciador de compras</title>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js" integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA==" crossorigin="anonymous"></script>
+
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
 </head>
 <body>
-    <p>(ﾉ◕ヮ◕)ﾉ*:･ﾟ✧</p>
+    <!-- CABEÇALHO -->
+    <header id="main-header">
+    <div class="top-bar">
+
+        <!-- Logo e nome do site -->
+        <div class="logo">
+        <h1>Compras</h1>
+        </div>
+
+        <!-- Localização -->
+        <div class="localizacao">
+        <button id="btn-localizacao" title="Definir localização">
+            <img src="{{ url_for('static', filename='img/localizacao.png') }}" alt="Localização" />
+            <span>Definir CEP</span>
+        </button>
+        </div>
+
+        <!-- Barra de pesquisa -->
+        <form id="search-form" class="search-form">
+        <select id="category-filters" name="category"> <!-- TODO: multiple-->
+            <option value="todos" selected>Todos</option>
+            <!-- As opções serão adicionadas dinamicamente a partir do BD -->
+        </select>
+
+        <input type="text" id="search-term" name="search-term" placeholder="Pesquisar produtos" autocomplete="off" />
+
+        <button id="btn-pesquisar" type="submit" aria-label="Buscar">
+            <img src="{{ url_for('static', filename='img/busca.png') }}" alt="Buscar" />
+        </button>
+        </form>
+
+        <!-- Ações do usuário -->
+        <div class="user-actions">
+        <button id="btn-usuario" type="button" aria-label="Usuário">
+            <img src="{{ url_for('static', filename='img/user.png') }}" alt="Usuário" />
+        </button>
+        <button id="btn-lista-produtos" type="button" aria-label="Lista de produtos">
+            <img src="{{ url_for('static', filename='img/lista.png') }}" alt="Lista de produtos" />
+        </button>
+        <button id="btn-carrinho" type="button" aria-label="Carrinho de compras">
+            <img src="{{ url_for('static', filename='img/carrinho_compras.png') }}" alt="Carrinho de compras" />
+        </button>
+        </div>
+
+    </div>
+
+    <!-- Categorias -->
+    <nav class="category-bar" aria-label="Categorias">
+        <ul>
+        <li><button class="btn-categoria" type="button"><img src="{{ url_for('static', filename='img/menu2.png') }}" alt="" /> Todos</button></li>
+        <li><button class="btn-categoria" type="button">Ofertas</button></li>
+        <li><button class="btn-categoria" type="button">Mais Vendidos</button></li>
+        <li><button class="btn-categoria" type="button">Eletrônicos</button></li>
+        <li><button class="btn-categoria" type="button">Casa</button></li>
+        </ul>
+    </nav>
+    </header>
+
+    <!-- FILTROS DE BUSCA -->
+    <button id="filter-toggle" class="filter-toggle">Filtros</button>
+    <!-- Painel de seleção de filtros -->
+    <aside id="filter-panel" class="filter-panel">
+        <div class="filter-content">
+          <button id="close-filter" class="close-filter">×</button>
+          <h2>Filtrar por</h2>
+      
+          <label for="min-price">Preço mínimo:</label>
+          <input type="number" id="min-price" placeholder="R$ 10,00">
+      
+          <label for="max-price">Preço máximo:</label>
+          <input type="number" id="max-price" placeholder="R$ 100,00">
+      
+          <button id="apply-price-filters">Aplicar Filtros</button>
+        </div>
+    </aside>
+
+    <!-- FEED DE PRODUTOS -->
+    <section class="product-feed" id="product-feed" aria-live="polite" aria-label="Lista de produtos">
+        <!-- Os cards dos produtos serão criados dinamicamente com o JS-->
+    </section>
+
+    <script type="module" src="{{ url_for('static', filename='scripts/index.js') }}"></script>
 </body>
 </html>
