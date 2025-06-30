@@ -2,13 +2,29 @@
 Projeto da disciplina Técnicas de Programação 2 do semestre 2025/1.
 
 ## Documentação
-Para gerar a documentação da aplicação, é necessário ter o Doxygen instalado.
-Com o software instalado, execute `doxygen` na raiz do repositório serão
+Para gerar a documentação da aplicação, é necessário instalar o Doxygen.
+Com o software instalado, execute `doxygen` na raiz do repositório e serão
 geradas as páginas da documentação. Acesse em:
-[index.html](artefatos/docs/html/index.html).
+`artefatos/docs/html/index.html`.
+
+## Backlog
+Funcionalidades em ordem de prioridade:
+
+- [x] Página de pesquisa de produtos
+- [ ] Lista de compras
+- [ ] Cadastro de produto
+- [ ] Registro de cliente
+- [ ] Avaliação de produto
+- [ ] Indicações de supermercados baseadas no carrinho
+- [ ] Histórico de sessões de compras
+- [ ] Lista de produtos não comprados -> indicação de onde comprar
+- [ ] Recomendação de compra baseado no histórico
+- [ ] Listar preços anteriores de um dado produto
+- [ ] Localização do produto dentro do supermercado
+- [ ] Medição de confiabilidade do preço apresentado
 
 ## Padrões do projeto
-O arquivo [padrões_do_projeto.txt](artefatos/padroes_do_projeto.txt) explica:
+O arquivo [Padrões do projeto.txt](artefatos/Padrões_do_projeto.txt) explica:
 - Qual o diretório adequado para cada tipo de arquivo
 - Como cada arquivo deve ser nomeado
 - Como documentar o código
