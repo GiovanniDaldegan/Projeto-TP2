@@ -24,7 +24,7 @@ Funcionalidades em ordem de prioridade:
 - [ ] Medição de confiabilidade do preço apresentado
 
 ## Padrões do projeto
-O arquivo [Padrões do projeto.txt](artefatos/Padrões_do_projeto.txt) explica:
+O arquivo [Padrões_do_projeto.md](artefatos/Padrões_do_projeto.md) explica:
 - Qual o diretório adequado para cada tipo de arquivo
 - Como cada arquivo deve ser nomeado
 - Como documentar o código
