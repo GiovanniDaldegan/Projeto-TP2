@@ -18,9 +18,6 @@ from modules.db_controller import DBController
 # Objeto controlador do banco de dados da aplicação
 db_controller = DBController(os.path.dirname(os.path.realpath(__file__)))
 
-db_controller.connect()
-db_controller.initialize()
-
 
 # listeners
 from modules import product_search
@@ -31,6 +28,15 @@ def create_app():
     
     @return  Instância da aplicação Flask.
     """
+
+    # inicialização dos módulos básicos
+
+    db_controller.connect()
+    db_controller.initialize()
+
+
+    # inicialização da aplicação
+
     app = Flask(__name__)
     app.config["SECRET_KEY"] = "tp2"
 
@@ -50,4 +56,4 @@ def create_app():
 if __name__ == "__main__":
     app = create_app()
 
-    socketio.run(app=app, host="0.0.0.0", port=5000, allow_unsafe_werkzeug=True)
+    socketio.run(app, "0.0.0.0", 5000, allow_unsafe_werkzeug=True)
