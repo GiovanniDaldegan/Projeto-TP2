@@ -37,8 +37,11 @@ class DBController:
     def __init__(self, app_root_dir):
         """! Construtor de DBController
         
-        Inicialza o atributo cursor_ok como falso e guarda o caminho do
-        diretório dos banco de dados no atributo path_databases.
+        Guarda o caminho do diretório dos banco de dados no atributo @ref
+        path_databases e inicializa as variáveis membros da classe.
+
+        @param  app_root_dir  Caminho do diretório do script que instancia o
+        controlador
         """
 
         self.cursor = None
@@ -79,7 +82,7 @@ class DBController:
         """! Define o cursor e a conexão do BD.
 
         Verifica se há conexão, caso não, inicializa o diretorio caso ele não exista,
-        bem como a conexão e o cursor
+        bem como a conexão e o @ref cursor.
         """
         if self.connection is None:
             if not os.path.isdir(self.path_databases):
@@ -88,7 +91,7 @@ class DBController:
             self.cursor = self.connection.cursor()
 
     def initialize(self):
-        """Inicializa o Banco de dados garantindo que as tabelas existam"""
+        """! Inicializa o Banco de dados garantindo que as tabelas existam"""
         self.connect()
         
         # Verifica se as tabelas principais existem
@@ -334,7 +337,7 @@ class DBController:
 
 
     def close(self):
-        """Fecha a conexão, evitando vazamentos e acesso indevido"""
+        """! Fecha a conexão, evitando vazamentos e acesso indevido"""
         if self.connection:
             self.connection.close()
             self.connection = None
@@ -342,6 +345,10 @@ class DBController:
 
 
     def get_categories(self):
+        """! Consulta quais são as categorias registradas.
+        
+        @return Lista com todas as categorias em formato string.
+        """
         return [i[0] for i in self.cursor.execute("SELECT * FROM CATEGORY").fetchall()]
 
 
@@ -416,7 +423,10 @@ class DBController:
         return self.format_results(self.cursor.fetchall())
     
     def format_results(self, rows):
-        """ Organiza os dados brutos em uma estrutura mais útil"""
+        """! Organiza os dados brutos em uma estrutura mais útil
+        
+        @param  rows  Lista de linhas resultantes de consulta.
+        """
         formatted = []
         for row in rows:
             formatted.append({

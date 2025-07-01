@@ -1,17 +1,21 @@
+"""! Script principal da aplicação"""
+
 import os
 
 from flask import Flask, render_template
 from flask_socketio import SocketIO
 
 
+## @var socketio 
+#    Objeto do servidor Flask-SocketIO
 socketio = SocketIO()
-
-# inicialização de módulos essenciais
 
 
 # módulos básicos
 from modules.db_controller import DBController
 
+## @var db_controller
+# Objeto controlador do banco de dados da aplicação
 db_controller = DBController(os.path.dirname(os.path.realpath(__file__)))
 
 db_controller.connect()
@@ -25,7 +29,7 @@ from modules import product_search
 def create_app():
     """! Cria a aplicação Flask
     
-    @return  app  Instância da aplicação Flask.
+    @return  Instância da aplicação Flask.
     """
     app = Flask(__name__)
     app.config["SECRET_KEY"] = "tp2"
@@ -39,6 +43,9 @@ def create_app():
 
     return app
 
+
+## @var app
+# Aplicação Flask.
 
 if __name__ == "__main__":
     app = create_app()
