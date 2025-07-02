@@ -50,10 +50,10 @@ def create_app():
     return app
 
 
-## @var app
-# Aplicação Flask.
 
 if __name__ == "__main__":
+    ## @var app
+    # Aplicação Flask.
     app = create_app()
 
     socketio.run(app, "0.0.0.0", 5000, allow_unsafe_werkzeug=True)
