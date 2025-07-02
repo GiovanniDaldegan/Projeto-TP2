@@ -1,6 +1,6 @@
 import { socketio } from "./index.js";
 
-// Emissão de eventos de requisição
+// Funções emissoras de requisição
 
 function requestProductList(params) {
   socketio.emit("get-product-list", params);
@@ -10,6 +10,8 @@ function requestCategories() {
     socketio.emit("get-categories");
 }
 
+
+// Funções próprias do módulo
 
 // Função para criar os cards dos produtos
 function createProductCard(product) {
@@ -89,7 +91,7 @@ function getSearchParams() {
 
 
 // Inicialização de listeners de eventos de reposta do servidor
-export function searchListenersSocketio() {
+export function productSearchSetupListeners() {
   requestCategories();
 
   // Faz requisição inicial da lista de produtos
@@ -114,7 +116,7 @@ export function searchListenersSocketio() {
 }
 
 // Inicialização do HTML
-export function searchSetupHTML() {
+export function productSearchSetupHTML() {
   sessionStorage.setItem("price-filters", "false");
 
   const filterToggleBtn = document.getElementById("filter-toggle");
