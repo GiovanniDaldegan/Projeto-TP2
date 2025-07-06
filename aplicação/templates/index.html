@@ -10,6 +10,7 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
 </head>
 <body>
+
     <!-- CABEÇALHO -->
     <header id="main-header">
     <div class="top-bar">
@@ -29,7 +30,7 @@
 
         <!-- Barra de pesquisa -->
         <form id="search-form" class="search-form">
-        <select id="category-filters" name="category"> <!-- TODO: multiple-->
+        <select id="category-filters" name="category"> 
             <option value="todos" selected>Todos</option>
             <!-- As opções serão adicionadas dinamicamente a partir do BD -->
         </select>
@@ -46,12 +47,6 @@
         <button id="btn-usuario" type="button" aria-label="Usuário">
             <img src="{{ url_for('static', filename='img/user.png') }}" alt="Usuário" />
         </button>
-        <button id="btn-lista-produtos" type="button" aria-label="Lista de produtos">
-            <img src="{{ url_for('static', filename='img/lista.png') }}" alt="Lista de produtos" />
-        </button>
-        <button id="btn-carrinho" type="button" aria-label="Carrinho de compras">
-            <img src="{{ url_for('static', filename='img/carrinho_compras.png') }}" alt="Carrinho de compras" />
-        </button>
         </div>
 
     </div>
@@ -59,7 +54,11 @@
     <!-- Categorias -->
     <nav class="category-bar" aria-label="Categorias">
         <ul>
-        <li><button class="btn-categoria" type="button"><img src="{{ url_for('static', filename='img/menu2.png') }}" alt="" /> Todos</button></li>
+        <li>
+            <button id="btn-minhas-listas" class="btn-categoria" type="button">
+                <img src="{{ url_for('static', filename='img/menu2.png') }}" alt="" /> Minhas Listas
+            </button>
+        </li>
         <li><button class="btn-categoria" type="button">Ofertas</button></li>
         <li><button class="btn-categoria" type="button">Mais Vendidos</button></li>
         <li><button class="btn-categoria" type="button">Eletrônicos</button></li>
@@ -68,12 +67,41 @@
     </nav>
     </header>
 
+    <!-- PAINEL DE LISTAS -->
+    <aside id="list-panel" class="list-panel">
+        <div class="list-header">
+            <h2 id="list-panel-title">Listas de Compras</h2>
+            <button id="close-list-panel" class="close-filter"><img src="{{ url_for('static', filename='img/close.png') }}" alt=""></button>
+        </div>
+
+        <div class="list-content">Você não possui listas.</div>
+
+        <div class="list-footer">
+            <button id="btn-create-list" class="btn-create-list">+ Nova Lista</button>
+        </div>
+    </aside>
+
+    <!--Criando Nova Lista de Compras-->
+    <div id="modal-new-list" class="modal-new-list">
+        <div class="modal-content">
+            <form id="form-new-list">
+                <h3>Criar Nova Lista</h3>
+                <input type="text" id="input-list-name" name="list_name" placeholder="Nome da lista" required />
+                <div class="modal-buttons">
+                    <button type="submit" class="btn-save">Salvar</button>
+                    <button type="button" id="btn-cancel" class="btn-cancel">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
     <!-- FILTROS DE BUSCA -->
     <button id="filter-toggle" class="filter-toggle">Filtros</button>
     <!-- Painel de seleção de filtros -->
     <aside id="filter-panel" class="filter-panel">
         <div class="filter-content">
-          <button id="close-filter" class="close-filter">×</button>
+          <button id="close-filter" class="close-filter"><img src="{{ url_for('static', filename='img/close.png') }}" alt=""></button>
           <h2>Filtrar por</h2>
       
           <label for="min-price">Preço mínimo:</label>

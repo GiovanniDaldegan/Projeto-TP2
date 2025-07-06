@@ -12,3 +12,38 @@ export function shoppingListSetupListeners() {}
 
 // setup dos eventos do HTML da tela
 export function shoppingListSetupHTML() {}
+
+export function setupListPanel() {
+  const btnMinhasListas = document.getElementById("btn-minhas-listas");
+  const listPanel = document.getElementById("list-panel");
+  const closeListPanelBtn = document.getElementById("close-list-panel");
+  const criarListaBtn = document.getElementById("btn-create-list"); 
+  const ulLista = document.getElementById("shopping-list-items");
+  const filterToggle = document.getElementById("filter-toggle");
+  const modalNewList = document.getElementById("modal-new-list");
+  const btnCancelModal = document.getElementById("btn-cancel");
+
+  // Exibe o painel de listas
+  btnMinhasListas.addEventListener("click", () => {
+    listPanel.classList.add("active");  
+    document.body.classList.add("list-open");
+    filterToggle.style.display = "none";
+  });
+
+  // Fecha o painel de listas
+  closeListPanelBtn.addEventListener("click", () => {
+    listPanel.classList.remove("active");
+    document.body.classList.remove("list-open");
+    filterToggle.style.display = "block";
+  });
+
+  // Exibe o modal para criação de nova lista
+  criarListaBtn.addEventListener("click", () => {
+    modalNewList.style.display = "flex";
+  });
+
+  // Fecha o modal 
+  btnCancelModal.addEventListener("click", () => {
+    modalNewList.style.display = "none";
+  });
+}
