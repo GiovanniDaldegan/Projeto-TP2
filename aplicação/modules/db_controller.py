@@ -44,7 +44,6 @@ class DBController:
         controlador
         """
 
-        self.cursor = None
         self.path_databases = os.path.join(app_root_dir, "databases")
         self.connection = None
         self.populated = False  # variável exclusiva para testes e demonstração
@@ -90,7 +89,6 @@ class DBController:
                 if not os.path.isdir(self.path_databases):
                     os.mkdir(self.path_databases)
                 self.connection = sqlite3.connect(os.path.join(self.path_databases, "tables.db"), check_same_thread=False)
-                self.cursor = self.connection.cursor()
 
         except sqlite3.Error as e:
             print_error("[Erro BD]", "falha na conexão com o BD", e)
@@ -98,14 +96,31 @@ class DBController:
             print_error("[Erro os]", "falha ao criar caminho do BD", e)
 
 
+    def close(self):
+        """! Fecha a conexão, evitando vazamentos e acesso indevido"""
+        try:
+            if self.connection:
+                self.connection.close()
+                self.connection = None
+        except sqlite3.Error as e:
+            print_error("[Erro BD]", "falha ao fechar a conexão com o BD", e)
+
+
+    def get_cursor(self):
+        """! Cria e retorna um cursor da conexão com o BD, desde que ela exista."""
+
+        if self.connection:
+            return self.connection.cursor()
+
     def initialize(self):
         """! Inicializa o Banco de dados garantindo que as tabelas existam"""
         
         try:
             # Verifica se as tabelas principais existem
             required_tables = ['PRODUCT', 'MARKET', 'CATEGORY', 'joao']
-            self.cursor.execute("SELECT name FROM sqlite_master WHERE type='table'")
-            existing_tables = [table[0] for table in self.cursor.fetchall()]
+            cursor = self.get_cursor()
+            cursor.execute("SELECT name FROM sqlite_master WHERE type='table'")
+            existing_tables = [table[0] for table in cursor.fetchall()]
 
             # print(f"Tabelas existentes: {existing_tables}")  # Debug
 
@@ -254,9 +269,10 @@ class DBController:
         """
 
         try:
-            self.cursor.executescript(create_script)
-            self.cursor.executescript(index_script)
-            self.cursor.executescript(view_script)
+            cursor = self.get_cursor()
+            cursor.executescript(create_script)
+            cursor.executescript(index_script)
+            cursor.executescript(view_script)
 
             self.connection.commit()
 
@@ -277,14 +293,15 @@ class DBController:
         @return Bool indicanto se o BD está correto ou não.
         """
 
-        if self.cursor is None:
+        if self.connection is None:
             self.connect()
 
         present_tables = 0
 
         try:
+            cursor = self.get_cursor()
             for table_name in self.tables_dict.keys():
-                result = self.cursor.execute(
+                result = cursor.execute(
                     f"""
                     SELECT name
                     FROM sqlite_master
@@ -358,7 +375,6 @@ class DBController:
                 ('Ração para Cães Adultos 15kg', 4.5),
                 ('Vinho Tinto Chileno 750ml', 4.8);
             """,
-
             """
             INSERT INTO "_PRODUCT_CATEGORY" ("id_product", "category_name") VALUES
                 (2, 'Limpeza'), (12, 'Limpeza'), (13, 'Limpeza'), (14, 'Limpeza'), (15, 'Limpeza'),
@@ -377,7 +393,6 @@ class DBController:
                 (16, 'Congelados'),
                 (20, 'Importados');
             """,
-
             """
             INSERT INTO "_MARKET_PRODUCT" ("id_market", "id_product", "price") VALUES
                 (1, 2, 11.90), (1, 3, 21.90), (1, 4, 8.99), (1, 5, 3.99),
@@ -400,17 +415,17 @@ class DBController:
                 (5, 9, 4.49), (5, 11, 8.90), (5, 16, 37.90), (5, 17, 24.90), (5, 18, 8.90),
                 (5, 19, 99.90), (5, 20, 49.90);
             """,
-
-            """INSERT INTO ACCOUNT (username, password) VALUES
+            """
+            INSERT INTO ACCOUNT (username, password) VALUES
                 ("123", "123")
             """,
-
-            """INSERT INTO SHOPPING_LIST (id_acc, name) VALUES
+            """
+            INSERT INTO SHOPPING_LIST (id_acc, name) VALUES
                 (1, "aaa"),
                 (1, "bbb")
             """,
-
-            """INSERT INTO _LIST_ITEM (id_list, id_product, id_market, amount, taken) VALUES
+            """
+            INSERT INTO _LIST_ITEM (id_list, id_product, id_market, amount, taken) VALUES
                 (1, 5, 1, 1, FALSE),
                 (1, 2, 1, 3, FALSE),
                 (1, 3, 1, 2, FALSE),
@@ -423,26 +438,18 @@ class DBController:
         ]
 
         try:
+            cursor = self.get_cursor()
             for q in inserts:
-                self.cursor.execute(q)
+                cursor.execute(q)
 
             self.connection.commit() #sobe os inserts para o arquivo .db, se quiser manter apenas em memoria reova
             self.populated = True
 
-            print(self.cursor.execute("SELECT * FROM v_shopping_list").fetchall())
+            print(cursor.execute("SELECT * FROM v_shopping_list").fetchall())
 
         except sqlite3.Error as e:
             print_error("[Erro BD]", "falha ao tentar popular o BD", e)
 
-    def close(self):
-        """! Fecha a conexão, evitando vazamentos e acesso indevido"""
-        try:
-            if self.connection:
-                self.connection.close()
-                self.connection = None
-                self.cursor = None
-        except sqlite3.Error as e:
-            print_error("[Erro BD]", "falha ao fechar a conexão com o BD", e)
 
     def get_categories(self):
         """! Consulta quais são as categorias registradas.
@@ -451,7 +458,8 @@ class DBController:
         """
         
         try:
-            return [i[0] for i in self.cursor.execute("SELECT * FROM CATEGORY").fetchall()]
+            cursor = self.get_cursor()
+            return [i[0] for i in cursor.execute("SELECT * FROM CATEGORY").fetchall()]
 
         except sqlite3.Error as e:
             print_error("[Erro BD]", "falha ao consultar categorias", e)
@@ -525,8 +533,9 @@ class DBController:
 
         self.connect()
         try:
-            self.cursor.execute(query, params)
-            return self.format_results(self.cursor.fetchall())
+            cursor = self.get_cursor()
+            cursor.execute(query, params)
+            return self.format_results(cursor.fetchall())
 
         except sqlite3.Error as e:
             print_error("[Erro BD]", "falha na pesquisa de produtos", e)
