@@ -36,7 +36,7 @@ class DBController:
 
     def __init__(self, app_root_dir):
         """! Construtor de DBController
-        
+
         Guarda o caminho do diretório dos banco de dados no atributo @ref
         path_databases e inicializa as variáveis membros da classe.
 
@@ -93,14 +93,14 @@ class DBController:
     def initialize(self):
         """! Inicializa o Banco de dados garantindo que as tabelas existam"""
         self.connect()
-        
+
         # Verifica se as tabelas principais existem
         required_tables = ['PRODUCT', 'MARKET', 'CATEGORY']
         self.cursor.execute("SELECT name FROM sqlite_master WHERE type='table'")
         existing_tables = [table[0] for table in self.cursor.fetchall()]
-        
+
         # print(f"Tabelas existentes: {existing_tables}")  # Debug
-        
+
         # Se faltar alguma tabela obrigatória
         if not all(table in existing_tables for table in required_tables):
             # print("Criando tabelas...")  # Debug
@@ -184,7 +184,7 @@ class DBController:
         self.cursor.executescript(
             """
             CREATE VIEW IF NOT EXISTS v_products_general AS
-            SELECT 
+            SELECT
                 p.id_product,
                 p.name,
                 p.rating,
@@ -195,9 +195,9 @@ class DBController:
             FROM PRODUCT p
             LEFT JOIN _PRODUCT_CATEGORY pc ON p.id_product = pc.id_product
             LEFT JOIN _MARKET_PRODUCT mp ON p.id_product = mp.id_product
-            GROUP BY p.id_product  
+            GROUP BY p.id_product
             """)
-        
+
         self.connection.commit() #sobe o banco para o arquivo .db, se quiser manter apenas em memoria reova
 
 
@@ -206,7 +206,7 @@ class DBController:
 
     def is_db_ok(self):
         """! Checa se o banco de dados está correto.
-        
+
         Checa se todas as tabelas estão presentes no banco de dados.
         """
 
@@ -240,7 +240,7 @@ class DBController:
 
         inserts = [
         """
-        INSERT INTO "CATEGORY" ("name") VALUES 
+        INSERT INTO "CATEGORY" ("name") VALUES
             ('Bebidas'),
             ('Laticínios'),
             ('Padaria'),
@@ -256,7 +256,7 @@ class DBController:
             ('Sem Glúten'),
             ('Importados');
         """,
-        
+
         """INSERT INTO "MARKET" ("name", "latitude", "longitude", "rating") VALUES
                 ('Supermercado Preço Bom', -23.5505, -46.6333, 4.2),
                 ('Mercado Qualitativo', -23.5432, -46.6444, 4.5),
@@ -264,7 +264,7 @@ class DBController:
                 ('Supermercado São Luiz', -23.5555, -46.6111, 4.1),
                 ('Mercado Natural', -23.5522, -46.6555, 4.7);
            """,
-        
+
         """INSERT INTO "PRODUCT" ("name", "rating") VALUES
             ('Veja Multiuso 500ml', 4.5),
             ('Sabão em Pó Omo 1kg', 4.3),
@@ -287,7 +287,7 @@ class DBController:
             ('Ração para Cães Adultos 15kg', 4.5),
             ('Vinho Tinto Chileno 750ml', 4.8);
            """,
-        
+
         """INSERT INTO "_PRODUCT_CATEGORY" ("id_product", "category_name") VALUES
                 (2, 'Limpeza'), (12, 'Limpeza'), (13, 'Limpeza'), (14, 'Limpeza'), (15, 'Limpeza'),
                 (3, 'Mercearia'), (4, 'Mercearia'), (6, 'Mercearia'), (7, 'Mercearia'), (8, 'Mercearia'), (9, 'Mercearia'),
@@ -305,7 +305,7 @@ class DBController:
                 (16, 'Congelados'),
                 (20, 'Importados');
            """,
-        
+
         """INSERT INTO "_MARKET_PRODUCT" ("id_market", "id_product", "price") VALUES
                 (1, 2, 11.90), (1, 3, 21.90), (1, 4, 8.99), (1, 5, 3.99),
                 (1, 6, 6.49), (1, 7, 3.49), (1, 8, 4.99), (1, 9, 3.29), (1, 10, 5.99),
@@ -346,7 +346,7 @@ class DBController:
 
     def get_categories(self):
         """! Consulta quais são as categorias registradas.
-        
+
         @return Lista com todas as categorias em formato string.
         """
         return [i[0] for i in self.cursor.execute("SELECT * FROM CATEGORY").fetchall()]
@@ -355,7 +355,7 @@ class DBController:
     def search_products(self, search_term=None, filters=None, limit = 20):
         """!
         @brief brief Busca produtos com filtros avançados
-        
+
         @param search_term: String de busca (Opcional) - busca por correspondência no nome do produto
 
         @param filters: Dicionario de filtros (Opcional) - com os seguintes parâmetros:
@@ -374,7 +374,7 @@ class DBController:
             - categories: list[str] - Lista de categorias
             - price_range: tuple(min, max) - Faixa de preços
             - avg_price: float - Preço médio
-        
+
         @note
         **Atributos de Ordenação Validos**
         - min_price
@@ -395,7 +395,7 @@ class DBController:
         # Outros Filtros
         if filters:
             if("min_price" in filters):
-                conditions.append("min_price >= ?") 
+                conditions.append("min_price >= ?")
                 params.append(filters['min_price'])
             if("max_price" in filters):
                 conditions.append("min_price <= ?")
@@ -417,14 +417,14 @@ class DBController:
             query += " ORDER BY name"
 
         query += f" LIMIT {abs(int(limit))}"
-    
+
         self.connect()
         self.cursor.execute(query, params)
         return self.format_results(self.cursor.fetchall())
-    
+
     def format_results(self, rows):
         """! Organiza os dados brutos em uma estrutura mais útil
-        
+
         @param  rows  Lista de linhas resultantes de consulta.
         """
         formatted = []
@@ -438,6 +438,6 @@ class DBController:
                 "avg_price": row[6]
             })
         return formatted
-        
+
 
 
