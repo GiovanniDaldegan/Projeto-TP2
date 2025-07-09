@@ -17,11 +17,15 @@ export function setupListPanel() {
   const btnMinhasListas = document.getElementById("btn-minhas-listas");
   const listPanel = document.getElementById("list-panel");
   const closeListPanelBtn = document.getElementById("close-list-panel");
-  const criarListaBtn = document.getElementById("btn-create-list"); 
-  const ulLista = document.getElementById("shopping-list-items");
   const filterToggle = document.getElementById("filter-toggle");
+
+  const ulLista = document.getElementById("shopping-list-items");
+  const criarListaBtn = document.getElementById("btn-create-list"); 
   const modalNewList = document.getElementById("modal-new-list");
   const btnCancelModal = document.getElementById("btn-cancel");
+
+  const newListForm = document.getElementById("form-new-list");
+  const listName = document.getElementById("input-list-name");
 
   // Exibe o painel de listas
   btnMinhasListas.addEventListener("click", () => {
@@ -46,4 +50,12 @@ export function setupListPanel() {
   btnCancelModal.addEventListener("click", () => {
     modalNewList.style.display = "none";
   });
+
+  // Confirma a criação de lista
+  newListForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+    modalNewList.style.display = "none";
+    createList(listName.value);
+  });
+
 }
