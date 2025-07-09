@@ -438,6 +438,81 @@ class DBController:
                 "avg_price": row[6]
             })
         return formatted
+        
+    
+    def create_account(self, user):
+        """! Cadastra uma conta no BD.
+        
+        Cria um registro na tabela CONTA com um ID único e nome de usuário e
+        senha fornecidos.
+
+        @param  user  Dicionário com chaves "type", "username" e "password".
+        """
+
+        if not self.is_db_ok():
+            return
+
+        try:
+            self.cursor.execute(f"""
+                                INSERT INTO ACCOUNT ('type', 'name', 'password')
+                                VALUES ('{user["type"]}', '{user["username"]}', '{user["password"]}')""")
+            
+            return True
+
+        except sqlite3.Error as e:
+            print(f"[Erro BD]: falha ao criar conta.\n{e}")
 
 
+    def account_exists(self, username, password):
+        """! Checa se conta existe no BD.
+        
+        @param  username  Nome do usuário.
+        @param  password  Senha do usuário.
+        """
+        if not self.is_db_ok():
+            return -1
 
+        try:
+            record = self.cursor.execute(f"""
+                                        SELECT * FROM ACCOUNT
+                                        WHERE 'name'='{username}' AND 'password'='{password}'"""
+                                        ).fetchall()
+            if len(record) == 0:
+                return False
+            
+            return True
+
+        except sqlite3.Error as e:
+            print(f"[Erro BD]: falha ao consultar conta.\n{e}")
+
+
+    def get_account(self, username, password):
+        """! Consulta e retorna nome e tipo de usuário
+        
+        @param  username  Nome do usuário.
+        @param  password  Senha do usuário.
+
+        @return Dicionário com chaves "user_name" e "type"
+        """
+
+        if not self.is_db_ok():
+            return -1
+
+        try:
+            record = self.cursor.execute(f"""
+                                         SELECT 'name', 'type' FROM ACCOUNT
+                                         WHERE 'name'='{username}' AND 'password'='{password}'"""
+                                        ).fetchall()
+
+            if len(record) == 0:
+                return None
+            
+            user = {
+                "username" : record[0][0],
+                "type"     : record[0][1]
+            }
+
+            return user
+
+        except sqlite3.Error as e:
+            print(f"[Erro BD]: falha ao consultar conta.\n{e}")
