@@ -100,9 +100,6 @@ class DBController:
     def initialize(self):
         """! Inicializa o Banco de dados garantindo que as tabelas existam"""
         
-        if not self.is_db_ok():
-            return
-
         try:
             # Verifica se as tabelas principais existem
             required_tables = ['PRODUCT', 'MARKET', 'CATEGORY']
@@ -134,9 +131,6 @@ class DBController:
         - _MARKET_PRODUCT (id_market:PK:FK, id_product:PK:FK, price)
         - _PRODUCT_CATEGORY (id_product:PK:FK, id_category:PK:FK)
         """
-
-        if not self.is_db_ok():
-            return
 
         create_script = """
             DROP TABLE IF EXISTS _PRODUCT_CATEGORY;
