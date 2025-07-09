@@ -4,7 +4,7 @@ import { registerSetupHTML, registerSetupListeners } from "./register.js";
 import { loginSetupHTML, loginSetupListeners} from "./login.js";
 
 export var socketio = io();
-
+export var user = {user_id : null, username : null};
 
 function setupProductSearch() {
   productSearchSetupListeners();
