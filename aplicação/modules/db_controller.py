@@ -73,8 +73,7 @@ class DBController:
             "_PRODUCT_CATEGORY" : [
                 "id_product",
                 "id_category"
-            ],
-            "joao" : []
+            ]
         }
 
 
@@ -117,7 +116,7 @@ class DBController:
         
         try:
             # Verifica se as tabelas principais existem
-            required_tables = ['PRODUCT', 'MARKET', 'CATEGORY', 'joao']
+            required_tables = ['PRODUCT', 'MARKET', 'CATEGORY']
             cursor = self.get_cursor()
             cursor.execute("SELECT name FROM sqlite_master WHERE type='table'")
             existing_tables = [table[0] for table in cursor.fetchall()]
