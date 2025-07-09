@@ -7,7 +7,7 @@
 
 import os
 import sqlite3
-
+from modules.utils import *
 
 class DBController:
     """! Controlador do banco de dados.
@@ -75,6 +75,7 @@ class DBController:
                 "id_product",
                 "id_category"
             ],
+            "joao" : []
         }
 
 
@@ -92,20 +93,17 @@ class DBController:
                 self.cursor = self.connection.cursor()
 
         except sqlite3.Error as e:
-            print(f"[Erro BD]: falha na conexão com o BD.\n{e}")
+            print_error("[Erro BD]", "falha na conexão com o BD", e)
         except os.error as e:
-            print(f"[Erro os]\n{e}")
+            print_error("[Erro os]", "falha ao criar caminho do BD", e)
 
 
     def initialize(self):
         """! Inicializa o Banco de dados garantindo que as tabelas existam"""
         
-        if not self.is_db_ok():
-            return
-
         try:
             # Verifica se as tabelas principais existem
-            required_tables = ['PRODUCT', 'MARKET', 'CATEGORY']
+            required_tables = ['PRODUCT', 'MARKET', 'CATEGORY', 'joao']
             self.cursor.execute("SELECT name FROM sqlite_master WHERE type='table'")
             existing_tables = [table[0] for table in self.cursor.fetchall()]
 
@@ -121,7 +119,7 @@ class DBController:
                 #print("Tabelas já existem")  # Debug
 
         except sqlite3.Error as e:
-            print(f"[Erro BD]: falha na inicialização do BD.\n{e}")
+            print_error("[Erro BD]", "falha na inicialização do BD", e)
 
 
     def create_tables(self):
@@ -135,52 +133,80 @@ class DBController:
         - _PRODUCT_CATEGORY (id_product:PK:FK, id_category:PK:FK)
         """
 
-        if not self.is_db_ok():
-            return
-
         create_script = """
             DROP TABLE IF EXISTS _PRODUCT_CATEGORY;
             DROP TABLE IF EXISTS _MARKET_PRODUCT;
             DROP TABLE IF EXISTS PRODUCT;
             DROP TABLE IF EXISTS MARKET;
             DROP TABLE IF EXISTS CATEGORY;
+            DROP TABLE IF EXISTS ACCOUNT;
+            DROP TABLE IF EXISTS SHOPPING_LIST;
+            DROP TABLE IF EXISTS _LIST_ITEM;
+
 
             CREATE TABLE "CATEGORY" (
-                "name"	TEXT NOT NULL UNIQUE,
+                "name"   TEXT   NOT NULL  UNIQUE,
                 PRIMARY KEY("name")
             );
 
             CREATE TABLE "MARKET" (
-                "id_market"	INTEGER,
-                "name"	TEXT NOT NULL,
-                "latitude"	REAL,
-                "longitude"	REAL,
-                "rating"	REAL,
+                "id_market"  INTEGER,
+                "name"       TEXT      NOT NULL,
+                "latitude"   REAL,
+                "longitude"  REAL,
+                "rating"     REAL,
                 PRIMARY KEY("id_market" AUTOINCREMENT)
             );
 
             CREATE TABLE "PRODUCT" (
-                "id_product"	INTEGER,
-                "name"	TEXT NOT NULL,
-                "rating"	REAL,
+                "id_product"  INTEGER,
+                "name"        TEXT     NOT NULL,
+                "rating"      REAL,
+
                 PRIMARY KEY("id_product" AUTOINCREMENT)
             );
 
             CREATE TABLE "_MARKET_PRODUCT" (
-                "id_market"	INTEGER NOT NULL,
-                "id_product"	INTEGER NOT NULL,
-                "price"	REAL NOT NULL,
-                PRIMARY KEY("id_market","id_product", "price"),
+                "id_market"   INTEGER  NOT NULL,
+                "id_product"  INTEGER  NOT NULL,
+                "price"       REAL     NOT NULL,
+
+                PRIMARY KEY("id_market","id_product"),
                 FOREIGN KEY("id_market") REFERENCES "MARKET"("id_market"),
                 FOREIGN KEY("id_product") REFERENCES "PRODUCT"("id_product")
             );
 
             CREATE TABLE "_PRODUCT_CATEGORY" (
-                "id_product"	INTEGER NOT NULL,
-                "category_name"	TEXT NOT NULL,
+                "id_product"     INTEGER  NOT NULL,
+                "category_name"  TEXT     NOT NULL,
+
                 PRIMARY KEY("id_product","category_name"),
                 FOREIGN KEY("category_name") REFERENCES "CATEGORY"("name"),
                 FOREIGN KEY("id_product") REFERENCES "PRODUCT"("id_product")
+            );
+
+            CREATE TABLE ACCOUNT (
+                id_acc    INTEGER  PRIMARY KEY,
+                username  TEXT     NOT NULL  UNIQUE,
+                password  TEXT     NOT NULL
+            );
+
+            CREATE TABLE SHOPPING_LIST (
+                id_list  INTEGER  PRIMARY KEY,
+                id_acc   INTEGER  NOT NULL,
+                name     TEXT     NOT NULL,
+
+                FOREIGN KEY (id_acc) REFERENCES ACCOUNT (id_acc)
+            );
+
+            CREATE TABLE _LIST_ITEM (
+                id_list     INTEGER,
+                id_product  INTEGER,
+                id_market   INTEGER,
+                amount      INTEGER  NOT NULL,
+                taken       BOOLEAN  NOT NULL,
+
+                PRIMARY KEY (id_list, id_product, id_market)
             );
         """
 
@@ -190,7 +216,11 @@ class DBController:
         """
 
         view_script = """
-            CREATE VIEW IF NOT EXISTS v_products_general AS
+            DROP VIEW IF EXISTS v_products_general;
+            DROP VIEW IF EXISTS v_shopping_list;
+
+
+            CREATE VIEW v_products_general AS
             SELECT
                 p.id_product,
                 p.name,
@@ -202,26 +232,41 @@ class DBController:
             FROM PRODUCT p
             LEFT JOIN _PRODUCT_CATEGORY pc ON p.id_product = pc.id_product
             LEFT JOIN _MARKET_PRODUCT mp ON p.id_product = mp.id_product
-            GROUP BY p.id_product  
+            GROUP BY p.id_product;
+
+
+            CREATE VIEW v_shopping_list AS
+            SELECT
+                sl.id_list              AS  id_list,
+                COUNT(li.id_product)    AS  n_items,
+                SUM(mp.price * amount)  AS  total_price,
+                SUM(CASE
+                        WHEN li.taken THEN mp.price * amount
+                        ELSE 0
+                    END)                AS  cart_price
+            FROM SHOPPING_LIST sl
+            JOIN _LIST_ITEM li
+                ON sl.id_list = li.id_list
+            JOIN _MARKET_PRODUCT mp
+                ON li.id_product = mp.id_product
+                AND li.id_market = mp.id_market
+            GROUP BY sl.id_list;
         """
 
         try:
-            # script cria todas as tabelas do banco
             self.cursor.executescript(create_script)
-
-            """cria indices que auxiliam em joins e em querys"""
             self.cursor.executescript(index_script)
-
-            """cria Views"""
             self.cursor.executescript(view_script)
 
-            self.connection.commit() #sobe o banco para o arquivo .db, se quiser manter apenas em memoria reova
-
+            self.connection.commit()
 
             # TODO: adicionar atributo de imagens ao produto
 
         except sqlite3.Error as e:
-            print(f"[Erro BD]: ao tentar popular o BD.\n{e}")
+            print_error("[Erro BD]", "falha ao estruturar o BD", e)
+        except Exception as e:
+            print(f"qual foi\n{e}")
+
 
     def is_db_ok(self):
         """! Checa se o banco de dados está correto.
@@ -256,7 +301,7 @@ class DBController:
             return True
 
         except sqlite3.Error as e:
-            print(f"[Erro BD]: falha na checagem do BD\n{e}")
+            print_error("[Erro BD]", "falha na checagem do BD", e)
 
     def populate(self):
         """! Popula as tabelas para fins de teste e demonstração."""
@@ -264,56 +309,58 @@ class DBController:
             return
 
         inserts = [
-        """
-        INSERT INTO "CATEGORY" ("name") VALUES
-            ('Bebidas'),
-            ('Laticínios'),
-            ('Padaria'),
-            ('Carnes'),
-            ('Frios'),
-            ('Hortifruti'),
-            ('Mercearia'),
-            ('Bebidas Alcoólicas'),
-            ('Pet Shop'),
-            ('Utilidades Domésticas'),
-            ('Congelados'),
-            ('Orgânicos'),
-            ('Sem Glúten'),
-            ('Importados');
-        """,
-
-        """INSERT INTO "MARKET" ("name", "latitude", "longitude", "rating") VALUES
+            """
+            INSERT INTO "CATEGORY" ("name") VALUES
+                ('Bebidas'),
+                ('Laticínios'),
+                ('Padaria'),
+                ('Carnes'),
+                ('Frios'),
+                ('Hortifruti'),
+                ('Mercearia'),
+                ('Bebidas Alcoólicas'),
+                ('Pet Shop'),
+                ('Utilidades Domésticas'),
+                ('Congelados'),
+                ('Orgânicos'),
+                ('Sem Glúten'),
+                ('Importados');
+            """,
+            """
+            INSERT INTO "MARKET" ("name", "latitude", "longitude", "rating") VALUES
                 ('Supermercado Preço Bom', -23.5505, -46.6333, 4.2),
                 ('Mercado Qualitativo', -23.5432, -46.6444, 4.5),
                 ('Atacadão Economia', -23.5488, -46.6222, 3.9),
                 ('Supermercado São Luiz', -23.5555, -46.6111, 4.1),
                 ('Mercado Natural', -23.5522, -46.6555, 4.7);
-           """,
+            """,
 
-        """INSERT INTO "PRODUCT" ("name", "rating") VALUES
-            ('Veja Multiuso 500ml', 4.5),
-            ('Sabão em Pó Omo 1kg', 4.3),
-            ('Arroz Tio João 5kg', 4.7),
-            ('Feijão Carioca 1kg', 4.6),
-            ('Leite Integral Parmalat 1L', 4.4),
-            ('Café Pilão 500g', 4.8),
-            ('Açúcar União 1kg', 4.2),
-            ('Óleo de Soja Liza 900ml', 4.0),
-            ('Macarrão Spaghetti Renata 500g', 4.5),
-            ('Cerveja Heineken 350ml', 4.9),
-            ('Refrigerante Coca-Cola 2L', 4.7),
-            ('Sabonete Dove 90g', 4.6),
-            ('Shampoo Pantene 400ml', 4.5),
-            ('Desinfetante Pinho Sol 1L', 4.3),
-            ('Papel Higiênico Neve 30m', 4.8),
-            ('Salmão Fresco Filé 500g', 4.7),
-            ('Queijo Mussarela Fresco 1kg', 4.6),
-            ('Pão de Forma Integral 500g', 4.3),
-            ('Ração para Cães Adultos 15kg', 4.5),
-            ('Vinho Tinto Chileno 750ml', 4.8);
-           """,
+            """
+            INSERT INTO "PRODUCT" ("name", "rating") VALUES
+                ('Veja Multiuso 500ml', 4.5),
+                ('Sabão em Pó Omo 1kg', 4.3),
+                ('Arroz Tio João 5kg', 4.7),
+                ('Feijão Carioca 1kg', 4.6),
+                ('Leite Integral Parmalat 1L', 4.4),
+                ('Café Pilão 500g', 4.8),
+                ('Açúcar União 1kg', 4.2),
+                ('Óleo de Soja Liza 900ml', 4.0),
+                ('Macarrão Spaghetti Renata 500g', 4.5),
+                ('Cerveja Heineken 350ml', 4.9),
+                ('Refrigerante Coca-Cola 2L', 4.7),
+                ('Sabonete Dove 90g', 4.6),
+                ('Shampoo Pantene 400ml', 4.5),
+                ('Desinfetante Pinho Sol 1L', 4.3),
+                ('Papel Higiênico Neve 30m', 4.8),
+                ('Salmão Fresco Filé 500g', 4.7),
+                ('Queijo Mussarela Fresco 1kg', 4.6),
+                ('Pão de Forma Integral 500g', 4.3),
+                ('Ração para Cães Adultos 15kg', 4.5),
+                ('Vinho Tinto Chileno 750ml', 4.8);
+            """,
 
-        """INSERT INTO "_PRODUCT_CATEGORY" ("id_product", "category_name") VALUES
+            """
+            INSERT INTO "_PRODUCT_CATEGORY" ("id_product", "category_name") VALUES
                 (2, 'Limpeza'), (12, 'Limpeza'), (13, 'Limpeza'), (14, 'Limpeza'), (15, 'Limpeza'),
                 (3, 'Mercearia'), (4, 'Mercearia'), (6, 'Mercearia'), (7, 'Mercearia'), (8, 'Mercearia'), (9, 'Mercearia'),
                 (10, 'Bebidas Alcoólicas'), (11, 'Bebidas'), (20, 'Bebidas Alcoólicas'),
@@ -329,9 +376,10 @@ class DBController:
                 (15, 'Utilidades Domésticas'),
                 (16, 'Congelados'),
                 (20, 'Importados');
-           """,
+            """,
 
-        """INSERT INTO "_MARKET_PRODUCT" ("id_market", "id_product", "price") VALUES
+            """
+            INSERT INTO "_MARKET_PRODUCT" ("id_market", "id_product", "price") VALUES
                 (1, 2, 11.90), (1, 3, 21.90), (1, 4, 8.99), (1, 5, 3.99),
                 (1, 6, 6.49), (1, 7, 3.49), (1, 8, 4.99), (1, 9, 3.29), (1, 10, 5.99),
                 (1, 11, 7.49), (1, 12, 2.19), (1, 13, 16.90), (1, 14, 6.99), (1, 15, 10.99),
@@ -351,7 +399,27 @@ class DBController:
                 (5, 3, 24.90), (5, 4, 10.90), (5, 5, 5.49), (5, 6, 8.90), (5, 8, 5.90),
                 (5, 9, 4.49), (5, 11, 8.90), (5, 16, 37.90), (5, 17, 24.90), (5, 18, 8.90),
                 (5, 19, 99.90), (5, 20, 49.90);
-           """
+            """,
+
+            """INSERT INTO ACCOUNT (username, password) VALUES
+                ("123", "123")
+            """,
+
+            """INSERT INTO SHOPPING_LIST (id_acc, name) VALUES
+                (1, "aaa"),
+                (1, "bbb")
+            """,
+
+            """INSERT INTO _LIST_ITEM (id_list, id_product, id_market, amount, taken) VALUES
+                (1, 5, 1, 1, FALSE),
+                (1, 2, 1, 3, FALSE),
+                (1, 3, 1, 2, FALSE),
+                (1, 6, 1, 1, TRUE),
+                (2, 3, 1, 1, TRUE),
+                (2, 4, 1, 1, TRUE),
+                (2, 5, 1, 1, FALSE),
+                (2, 6, 1, 1, FALSE)
+            """
         ]
 
         try:
@@ -361,8 +429,10 @@ class DBController:
             self.connection.commit() #sobe os inserts para o arquivo .db, se quiser manter apenas em memoria reova
             self.populated = True
 
+            print(self.cursor.execute("SELECT * FROM v_shopping_list").fetchall())
+
         except sqlite3.Error as e:
-            print(f"[Erro BD]: falha ao tentar popular o BD\n{e}")
+            print_error("[Erro BD]", "falha ao tentar popular o BD", e)
 
     def close(self):
         """! Fecha a conexão, evitando vazamentos e acesso indevido"""
@@ -372,7 +442,7 @@ class DBController:
                 self.connection = None
                 self.cursor = None
         except sqlite3.Error as e:
-            print(f"[Erro BD]: falha ao fechar a conexão com o BD\n{e}")
+            print_error("[Erro BD]", "falha ao fechar a conexão com o BD", e)
 
     def get_categories(self):
         """! Consulta quais são as categorias registradas.
@@ -384,7 +454,7 @@ class DBController:
             return [i[0] for i in self.cursor.execute("SELECT * FROM CATEGORY").fetchall()]
 
         except sqlite3.Error as e:
-            print(f"[Erro BD]: falha ao consultar categorias.\n{e}")
+            print_error("[Erro BD]", "falha ao consultar categorias", e)
 
 
     def search_products(self, search_term=None, filters=None, limit = 20):
@@ -459,7 +529,7 @@ class DBController:
             return self.format_results(self.cursor.fetchall())
 
         except sqlite3.Error as e:
-            print(f"[Erro BD]: falha na pesquisa de produtos.\n{e}")
+            print_error("[Erro BD]", "falha na pesquisa de produtos", e)
 
 
     def format_results(self, rows):
