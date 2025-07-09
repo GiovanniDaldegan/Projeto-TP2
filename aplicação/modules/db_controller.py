@@ -200,17 +200,17 @@ class DBController:
             );
 
             CREATE TABLE ACCOUNT (
-                id_acc    INTEGER  PRIMARY KEY,
+                id_user   INTEGER  PRIMARY KEY,
                 username  TEXT     NOT NULL  UNIQUE,
                 password  TEXT     NOT NULL
             );
 
             CREATE TABLE SHOPPING_LIST (
                 id_list  INTEGER  PRIMARY KEY,
-                id_acc   INTEGER  NOT NULL,
+                id_user  INTEGER  NOT NULL,
                 name     TEXT     NOT NULL,
 
-                FOREIGN KEY (id_acc) REFERENCES ACCOUNT (id_acc)
+                FOREIGN KEY (id_user) REFERENCES ACCOUNT (id_user)
             );
 
             CREATE TABLE _LIST_ITEM (
@@ -312,7 +312,7 @@ class DBController:
                     present_tables += 1
 
             if len(self.tables_dict.keys()) != present_tables:
-                print("[BD Inconsistente]: falta(m) tabela(s).")
+                print_error("[BD Inconsistente]", "falta(m) tabela(s)")
                 return False
             return True
 
@@ -419,7 +419,7 @@ class DBController:
                 ("123", "123")
             """,
             """
-            INSERT INTO SHOPPING_LIST (id_acc, name) VALUES
+            INSERT INTO SHOPPING_LIST (id_user, name) VALUES
                 (1, "aaa"),
                 (1, "bbb")
             """,
