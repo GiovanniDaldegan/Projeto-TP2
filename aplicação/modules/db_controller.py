@@ -125,7 +125,7 @@ class DBController:
             # Se faltar alguma tabela obrigatória
             if not all(table in existing_tables for table in required_tables):
                 # print("Criando tabelas...")  # Debug
-                self.create_tables()
+                self.setup_db()
                 #print("Populando dados...")  # Debug
                 self.populate()
             #else:
@@ -134,7 +134,7 @@ class DBController:
         except sqlite3.Error as e:
             print_error("[Erro BD]", "falha na inicialização do BD", e)
 
-    def create_tables(self):
+    def setup_db(self):
         """! Cria todas as tabelas da aplicação.
 
         Cria as tabelas (nomes precedidos por _ são relacionamentos):
@@ -213,9 +213,9 @@ class DBController:
 
             CREATE TABLE _LIST_ITEM (
                 id_list     INTEGER,
-                id_product  INTEGER,
                 id_market   INTEGER,
-                quantity      INTEGER  NOT NULL,
+                id_product  INTEGER,
+                quantity    INTEGER  NOT NULL,
                 taken       BOOLEAN  NOT NULL,
 
                 PRIMARY KEY (id_list, id_product, id_market)
@@ -249,13 +249,13 @@ class DBController:
 
             CREATE VIEW v_shopping_list AS
             SELECT
-                sl.id_list              AS  id_list,
-                COUNT(li.id_product)    AS  n_items,
+                sl.id_list,
+                COUNT(li.id_product)      AS  n_items,
                 SUM(mp.price * quantity)  AS  total_price,
                 SUM(CASE
                         WHEN li.taken THEN mp.price * quantity
                         ELSE 0
-                    END)                AS  cart_price
+                    END)                  AS  cart_price
             FROM SHOPPING_LIST sl
             JOIN _LIST_ITEM li
                 ON sl.id_list = li.id_list
@@ -277,8 +277,6 @@ class DBController:
 
         except sqlite3.Error as e:
             print_error("[Erro BD]", "falha ao estruturar o BD", e)
-        except Exception as e:
-            print(f"qual foi\n{e}")
 
     def is_db_ok(self):
         """! Checa se o banco de dados está correto.
@@ -319,7 +317,7 @@ class DBController:
     def populate(self):
         """! Popula as tabelas para fins de teste e demonstração."""
 
-        if self.populated:
+        if self.populated or not self.is_db_ok():
             return
 
         inserts = [
@@ -443,8 +441,6 @@ class DBController:
             self.connection.commit()
             self.populated = True
 
-            print(cursor.execute("SELECT * FROM v_shopping_list").fetchall())
-
         except sqlite3.Error as e:
             print_error("[Erro BD]", "falha ao tentar popular o BD", e)
 
@@ -453,6 +449,9 @@ class DBController:
 
         @return Lista com todas as categorias em formato string.
         """
+
+        if not self.is_db_ok():
+            return
 
         try:
             cursor = self.get_cursor()
@@ -492,6 +491,9 @@ class DBController:
         - categories
         - name
         """
+
+        if not self.is_db_ok():
+            return
 
         query = "SELECT * FROM v_products_general"
         params = []  # valores que entram nos placeholders(?)
@@ -554,7 +556,7 @@ class DBController:
             })
         return formatted
 
-    def get_all_shopping_lists(self, user_id):
+    def get_all_shopping_lists(self, user_id) -> list[str]:
         """! Busca todas as listas de um usuário, dado seu ID.
 
         @param  user_id  ID do usuário.
@@ -568,17 +570,22 @@ class DBController:
         try:
             cursor = self.get_cursor()
             cursor.execute(
-                f"SELECT name FROM SHOPPING_LIST WHERE id_user = {user_id}")
-            return cursor.fetchall()
+                f"SELECT name FROM SHOPPING_LIST WHERE id_user={user_id}")
+            
+            list_names = cursor.fetchall()
+
+            if len(list_names) == 0:
+                return
+            return [i[0] for i in list_names]
 
         except sqlite3.Error as e:
             print_error(
                 "[Erro BD]", "falha na busca de listas de compras de usuário", e)
 
-    def get_shopping_list(self, list_id):
+    def get_shopping_list(self, id_list) -> list:
         """! Busca os dados de dada lista de compras.
 
-        @param  list_id  ID da lista.
+        @param  id_list  ID da lista.
         """
 
         if not self.is_db_ok():
@@ -587,8 +594,8 @@ class DBController:
         try:
             cursor = self.get_cursor()
             cursor.execute(
-                f"SELECT * FROM v_shopping_list WHERE id_list = {list_id}")
-            return cursor.fetchall()
+                f"SELECT * FROM v_shopping_list WHERE id_list={id_list}")
+            return cursor.fetchone()
 
         except sqlite3.Error as e:
             print_error("[Erro BD]", "falha na busca de lista de compras", e)
@@ -596,42 +603,73 @@ class DBController:
     def create_shopping_list(self, name:str, user_id:int):
         """! Registra uma nova lista de compras de um usuário."""
 
+        if not self.is_db_ok():
+            return
+
         try:
             cursor = self.get_cursor()
-            cursor.execute(f"""INSERT INTO SHOPPING_LIST (id_user, name) VALUES ({user_id}, {name})""")
+            cursor.execute(f"""INSERT INTO SHOPPING_LIST (id_user, name) VALUES ({user_id}, '{name}')""")
 
         except sqlite3.Error as e:
             print_error("[Erro BD]", "falha na inserção de lista de compras", e)
     
     def add_product_to_list(self, id_list:int, id_market:int, id_product:int, quantity:int):
         """! Adiciona dado produto a dada lista.
-        
+
         @param  id_list     ID da lista.
         @param  id_market   ID do mercado do produto.
         @param  id_product  ID do produto.
         @param  quantity    Quantidade escolhida do produto.
         """
+        if not self.is_db_ok():
+            return
 
         try:
             cursor = self.get_cursor()
-            cursor.execute(f"INSERT INTO _LIST_ITEM VALUES ({id_list}, {id_market}, {id_product}, {quantity}, {quantity}, FALSE)")
+            cursor.execute(f"""
+                INSERT INTO _LIST_ITEM VALUES
+                ({id_list}, {id_market}, {id_product}, {quantity}, FALSE)
+                """)
+
+        except sqlite3.Error as e:
+            print_error("[Erro BD]", "falha na inserção de produto na lista de compras", e)
+
+    def remove_product_from_list(self, id_list:int, id_market:int, id_product:int):
+        """! Remove produto de lista de compras.
+
+        @param  id_list     ID da lista de compras.
+        @param  id_market   ID do mercado do produto.
+        @param  id_product  ID do produto a ser removido.
+        """
+
+        try:
+            cursor = self.get_cursor()
+            cursor.execute(f"""
+                DELETE FROM _LIST_ITEM
+                WHERE id_list={id_list}
+                    AND id_market={id_market}
+                    AND id_product={id_product}
+                """)
 
         except sqlite3.Error as e:
             print_error("[Erro BD]", "falha na inserção de produto na lista de compras", e)
 
     def set_product_taken(self, id_list:int, id_market:int, id_product:int, taken:bool):
-        """! Define o status do produto de lista como \"pego\".
-        
+        """! Define o status do produto de lista como "pego".
+
         @param id_list     ID da lista.
         @param id_market   ID do mercado do produto.
         @param id_product  ID do produto.
         """
 
+        if not self.is_db_ok():
+            return
+
         try:
             cursor = self.get_cursor()
             cursor.execute(
                 f"""
-                UPDATE TABLE _LIST_ITEM
+                UPDATE _LIST_ITEM
                 SET taken={taken}
                 WHERE id_list={id_list}
                     AND id_market={id_market}
