@@ -12,7 +12,7 @@ def register_account(data):
     cliente se a conta foi criada com sucesso.
     """
 
-    if not db_controller.create_account(data):
+    if not db_controller.create_account(data["acc_type"], data["username", data["password"]]):
         socketio.emit("register-failed")
         return
     
