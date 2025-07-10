@@ -29,7 +29,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // TODO: eventos de ativação chamam as funções de inicialização de outras telas
   setupProductSearch();
-  setupListPanel();
+  setupShoppingList();
 });
 
 

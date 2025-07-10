@@ -313,6 +313,248 @@ body.list-open {
     overflow: hidden;
 }
 
+/**/
+/* Modal para adicionar produto à lista */
+.modal-add-to-list {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1150;
+  }
+  
+  .modal-add-to-list.hidden {
+    display: none;
+  }
+  
+  .modal-add-to-list .modal-content {
+    background-color: #fff;
+    border-radius: 12px;
+    padding: 24px 32px;
+    width: 100%;
+    max-width: 480px;
+    max-height: 400px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .modal-add-to-list .close-popup {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    width: 28px;
+    height: 28px;
+  }
+  
+  .modal-add-to-list .close-popup img {
+    width: 16px;
+    height: 16px;
+  }
+  
+  .popup-title {
+    margin-bottom: 20px;
+    color: #0078d4;
+    font-size: 22px;
+    font-weight: 600;
+    text-align: center;
+  }
+  
+  .existing-lists {
+    flex: 1;
+    overflow-y: auto;
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding-right: 8px; /* para scrollbar não cortar botão */
+  }
+  
+  /* Botões das listas existentes */
+  .existing-lists button {
+    background-color: #f1f5fb;
+    border: 1px solid #0078d4;
+    color: #0078d4;
+    font-weight: 600;
+    padding: 10px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    text-align: left;
+    transition: background-color 0.2s, color 0.2s;
+    width: 100%;
+  }
+  
+  .existing-lists button:hover {
+    background-color: #0078d4;
+    color: white;
+  }
+  
+  /* Container dos botões Cancelar e Criar nova lista */
+  .modal-buttons {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 14px;
+  }
+  
+  /* Botões já existem no seu CSS, só replicando para contexto */
+  
+  .btn-save {
+    background-color: #0078d4;
+    color: white;
+    font-weight: 600;
+    padding: 10px 24px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.25s ease;
+    font-size: 16px;
+    min-width: 140px;
+  }
+  
+  .btn-save:hover {
+    background-color: #005ea6;
+  }
+  
+  .btn-cancel {
+    background-color: #f0f0f0;
+    color: #555;
+    font-weight: 600;
+    padding: 10px 24px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.25s ease;
+    font-size: 16px;
+    min-width: 140px;
+  }
+  
+  .btn-cancel:hover {
+    background-color: #ddd;
+  }
+  
+
+
+/*Estilização dos botões de listas*/
+.shopping-list {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 14px;
+    background-color: #f1f5fb;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+  
+.shopping-list:hover {
+    background-color: #e1e7f0;
+}
+  
+.shopping-list .list-name {
+    flex-grow: 1;
+    font-size: 16px;
+    font-weight: 500;
+    color: #333;
+}
+  
+.shopping-list .delete-list-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    margin-left: 10px;
+    padding: 4px;
+    border-radius: 50%;
+}
+.shopping-list .delete-list-btn:hover {
+    transform: scale(1.3);
+}
+.shopping-list .delete-list-btn img {
+    width: 22px;
+    height: 22px;
+    object-fit: contain;
+}
+
+.hidden {
+    display: none;
+}
+
+/*=====================================================
+|       ESTILIZAÇÃO DO POP-UP DAS LISTAS              | 
+=====================================================*/
+.popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0,0,0,0.4);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1200;
+}
+  
+.popup.hidden {
+    display: none;
+}
+  
+.popup-content {
+    background: #fff;
+    padding: 20px 24px;
+    border-radius: 12px;
+    width: 100%;
+    max-width: 500px;
+    position: relative;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+}
+  
+.popup-content .close-popup {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    width: 24px;
+    height: 24px;
+}
+  
+.popup-content .close-popup img {
+    width: 14px;
+    height: 14px;
+}
+  
+.popup-title {
+    margin-bottom: 16px;
+    color: #0078d4;
+    font-size: 20px;
+    text-align: center;
+}
+  
+.popup-products {
+    max-height: 260px;
+    overflow-y: auto;
+    margin-bottom: 16px;
+}
+  
+.popup-footer {
+    text-align: right;
+    font-weight: 600;
+    font-size: 16px;
+    color: #1A1A1A;
+}
+  
 /*=====================================================
 |       ESTILIZAÇÃO DO MENU DE CRIAÇÃO DE LISTA       | 
 =====================================================*/
@@ -569,3 +811,6 @@ body.list-open {
 .btn-adicionar-lista:hover {
     background-color: #d0d3d6;
 }
+
+
+  
