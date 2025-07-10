@@ -9,6 +9,7 @@ import os
 import sqlite3
 from modules.utils import *
 
+
 class DBController:
     """! Controlador do banco de dados.
 
@@ -49,33 +50,32 @@ class DBController:
         self.populated = False  # variável exclusiva para testes e demonstração
 
         self.tables_dict = {
-            "PRODUCT" : [
+            "PRODUCT": [
                 "id_product",
                 "name",
                 "price",
                 "rating"
             ],
-            "MARKET" : [
+            "MARKET": [
                 "id_market",
                 "name",
                 "latitude",
                 "longitude",
                 "rating"
             ],
-            "CATEGORY" : [
+            "CATEGORY": [
                 "id_category",
                 "name"
             ],
-            "_MARKET_PRODUCT" : [
+            "_MARKET_PRODUCT": [
                 "id_market",
                 "id_product"
             ],
-            "_PRODUCT_CATEGORY" : [
+            "_PRODUCT_CATEGORY": [
                 "id_product",
                 "id_category"
             ]
         }
-
 
     def connect(self):
         """! Define o cursor e a conexão do BD.
@@ -87,13 +87,13 @@ class DBController:
             if self.connection is None:
                 if not os.path.isdir(self.path_databases):
                     os.mkdir(self.path_databases)
-                self.connection = sqlite3.connect(os.path.join(self.path_databases, "tables.db"), check_same_thread=False)
+                self.connection = sqlite3.connect(os.path.join(
+                    self.path_databases, "tables.db"), check_same_thread=False)
 
         except sqlite3.Error as e:
             print_error("[Erro BD]", "falha na conexão com o BD", e)
         except os.error as e:
             print_error("[Erro os]", "falha ao criar caminho do BD", e)
-
 
     def close(self):
         """! Fecha a conexão, evitando vazamentos e acesso indevido"""
@@ -104,7 +104,6 @@ class DBController:
         except sqlite3.Error as e:
             print_error("[Erro BD]", "falha ao fechar a conexão com o BD", e)
 
-
     def get_cursor(self):
         """! Cria e retorna um cursor da conexão com o BD, desde que ela exista."""
 
@@ -113,7 +112,7 @@ class DBController:
 
     def initialize(self):
         """! Inicializa o Banco de dados garantindo que as tabelas existam"""
-        
+
         try:
             # Verifica se as tabelas principais existem
             required_tables = ['PRODUCT', 'MARKET', 'CATEGORY']
@@ -134,7 +133,6 @@ class DBController:
 
         except sqlite3.Error as e:
             print_error("[Erro BD]", "falha na inicialização do BD", e)
-
 
     def create_tables(self):
         """! Cria todas as tabelas da aplicação.
@@ -282,10 +280,9 @@ class DBController:
         except Exception as e:
             print(f"qual foi\n{e}")
 
-
     def is_db_ok(self):
         """! Checa se o banco de dados está correto.
-        
+
         Primeiro, checa se há conexão. Se não há, conecta ao banco de dados.
         Então, checa se todas as tabelas estão presentes no banco de dados.
 
@@ -321,7 +318,8 @@ class DBController:
 
     def populate(self):
         """! Popula as tabelas para fins de teste e demonstração."""
-        if  self.populated:
+
+        if self.populated:
             return
 
         inserts = [
@@ -441,7 +439,8 @@ class DBController:
             for q in inserts:
                 cursor.execute(q)
 
-            self.connection.commit() #sobe os inserts para o arquivo .db, se quiser manter apenas em memoria reova
+            # sobe os inserts para o arquivo .db, se quiser manter apenas em memoria reova
+            self.connection.commit()
             self.populated = True
 
             print(cursor.execute("SELECT * FROM v_shopping_list").fetchall())
@@ -449,13 +448,12 @@ class DBController:
         except sqlite3.Error as e:
             print_error("[Erro BD]", "falha ao tentar popular o BD", e)
 
-
     def get_categories(self):
         """! Consulta quais são as categorias registradas.
 
         @return Lista com todas as categorias em formato string.
         """
-        
+
         try:
             cursor = self.get_cursor()
             return [i[0] for i in cursor.execute("SELECT * FROM CATEGORY").fetchall()]
@@ -463,8 +461,7 @@ class DBController:
         except sqlite3.Error as e:
             print_error("[Erro BD]", "falha ao consultar categorias", e)
 
-
-    def search_products(self, search_term=None, filters=None, limit = 20):
+    def search_products(self, search_term=None, filters=None, limit=20):
         """!
         @brief brief Busca produtos com filtros avançados
 
@@ -497,8 +494,8 @@ class DBController:
         """
 
         query = "SELECT * FROM v_products_general"
-        params = [] #valores que entram nos placeholders(?)
-        conditions = [] #Clausulas where
+        params = []  # valores que entram nos placeholders(?)
+        conditions = []  # Clausulas where
 
         # Filtro termos de busca
         if search_term:
@@ -506,20 +503,20 @@ class DBController:
             params.append(f"%{search_term}%")
         # Outros Filtros
         if filters:
-            if("min_price" in filters):
+            if ("min_price" in filters):
                 conditions.append("min_price >= ?")
                 params.append(filters['min_price'])
-            if("max_price" in filters):
+            if ("max_price" in filters):
                 conditions.append("min_price <= ?")
                 params.append(filters['max_price'])
-            if("category" in filters):
+            if ("category" in filters):
                 conditions.append("categories LIKE ?")
                 params.append(f"{filters['category']}%")
-            if("min_rating" in filters):
+            if ("min_rating" in filters):
                 conditions.append("rating >= ?")
                 params.append(filters['min_rating'])
 
-        #Montagem da query
+        # Montagem da query
         if conditions:
             query += " WHERE " + " AND ".join(conditions)
 
@@ -539,12 +536,12 @@ class DBController:
         except sqlite3.Error as e:
             print_error("[Erro BD]", "falha na pesquisa de produtos", e)
 
-
     def format_results(self, rows):
         """! Organiza os dados brutos em uma estrutura mais útil
 
         @param  rows  Lista de linhas resultantes de consulta.
         """
+
         formatted = []
         for row in rows:
             formatted.append({
