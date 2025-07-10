@@ -412,8 +412,8 @@ class DBController:
                 (5, 19, 99.90), (5, 20, 49.90);
             """,
             """
-            INSERT INTO ACCOUNT (username, password) VALUES
-                ("123", "123")
+            INSERT INTO ACCOUNT (acc_type, username, password) VALUES
+                ("adm", "123", "123")
             """,
             """
             INSERT INTO SHOPPING_LIST (id_user, name) VALUES
@@ -645,7 +645,7 @@ class DBController:
         @return Lista de nomes das listas de compras do usuário.
         """
 
-       if not self.is_db_ok():
+        if not self.is_db_ok():
             return
 
         try:
