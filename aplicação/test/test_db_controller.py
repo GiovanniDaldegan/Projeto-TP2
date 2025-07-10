@@ -15,16 +15,17 @@ def test_database():
     # 2. Verificação da criação do banco
     print("\n=== Verificando inicialização do banco ===")
     db.initialize()
+    cursor = db.get_cursor()
 
     # Teste adicional: verifica se as tabelas foram criadas
-    db.cursor.execute("SELECT name FROM sqlite_master WHERE type='table'")
-    tables = db.cursor.fetchall()
+    cursor.execute("SELECT name FROM sqlite_master WHERE type='table'")
+    tables = cursor.fetchall()
     print("Tabelas existentes:", tables)
 
     # 3. Teste de população
     print("\n=== Verificando dados iniciais ===")
-    db.cursor.execute("SELECT COUNT(*) FROM PRODUCT")
-    product_count = db.cursor.fetchone()[0]
+    cursor.execute("SELECT COUNT(*) FROM PRODUCT")
+    product_count = cursor.fetchone()[0]
     print(f"Produtos cadastrados: {product_count}")
 
     # 4. Teste de consulta

@@ -4,6 +4,7 @@
 
 from __main__ import socketio, db_controller
 
+
 @socketio.on("get-product-list")
 def send_product_list(data):
     """! Envia a lista de produtos que atendem à pesquisa do cliente.
@@ -16,9 +17,11 @@ def send_product_list(data):
     @sa db_controller.DBController.search_products()
     """
 
-    product_list = db_controller.search_products(search_term=data["search_term"], filters=data["filters"])
+    product_list = db_controller.search_products(
+        search_term=data["search_term"], filters=data["filters"])
 
     socketio.emit("product-list", product_list)
+
 
 @socketio.on("get-categories")
 def send_categories():

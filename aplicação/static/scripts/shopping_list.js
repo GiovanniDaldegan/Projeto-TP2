@@ -1,9 +1,31 @@
 import { socketio } from "./index.js";
 
 // Funções emissoras de requisição
+function createList(listName) {
+  socketio.emit("create-shopping-list", listName);
+}
 
+function getLists() {
+  socketio.emit("get-shopping-lists")
+}
 
 // Funções próprias do módulo
+function feedShoppingLists(shoppingLists) {
+  const listContainer = document.getElementById("list-content");
+
+  shoppingLists.forEach(list => {
+    const listItem = document.createElement("article");
+    listItem.classList.add("shopping-list");
+
+    listItem.innerHTML = `
+      <h3 class="list-name">${list["name"]}</h3>
+      <span class="list-size">${list["size"]}</span>
+    `;
+
+    listContainer.appendChild(listItem)
+    console.log(listItem.innerHTML);
+  });
+}
 
 
 // setup dos listeners de eventos da tela
@@ -27,6 +49,7 @@ export function setupListPanel() {
   const newListForm = document.getElementById("form-new-list");
   const listName = document.getElementById("input-list-name");
 
+  
   // Exibe o painel de listas
   btnMinhasListas.addEventListener("click", () => {
     listPanel.classList.add("active");  
@@ -58,4 +81,6 @@ export function setupListPanel() {
     createList(listName.value);
   });
 
+  // mock up
+  feedShoppingLists([{"name" : "FODA", 'size' : 123}, {"name" : "FODA2", 'size' : 321}])
 }
