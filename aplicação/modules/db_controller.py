@@ -171,6 +171,13 @@ class DBController:
                 FOREIGN KEY("category_name") REFERENCES "CATEGORY"("name"),
                 FOREIGN KEY("id_product") REFERENCES "PRODUCT"("id_product")
             );
+
+            CREATE TABLE ACCOUNT (
+                id_acc    INTEGER  PRIMARY KEY,
+                acc_type  TEXT     NOT NULL,
+                username  TEXT     NOT NULL  UNIQUE,
+                password  TEXT     NOT NULL
+            );
             """)
 
         """cria indices que auxiliam em joins e em querrys"""
@@ -222,9 +229,9 @@ class DBController:
                 FROM sqlite_master
                 WHERE type='table'
                 AND name='{table_name}';
-                """).fetchall()
+                """).fetchone()
 
-            if len(result) != 0:
+            if result:
                 present_tables += 1
 
         if len(self.tables_dict.keys()) != present_tables:
@@ -440,47 +447,48 @@ class DBController:
         return formatted
         
     
-    def create_account(self, user):
+    def create_account(self, acc_type, username, password):
         """! Cadastra uma conta no BD.
-        
-        Cria um registro na tabela CONTA com um ID único e nome de usuário e
-        senha fornecidos.
 
-        @param  user  Dicionário com chaves "type", "username" e "password".
+        @param  acc_type  Tipo de conta (adm, user).
+        @param  username  Nome do usuário.
+        @param  password  Senha do usuário.
         """
 
         if not self.is_db_ok():
             return
 
         try:
+            if self.account_exists(username):
+                return
+
             self.cursor.execute(f"""
-                                INSERT INTO ACCOUNT ('type', 'name', 'password')
-                                VALUES ('{user["type"]}', '{user["username"]}', '{user["password"]}')""")
-            
+                INSERT INTO ACCOUNT ('acc_type', 'username', 'password')
+                VALUES ('{acc_type}', '{username}', '{password}')""")
+
             return True
 
         except sqlite3.Error as e:
             print(f"[Erro BD]: falha ao criar conta.\n{e}")
 
 
-    def account_exists(self, username, password):
+    def account_exists(self, username):
         """! Checa se conta existe no BD.
         
         @param  username  Nome do usuário.
         @param  password  Senha do usuário.
         """
+
         if not self.is_db_ok():
             return -1
 
         try:
             record = self.cursor.execute(f"""
-                                        SELECT * FROM ACCOUNT
-                                        WHERE 'name'='{username}' AND 'password'='{password}'"""
-                                        ).fetchall()
-            if len(record) == 0:
-                return False
+                SELECT * FROM ACCOUNT
+                WHERE username='{username}'"""
+            ).fetchone()
             
-            return True
+            return record is not None
 
         except sqlite3.Error as e:
             print(f"[Erro BD]: falha ao consultar conta.\n{e}")
@@ -499,17 +507,19 @@ class DBController:
             return -1
 
         try:
-            record = self.cursor.execute(f"""
-                                         SELECT 'name', 'type' FROM ACCOUNT
-                                         WHERE 'name'='{username}' AND 'password'='{password}'"""
-                                        ).fetchall()
+            print(self.cursor.execute("SELECT * from account").fetchall())
 
-            if len(record) == 0:
-                return None
-            
+            record = self.cursor.execute(f"""
+                SELECT username, type FROM ACCOUNT
+                WHERE username='{username}' AND password='{password}'"""
+            ).fetchone()
+
+            if not record:
+                return
+
             user = {
-                "username" : record[0][0],
-                "type"     : record[0][1]
+                "username" : record[0],
+                "type"     : record[1]
             }
 
             return user
