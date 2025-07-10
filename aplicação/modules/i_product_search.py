@@ -1,8 +1,5 @@
-"""! @package product_search
-    Fornece dados à tela de pesquisa de produtos por meio de eventos SocketIO.
-
-    Envia as categorias cadastradas no BD para filtragem de produtos, e envia o
-    o resultado da pesquisa do cliente.
+"""! @package i_product_search
+    Interface de eventos SocketIO da tela de pesquisa de produtos.
 """
 
 from __main__ import socketio, db_controller

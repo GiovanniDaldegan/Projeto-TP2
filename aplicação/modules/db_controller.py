@@ -84,31 +84,41 @@ class DBController:
         Verifica se há conexão, caso não, inicializa o diretorio caso ele não exista,
         bem como a conexão e o @ref cursor.
         """
-        if self.connection is None:
-            if not os.path.isdir(self.path_databases):
-                os.mkdir(self.path_databases)
-            self.connection = sqlite3.connect(os.path.join(self.path_databases, "tables.db"), check_same_thread=False)
-            self.cursor = self.connection.cursor()
+        try:
+            if self.connection is None:
+                if not os.path.isdir(self.path_databases):
+                    os.mkdir(self.path_databases)
+                self.connection = sqlite3.connect(os.path.join(self.path_databases, "tables.db"), check_same_thread=False)
+                self.cursor = self.connection.cursor()
+
+        except sqlite3.Error as e:
+            print(f"[Erro BD]: falha na conexão com o BD.\n{e}")
+        except os.error as e:
+            print(f"[Erro os]\n{e}")
+
 
     def initialize(self):
         """! Inicializa o Banco de dados garantindo que as tabelas existam"""
-        self.connect()
+        
+        try:
+            # Verifica se as tabelas principais existem
+            required_tables = ['PRODUCT', 'MARKET', 'CATEGORY']
+            self.cursor.execute("SELECT name FROM sqlite_master WHERE type='table'")
+            existing_tables = [table[0] for table in self.cursor.fetchall()]
 
-        # Verifica se as tabelas principais existem
-        required_tables = ['PRODUCT', 'MARKET', 'CATEGORY']
-        self.cursor.execute("SELECT name FROM sqlite_master WHERE type='table'")
-        existing_tables = [table[0] for table in self.cursor.fetchall()]
+            # print(f"Tabelas existentes: {existing_tables}")  # Debug
 
-        # print(f"Tabelas existentes: {existing_tables}")  # Debug
+            # Se faltar alguma tabela obrigatória
+            if not all(table in existing_tables for table in required_tables):
+                # print("Criando tabelas...")  # Debug
+                self.create_tables()
+                #print("Populando dados...")  # Debug
+                self.populate()
+            #else:
+                #print("Tabelas já existem")  # Debug
 
-        # Se faltar alguma tabela obrigatória
-        if not all(table in existing_tables for table in required_tables):
-            # print("Criando tabelas...")  # Debug
-            self.create_tables()
-            #print("Populando dados...")  # Debug
-            self.populate()
-        #else:
-            #print("Tabelas já existem")  # Debug
+        except sqlite3.Error as e:
+            print(f"[Erro BD]: falha na inicialização do BD.\n{e}")
 
 
     def create_tables(self):
@@ -122,12 +132,7 @@ class DBController:
         - _PRODUCT_CATEGORY (id_product:PK:FK, id_category:PK:FK)
         """
 
-        if self.cursor is None:
-            self.connect()
-
-        # script cria todas as tabelas do banco
-        self.cursor.executescript(
-            """
+        create_script = """
             DROP TABLE IF EXISTS _PRODUCT_CATEGORY;
             DROP TABLE IF EXISTS _MARKET_PRODUCT;
             DROP TABLE IF EXISTS PRODUCT;
@@ -179,17 +184,14 @@ class DBController:
                 password  TEXT     NOT NULL
             );
             """)
+        """
 
-        """cria indices que auxiliam em joins e em querrys"""
-        self.cursor.executescript(
-            """
+        index_script = """
             CREATE INDEX IF NOT EXISTS idx_productcategory_product ON _PRODUCT_CATEGORY(id_product);
             CREATE INDEX IF NOT EXISTS idx_productcategory_category ON _PRODUCT_CATEGORY(category_name);
-            """)
+        """
 
-        """cria Views"""
-        self.cursor.executescript(
-            """
+        view_script = """
             CREATE VIEW IF NOT EXISTS v_products_general AS
             SELECT
                 p.id_product,
@@ -202,19 +204,34 @@ class DBController:
             FROM PRODUCT p
             LEFT JOIN _PRODUCT_CATEGORY pc ON p.id_product = pc.id_product
             LEFT JOIN _MARKET_PRODUCT mp ON p.id_product = mp.id_product
-            GROUP BY p.id_product
-            """)
+            GROUP BY p.id_product  
+        """
 
-        self.connection.commit() #sobe o banco para o arquivo .db, se quiser manter apenas em memoria reova
+        try:
+            # script cria todas as tabelas do banco
+            self.cursor.executescript(create_script)
+
+            """cria indices que auxiliam em joins e em querys"""
+            self.cursor.executescript(index_script)
+
+            """cria Views"""
+            self.cursor.executescript(view_script)
+
+            self.connection.commit() #sobe o banco para o arquivo .db, se quiser manter apenas em memoria reova
 
 
-        # TODO: adicionar atributo de imagens ao produto
+            # TODO: adicionar atributo de imagens ao produto
 
+        except sqlite3.Error as e:
+            print(f"[Erro BD]: ao tentar popular o BD.\n{e}")
 
     def is_db_ok(self):
         """! Checa se o banco de dados está correto.
+        
+        Primeiro, checa se há conexão. Se não há, conecta ao banco de dados.
+        Então, checa se todas as tabelas estão presentes no banco de dados.
 
-        Checa se todas as tabelas estão presentes no banco de dados.
+        @return Bool indicanto se o BD está correto ou não.
         """
 
         if self.cursor is None:
@@ -222,23 +239,26 @@ class DBController:
 
         present_tables = 0
 
-        for table_name in self.tables_dict.keys():
-            result = self.cursor.execute(
-                f"""
-                SELECT name
-                FROM sqlite_master
-                WHERE type='table'
-                AND name='{table_name}';
-                """).fetchone()
+        try:
+            for table_name in self.tables_dict.keys():
+                result = self.cursor.execute(
+                    f"""
+                    SELECT name
+                    FROM sqlite_master
+                    WHERE type='table'
+                        AND name='{table_name}';
+                    """).fetchone()
 
-            if result:
-                present_tables += 1
+                if result:
+                    present_tables += 1
 
-        if len(self.tables_dict.keys()) != present_tables:
-            print("[BD] ERRO: falta(m) tabela(s).")
-            return False
-        return True
+            if len(self.tables_dict.keys()) != present_tables:
+                print("[BD Inconsistente]: falta(m) tabela(s).")
+                return False
+            return True
 
+        except sqlite3.Error as e:
+            print(f"[Erro BD]: falha na checagem do BD\n{e}")
 
     def populate(self):
         """! Popula as tabelas para fins de teste e demonstração."""
@@ -336,27 +356,37 @@ class DBController:
            """
         ]
 
-        for q in inserts:
-            self.cursor.execute(q)
+        try:
+            for q in inserts:
+                self.cursor.execute(q)
 
-        self.connection.commit() #sobe os inserts para o arquivo .db, se quiser manter apenas em memoria reova
-        self.populated = True
+            self.connection.commit() #sobe os inserts para o arquivo .db, se quiser manter apenas em memoria reova
+            self.populated = True
 
+        except sqlite3.Error as e:
+            print(f"[Erro BD]: falha ao tentar popular o BD\n{e}")
 
     def close(self):
         """! Fecha a conexão, evitando vazamentos e acesso indevido"""
-        if self.connection:
-            self.connection.close()
-            self.connection = None
-            self.cursor = None
-
+        try:
+            if self.connection:
+                self.connection.close()
+                self.connection = None
+                self.cursor = None
+        except sqlite3.Error as e:
+            print(f"[Erro BD]: falha ao fechar a conexão com o BD\n{e}")
 
     def get_categories(self):
         """! Consulta quais são as categorias registradas.
 
         @return Lista com todas as categorias em formato string.
         """
-        return [i[0] for i in self.cursor.execute("SELECT * FROM CATEGORY").fetchall()]
+        
+        try:
+            return [i[0] for i in self.cursor.execute("SELECT * FROM CATEGORY").fetchall()]
+
+        except sqlite3.Error as e:
+            print(f"[Erro BD]: falha ao consultar categorias.\n{e}")
 
 
     def search_products(self, search_term=None, filters=None, limit = 20):
@@ -426,8 +456,13 @@ class DBController:
         query += f" LIMIT {abs(int(limit))}"
 
         self.connect()
-        self.cursor.execute(query, params)
-        return self.format_results(self.cursor.fetchall())
+        try:
+            self.cursor.execute(query, params)
+            return self.format_results(self.cursor.fetchall())
+
+        except sqlite3.Error as e:
+            print(f"[Erro BD]: falha na pesquisa de produtos.\n{e}")
+
 
     def format_results(self, rows):
         """! Organiza os dados brutos em uma estrutura mais útil

@@ -185,16 +185,242 @@ body {
     object-fit: contain;
 }
 
+/*===================================================*
+|            ESTILIZAÇÃO DO PAINEL DE LISTAS        |
+====================================================*/
+.list-panel {
+    position: fixed;
+    top: 0;
+    left: -360px; 
+    width: 320px;
+    height: 100%;
+    background-color: #ffffff;
+    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.15);
+    border-right: 1px solid #ddd;
+    transition: left 0.3s ease;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+}
+  
+.list-panel.active {
+    left: 0; 
+}
+
+.list-panel.active {
+    left: 0; 
+}
+
+.list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #f2f6fb;
+  padding: 16px 20px;
+  border-bottom: 1px solid #ddd;
+}
+
+.list-header h2 {
+  margin: 0;
+  font-size: 20px;
+  color: #0078d4;
+  align-items: center;
+}
+
+.list-content {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 16px 20px;
+    position: relative;
+    overflow-y: auto;
+    flex: 1;
+}
+
+.list-footer{
+    padding: 16px 20px;
+    border-top: 1px solid #ddd;
+    background-color: #f9f9f9;
+}
+
+/*Botões*/
+#close-list-panel {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s;
+    border-radius: 50%;
+}
+
+#close-list-panel:hover {
+    background-color: rgba(234, 4, 4, 0.121);
+}
+
+#close-list-panel img {
+    width: 16px;
+    height: 16px;
+    pointer-events: none;
+}
+
+.close-filter img {
+    width: 16px;
+    height: 16px;
+    object-fit: contain;
+    user-select: none;
+    pointer-events: none;
+}
+
+.btn-create-list {
+    margin-top: 16px;
+    padding: 12px;
+    width: 100%;
+    background-color: #0078d4;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.btn-create-list:hover {
+    background-color: #005a9e;
+}
+  
+/*Comportamento do body ao abrir painel de listas*/
+body.list-open::after {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 998;
+}
+
+body.list-open {
+    overflow: hidden;
+}
+
 /*=====================================================
-|          ESTILIZAÇÃO DOS FILTROS DE BUSCA          | 
+|       ESTILIZAÇÃO DO MENU DE CRIAÇÃO DE LISTA       | 
+=====================================================*/
+.modal-new-list{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1100;
+    display: none;
+}
+
+.modal-content {
+    background-color: white;
+    border-radius: 12px;
+    padding: 24px 32px;
+    width: 100%;
+    height: 100%;
+    max-width: 500px;
+    max-height: 300px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+    box-sizing: border-box;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.modal-content h3 {
+    font-size: 22px;
+    color: #0078d4;
+    margin-bottom: 20px;
+    font-weight: 600;
+    text-align: center;
+}
+
+.modal-content input[type="text"] {
+    font-size: 16px;
+    padding: 12px 14px;
+    border: 1.5px solid #ccc;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    transition: border-color 0.3s;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.modal-content input[type="text"]:focus {
+    border-color: #0078d4;
+    outline: none;
+}
+
+/*Botões*/
+.modal-buttons {
+    display: flex;
+    justify-content: center;  
+    align-items: center;
+    gap: 12px;                 
+    margin-top: 8px;
+    min-width: 100px;
+}
+
+.btn-save {
+  background-color: #0078d4;
+  color: white;
+  font-weight: 600;
+  padding: 10px 24px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.25s ease;
+  font-size: 16px;
+}
+
+.btn-save:hover {
+  background-color: #005ea6;
+}
+
+.btn-cancel {
+  background-color: #f0f0f0;
+  color: #555;
+  font-weight: 600;
+  padding: 10px 24px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.25s ease;
+  font-size: 16px;
+}
+
+.btn-cancel:hover {
+  background-color: #ddd;
+}
+
+/*=====================================================
+|          ESTILIZAÇÃO DOS FILTROS DE BUSCA           | 
 ======================================================*/
 
-/* Botão de filtros */
+/*Botão de Filtro*/
 .filter-toggle {
     position: fixed;
     top: 80px;
     right: 20px;
-    z-index: 1000;
+    z-index: 1001; 
     background-color: #0078d4;
     color: white;
     border: none;
@@ -224,7 +450,7 @@ body {
     z-index: 999;
 }
   
-  .filter-panel.active {
+.filter-panel.active {
     right: 0;
 }
   
@@ -240,8 +466,8 @@ body {
     border-radius: 6px;
     border: 1px solid #ccc;
 }
-  
-#apply-filters {
+
+#apply-price-filters {
     width: 100%;
     padding: 10px;
     background-color: #0078d4;
@@ -251,7 +477,7 @@ body {
     cursor: pointer;
 }
   
-#apply-filters:hover {
+#apply-price-filters:hover {
     background-color: #005a9e;
 }
   
@@ -266,7 +492,6 @@ body {
     color: #666;
 }
   
-
 /*=====================================================
 |       ESTILIZAÇÃO DO FEED DE PRODUTOS               |
 =====================================================*/
@@ -344,29 +569,3 @@ body {
 .btn-adicionar-lista:hover {
     background-color: #d0d3d6;
 }
-
-.btn-adicionar-carrinho {
-    background-color: #0078d4;
-    border: none;
-    padding: 10px;
-    border-radius: 6px;
-    cursor: pointer;
-    color: white;
-    flex: 1; 
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 1px; 
-    transition: background-color 0.2s;
-}
-
-.btn-adicionar-carrinho:hover {
-    background-color: #005a9e;
-}
-
-.btn-adicionar-carrinho img {
-    width: 30px;
-    height: 30px;
-    filter: invert(1);
-}
-

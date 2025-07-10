@@ -26,7 +26,6 @@ function createProductCard(product) {
       <span class="preco">R$ ${product["price_range"][0].toFixed(2).replace('.', ',')}</span>
       <div class="btn-produto">
         <button class="btn-adicionar-lista" type="button">+ Lista</button>
-        <button class="btn-adicionar-carrinho" type="button">+ Carrinho</button>
       </div>
     </div>
   `;
@@ -133,12 +132,14 @@ export function productSearchSetupHTML() {
   filterToggleBtn.addEventListener("click", () => {
     filterPanel.classList.add("active");
     filterToggleBtn.style.display = "none";
+    document.body.classList.add("list-open");
   });
 
   // Fecha o painel de filtro
   closeFilterBtn.addEventListener("click", () => {
     filterPanel.classList.remove("active");
     filterToggleBtn.style.display = "block";
+    document.body.classList.remove("list-open");
   });
   
   // Aplica filtros
