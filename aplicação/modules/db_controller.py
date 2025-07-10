@@ -183,7 +183,6 @@ class DBController:
                 username  TEXT     NOT NULL  UNIQUE,
                 password  TEXT     NOT NULL
             );
-            """)
         """
 
         index_script = """
