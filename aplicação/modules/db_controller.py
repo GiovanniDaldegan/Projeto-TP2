@@ -164,16 +164,16 @@ class DBController:
             CREATE TABLE "MARKET" (
                 "id_market"  INTEGER,
                 "name"       TEXT      NOT NULL,
-                "latitude"   REAL,
-                "longitude"  REAL,
-                "rating"     REAL,
+                "latitude"   INTEGER,
+                "longitude"  INTEGER,
+                "rating"     INTEGER,
                 PRIMARY KEY("id_market" AUTOINCREMENT)
             );
 
             CREATE TABLE "PRODUCT" (
                 "id_product"  INTEGER,
                 "name"        TEXT     NOT NULL,
-                "rating"      REAL,
+                "rating"      INTEGER,
 
                 PRIMARY KEY("id_product" AUTOINCREMENT)
             );
@@ -181,7 +181,7 @@ class DBController:
             CREATE TABLE "_MARKET_PRODUCT" (
                 "id_market"   INTEGER  NOT NULL,
                 "id_product"  INTEGER  NOT NULL,
-                "price"       REAL     NOT NULL,
+                "price"       INTEGER  NOT NULL,
 
                 PRIMARY KEY("id_market","id_product"),
                 FOREIGN KEY("id_market") REFERENCES "MARKET"("id_market"),
@@ -620,19 +620,18 @@ class DBController:
             print(self.cursor.execute("SELECT * from account").fetchall())
 
             record = self.cursor.execute(f"""
-                SELECT username, type FROM ACCOUNT
+                SELECT id_acc, username, type FROM ACCOUNT
                 WHERE username='{username}' AND password='{password}'"""
             ).fetchone()
 
             if not record:
                 return
 
-            user = {
-                "username" : record[0],
-                "type"     : record[1]
+            return {
+                "id"       : record[0],
+                "username" : record[1],
+                "type"     : record[2]
             }
-
-            return user
 
         except sqlite3.Error as e:
             print(f"[Erro BD]: falha ao consultar conta.\n{e}")
@@ -702,6 +701,7 @@ class DBController:
         @param  id_product  ID do produto.
         @param  quantity    Quantidade escolhida do produto.
         """
+
         if not self.is_db_ok():
             return
 
