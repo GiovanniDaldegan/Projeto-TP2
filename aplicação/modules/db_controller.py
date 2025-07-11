@@ -250,12 +250,13 @@ class DBController:
             SELECT
                 p.id_product,
                 p.name,
-                p.rating,
+                AVG(pr.rating) AS rating,
                 GROUP_CONCAT(DISTINCT pc.category_name) AS categories,
                 MIN(mp.price) AS min_price,
                 MAX(mp.price) AS max_price,
                 AVG(mp.price) AS avg_price
             FROM PRODUCT p
+			LEFT JOIN PRODUCT_REVIEW pr ON P.id_product = pr.id_product
             LEFT JOIN _PRODUCT_CATEGORY pc ON p.id_product = pc.id_product
             LEFT JOIN _MARKET_PRODUCT mp ON p.id_product = mp.id_product
             GROUP BY p.id_product;
