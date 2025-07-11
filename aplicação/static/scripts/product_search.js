@@ -1,5 +1,5 @@
 import { socketio } from "./index.js";
-
+import { openAddToListModal} from "./shopping_list.js";
 // Funções emissoras de requisição
 
 function requestProductList(params) {
@@ -30,7 +30,12 @@ function createProductCard(product) {
     </div>
   `;
 
-  return card;
+    const btnAdd = card.querySelector(".btn-adicionar-lista");
+    btnAdd.addEventListener("click", () => {
+      openAddToListModal();
+    });
+  
+    return card;
 }
 
 // Renderização do Feed

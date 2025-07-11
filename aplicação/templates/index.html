@@ -74,7 +74,9 @@
             <button id="close-list-panel" class="close-filter"><img src="{{ url_for('static', filename='img/close.png') }}" alt=""></button>
         </div>
 
-        <div class="list-content" id="list-content">Você não possui listas.</div>
+        <div class="list-content" id="shopping-list-items">
+            Você não possui listas.
+        </div>
 
         <div class="list-footer">
             <button id="btn-create-list" class="btn-create-list">+ Nova Lista</button>
@@ -95,6 +97,25 @@
         </div>
     </div>
 
+    <!-- Modal Para Adicionar Produto à Lista -->
+    <div id="modal-add-to-list" class="modal-add-to-list hidden">
+        <div class="modal-content">
+        <button class="close-popup" id="close-add-to-list" aria-label="Fechar">
+            <img src="{{ url_for('static', filename='img/close.png') }}" alt="Fechar" />
+        </button>
+        <h3 class="popup-title">Adicionar Produto à Lista</h3>
+        
+        <div id="existing-lists" class="existing-lists">
+            <!-- Botões das listas serão inseridos pelo JS -->
+        </div>
+    
+        <div class="modal-buttons">
+            <button id="btn-create-new-list" class="btn-save">Criar Nova Lista</button>
+            <button id="btn-cancel-add-to-list" class="btn-cancel">Cancelar</button>
+        </div>
+        </div>
+    </div>
+  
 
     <!-- FILTROS DE BUSCA -->
     <button id="filter-toggle" class="filter-toggle">Filtros</button>
