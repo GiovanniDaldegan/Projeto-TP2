@@ -232,9 +232,6 @@ class DBController:
                 FOREIGN KEY("id_product") REFERENCES "PRODUCT"("id_product")
             );
         """
-        
-        # TODO #9: complexo - remover rating de PRODUCT e atualizar
-        # v_products_general para calcular a nota média de produto em REVIEW
 
         index_script = """
             CREATE INDEX IF NOT EXISTS idx_productcategory_product ON _PRODUCT_CATEGORY(id_product);
