@@ -362,7 +362,7 @@ class DBController:
             """,
 
             """
-            INSERT INTO "PRODUCT" ("name", "rating") VALUES
+            INSERT INTO "PRODUCT" ("name") VALUES
                 ('Veja Multiuso 500ml'),
                 ('Sabão em Pó Omo 1kg'),
                 ('Arroz Tio João 5kg'),
