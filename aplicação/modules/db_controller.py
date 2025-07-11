@@ -231,6 +231,9 @@ class DBController:
                 PRIMARY KEY (id_review, id_product)
             );
         """
+        
+        # TODO #9: complexo - remover rating de PRODUCT e atualizar
+        # v_products_general para calcular a nota média de produto em REVIEW
 
         index_script = """
             CREATE INDEX IF NOT EXISTS idx_productcategory_product ON _PRODUCT_CATEGORY(id_product);
@@ -671,6 +674,15 @@ class DBController:
             print_error(
                 "[Erro BD]", "falha na busca de listas de compras de usuário", e)
 
+    # TODO #12: tranquilo
+    # def format_shopping_lists(self, shopping_lists:list[dict]):
+        """! Formata e retorna listas de compras em uma lista de dicionários.
+        
+        @param shopping_lists  Lista com listas de compras.
+
+        @return Lista de dicionários com informações de lista de compras.
+        """
+
     def get_shopping_list(self, id_list) -> list:
         """! Busca os dados de dada lista de compras.
 
@@ -701,6 +713,12 @@ class DBController:
 
         except sqlite3.Error as e:
             print_error("[Erro BD]", "falha na inserção de lista de compras", e)
+    
+    # TODO #2: tranquilo
+        """! Deleta lista de compras.
+
+        @param  id_list  ID da lista de compras a ser deletada
+        """
     
     def add_product_to_list(self, id_list:int, id_market:int, id_product:int, quantity:int):
         """! Adiciona dado produto a dada lista.
@@ -768,3 +786,56 @@ class DBController:
 
         except sqlite3.Error as e:
             print_error("[Erro BD]", "falha na atualização de produto na lista de compras", e)
+
+    # TODO #3: médio
+    # def create_product(self, name:str, id_market:int, price:int):
+        """! Cadastra produto no BD.
+
+        Se o produto já existir mas em outro mercado, apenas cria registro na
+        tabela de relacionamento entre produto e mercado.
+
+        @param  name       Nome do produto a ser cadastrado.
+        @param  id_market  ID do mercado que oferece o produto.
+        @param  price      Preço oferecido pelo produto (em centavos),
+        """
+
+    # TODO #4: tranquilin
+    # def create_review(self, id_product:int, rating:int, comment:str):
+        """! Registra avaliação de produto.
+
+        @param  id_product  ID do produto.
+        @param  rating      Nota para o produto.
+        @param  comment     Comentário sobre o produto.
+        """
+
+    # TODO #5: complexo (vai precisar de um SELECT com 2 JOINs)
+    # (talvez possa ser quebrado em 2 funções, uma de informações principais e 
+    # outra de avaliaões)                
+    # def get_product(self, id_product:int):
+        """! Busca o produto no BD e retorna todas suas informações.
+
+        Reúne informações de ID, nome do produto, seus preços em cada mercado, a
+        média de suas notas e todas suas avaliações.
+
+        @param  id_product  ID do produto.
+
+        @return Informações do produto.
+        """
+
+    # TODO #10: médio
+    # def format_product_data(self, data:list):
+        """! Formata informações de produto em um dicionário.
+
+        @param  data  Lista com todas as informações de produto.
+
+        @return Dicionário com informações de produto.
+        """
+
+    # TODO #11: tranquilo (baixa prioridade, talvez n necessário)
+    # def create_market(self, name:str, latitude:int, longitude:int):
+        """! Cria novo mercado.
+        
+        @param  name       Nome do novo mercado
+        @param  latitude
+        @param  longitude
+        """

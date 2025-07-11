@@ -18,4 +18,10 @@ def register_account(data):
     
     socketio.emit("register-success")
 
+
+# TODO #1: recebe evento de login, valida a conta no BD e envia p cliente o
+# objeto retornado pelo BD
+# > usar db_controller.get_account()
+
 #@socketio.on("login")
+# def log_user(data)
