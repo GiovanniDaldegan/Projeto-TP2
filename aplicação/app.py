@@ -6,7 +6,7 @@ from flask import Flask, render_template
 from flask_socketio import SocketIO
 
 
-## @var socketio 
+## @var socketio
 #    Objeto do servidor Flask-SocketIO
 socketio = SocketIO()
 
@@ -20,12 +20,12 @@ db_controller = DBController(os.path.dirname(os.path.realpath(__file__)))
 
 
 # listeners
-from modules import product_search
+from modules import i_product_search
 
 
 def create_app():
     """! Cria a aplicação Flask
-    
+
     @return  Instância da aplicação Flask.
     """
 
@@ -41,7 +41,7 @@ def create_app():
     app.config["SECRET_KEY"] = "tp2"
 
     socketio.init_app(app)
-    
+
     # índice da aplicação
     @app.route("/")
     def index():

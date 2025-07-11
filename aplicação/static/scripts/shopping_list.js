@@ -3,6 +3,9 @@ import { socketio } from "./index.js";
 // setup dos listeners de eventos da tela
 export function shoppingListSetupListeners() {}
 
+function getLists() {
+  socketio.emit("get-shopping-lists")
+}
 
 // setup dos eventos do HTML da tela
 export function shoppingListSetupHTML() {
