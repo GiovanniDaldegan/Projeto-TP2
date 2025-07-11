@@ -205,7 +205,7 @@ class DBController:
             );
 
             CREATE TABLE SHOPPING_LIST (
-                id_list  INTEGER  PRIMARY KEY,
+                id_list  INTEGER  PRIMARY KEY AUTOINCREMENT,
                 id_user  INTEGER  NOT NULL,
                 name     TEXT     NOT NULL,
 
@@ -214,12 +214,11 @@ class DBController:
 
             CREATE TABLE _LIST_ITEM (
                 id_list     INTEGER,
-                id_market   INTEGER,
                 id_product  INTEGER,
                 quantity    INTEGER  NOT NULL,
                 taken       BOOLEAN  NOT NULL,
 
-                PRIMARY KEY (id_list, id_product, id_market)
+                PRIMARY KEY (id_list, id_product)
             );
 
             CREATE TABLE PRODUCT_REVIEW (
@@ -260,21 +259,14 @@ class DBController:
 
 
             CREATE VIEW v_shopping_list AS
-            SELECT
-                sl.id_list,
-                COUNT(li.id_product)      AS  n_items,
-                SUM(mp.price * quantity)  AS  total_price,
-                SUM(CASE
-                        WHEN li.taken THEN mp.price * quantity
-                        ELSE 0
-                    END)                  AS  cart_price
-            FROM SHOPPING_LIST sl
-            JOIN _LIST_ITEM li
-                ON sl.id_list = li.id_list
-            JOIN _MARKET_PRODUCT mp
-                ON li.id_product = mp.id_product
-                AND li.id_market = mp.id_market
-            GROUP BY sl.id_list;
+            SELECT 
+				li.id_list,
+				p.name,
+				li.quantity,
+				li.taken,
+				COUNT(*) OVER (PARTITION BY li.id_list) AS num_products
+			FROM _LIST_ITEM li 
+			LEFT JOIN PRODUCT P ON li.id_product = p.id_product;
         """
 
         try:
@@ -432,15 +424,15 @@ class DBController:
                 (1, "bbb")
             """,
             """
-            INSERT INTO _LIST_ITEM (id_list, id_product, id_market, quantity, taken) VALUES
-                (1, 5, 1, 1, FALSE),
-                (1, 2, 1, 3, FALSE),
-                (1, 3, 1, 2, FALSE),
-                (1, 6, 1, 1, TRUE),
-                (2, 3, 1, 1, TRUE),
-                (2, 4, 1, 1, TRUE),
-                (2, 5, 1, 1, FALSE),
-                (2, 6, 1, 1, FALSE)
+            INSERT INTO _LIST_ITEM (id_list, id_product, quantity, taken) VALUES
+                (1, 5, 1, FALSE),
+                (1, 2, 3, FALSE),
+                (1, 3, 2, FALSE),
+                (1, 6, 1, TRUE),
+                (2, 3, 1, TRUE),
+                (2, 4, 1, TRUE),
+                (2, 5, 1, FALSE),
+                (2, 6, 1, FALSE)
             """,
             """
             INSERT INTO PRODUCT_REVIEW (id_product, rating, comment) VALUES
@@ -561,12 +553,12 @@ class DBController:
         try:
             cursor = self.get_cursor()
             cursor.execute(query, params)
-            return self.format_results(cursor.fetchall())
+            return self.format_results_search(cursor.fetchall())
 
         except sqlite3.Error as e:
             print_error("[Erro BD]", "falha na pesquisa de produtos", e)
 
-    def format_results(self, rows):
+    def format_results_search(self, rows):
         """! Organiza os dados brutos em uma estrutura mais útil
 
         @param  rows  Lista de linhas resultantes de consulta.
