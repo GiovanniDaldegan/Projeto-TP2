@@ -457,7 +457,7 @@ class DBController:
             for q in inserts:
                 cursor.execute(q)
 
-            # sobe os inserts para o arquivo .db, se quiser manter apenas em memoria reova
+            # sobe os inserts para o arquivo .db, se quiser manter apenas em memoria remova
             self.connection.commit()
             self.populated = True
 
@@ -672,11 +672,12 @@ class DBController:
                 f"SELECT name FROM SHOPPING_LIST WHERE id_user={user_id}")
             
             list_names = cursor.fetchall()
-
+            return list_names
+            '''
             if len(list_names) == 0:
                 return
             return [i[0] for i in list_names]
-
+            '''
         except sqlite3.Error as e:
             print_error(
                 "[Erro BD]", "falha na busca de listas de compras de usuário", e)
@@ -703,7 +704,7 @@ class DBController:
             cursor = self.get_cursor()
             cursor.execute(
                 f"SELECT * FROM v_shopping_list WHERE id_list={id_list}")
-            return cursor.fetchone()
+            return cursor.fetchall()
 
         except sqlite3.Error as e:
             print_error("[Erro BD]", "falha na busca de lista de compras", e)
@@ -727,7 +728,7 @@ class DBController:
         @param  id_list  ID da lista de compras a ser deletada
         """
     
-    def add_product_to_list(self, id_list:int, id_market:int, id_product:int, quantity:int):
+    def add_product_to_list(self, id_list:int, id_product:int, quantity:int):
         """! Adiciona dado produto a dada lista.
 
         @param  id_list     ID da lista.
@@ -743,13 +744,13 @@ class DBController:
             cursor = self.get_cursor()
             cursor.execute(f"""
                 INSERT INTO _LIST_ITEM VALUES
-                ({id_list}, {id_market}, {id_product}, {quantity}, FALSE)
+                ({id_list}, {id_product}, {quantity}, FALSE)
                 """)
 
         except sqlite3.Error as e:
             print_error("[Erro BD]", "falha na inserção de produto na lista de compras", e)
 
-    def remove_product_from_list(self, id_list:int, id_market:int, id_product:int):
+    def remove_product_from_list(self, id_list:int, id_product:int):
         """! Remove produto de lista de compras.
 
         @param  id_list     ID da lista de compras.
@@ -762,14 +763,13 @@ class DBController:
             cursor.execute(f"""
                 DELETE FROM _LIST_ITEM
                 WHERE id_list={id_list}
-                    AND id_market={id_market}
                     AND id_product={id_product}
                 """)
 
         except sqlite3.Error as e:
             print_error("[Erro BD]", "falha na inserção de produto na lista de compras", e)
 
-    def set_product_taken(self, id_list:int, id_market:int, id_product:int, taken:bool):
+    def set_product_taken(self, id_list:int, id_product:int, taken:bool):
         """! Define o status do produto de lista como "pego".
 
         @param id_list     ID da lista.
@@ -787,7 +787,6 @@ class DBController:
                 UPDATE _LIST_ITEM
                 SET taken={taken}
                 WHERE id_list={id_list}
-                    AND id_market={id_market}
                     AND id_product={id_product}
                 """)
 
