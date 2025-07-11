@@ -225,7 +225,7 @@ class DBController:
             CREATE TABLE PRODUCT_REVIEW (
                 id_review   INTEGER,
                 id_product  INTEGER,
-                rating      INTEGER,
+                rating      REAL,
                 comment     TEXT,
 
                 PRIMARY KEY ("id_review" AUTOINCREMENT),
@@ -443,6 +443,22 @@ class DBController:
                 (2, 4, 1, 1, TRUE),
                 (2, 5, 1, 1, FALSE),
                 (2, 6, 1, 1, FALSE)
+            """,
+            """
+            INSERT INTO PRODUCT_REVIEW (id_product, rating, comment) VALUES
+                (1, 3, 'aaaa'),
+                (1, 2, 'aaaa'),
+                (1, 5, 'aaaa'),
+                (1, 4, 'aaaa'),
+                (1, 2.4, 'aaaa'),
+                (1, 3.3, 'aaaa'),
+                (2, 3, 'aaaa'),
+                (2, 1.5, 'aaaa'),
+                (3, 4.6, 'aaaa'),
+                (3, 5, 'aaaa'),
+                (3, 3, 'aaaa'),
+                (6, 2, 'aaaa'),
+                (6, 0, 'aaaa')
             """
         ]
 
