@@ -221,6 +221,15 @@ class DBController:
 
                 PRIMARY KEY (id_list, id_product, id_market)
             );
+
+            CREATE TABLE PRODUCT_REVIEW (
+                id_review   INTEGER,
+                id_product  INTEGER,
+                rating      INTEGER,
+                comment     TEXT,
+
+                PRIMARY KEY (id_review, id_product)
+            );
         """
 
         index_script = """
