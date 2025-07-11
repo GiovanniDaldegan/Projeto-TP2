@@ -154,6 +154,7 @@ class DBController:
             DROP TABLE IF EXISTS ACCOUNT;
             DROP TABLE IF EXISTS SHOPPING_LIST;
             DROP TABLE IF EXISTS _LIST_ITEM;
+            DROP TABLE IF EXISTS PRODUCT_REVIEW;
 
 
             CREATE TABLE "CATEGORY" (
@@ -173,7 +174,6 @@ class DBController:
             CREATE TABLE "PRODUCT" (
                 "id_product"  INTEGER,
                 "name"        TEXT     NOT NULL,
-                "rating"      INTEGER,
 
                 PRIMARY KEY("id_product" AUTOINCREMENT)
             );
@@ -228,7 +228,8 @@ class DBController:
                 rating      INTEGER,
                 comment     TEXT,
 
-                PRIMARY KEY (id_review, id_product)
+                PRIMARY KEY ("id_review" AUTOINCREMENT),
+                FOREIGN KEY("id_product") REFERENCES "PRODUCT"("id_product")
             );
         """
         
@@ -362,26 +363,26 @@ class DBController:
 
             """
             INSERT INTO "PRODUCT" ("name", "rating") VALUES
-                ('Veja Multiuso 500ml', 4.5),
-                ('Sabão em Pó Omo 1kg', 4.3),
-                ('Arroz Tio João 5kg', 4.7),
-                ('Feijão Carioca 1kg', 4.6),
-                ('Leite Integral Parmalat 1L', 4.4),
-                ('Café Pilão 500g', 4.8),
-                ('Açúcar União 1kg', 4.2),
-                ('Óleo de Soja Liza 900ml', 4.0),
-                ('Macarrão Spaghetti Renata 500g', 4.5),
-                ('Cerveja Heineken 350ml', 4.9),
-                ('Refrigerante Coca-Cola 2L', 4.7),
-                ('Sabonete Dove 90g', 4.6),
-                ('Shampoo Pantene 400ml', 4.5),
-                ('Desinfetante Pinho Sol 1L', 4.3),
-                ('Papel Higiênico Neve 30m', 4.8),
-                ('Salmão Fresco Filé 500g', 4.7),
-                ('Queijo Mussarela Fresco 1kg', 4.6),
-                ('Pão de Forma Integral 500g', 4.3),
-                ('Ração para Cães Adultos 15kg', 4.5),
-                ('Vinho Tinto Chileno 750ml', 4.8);
+                ('Veja Multiuso 500ml'),
+                ('Sabão em Pó Omo 1kg'),
+                ('Arroz Tio João 5kg'),
+                ('Feijão Carioca 1kg'),
+                ('Leite Integral Parmalat 1L'),
+                ('Café Pilão 500g'),
+                ('Açúcar União 1kg'),
+                ('Óleo de Soja Liza 900ml'),
+                ('Macarrão Spaghetti Renata 500g'),
+                ('Cerveja Heineken 350ml'),
+                ('Refrigerante Coca-Cola 2L'),
+                ('Sabonete Dove 90g'),
+                ('Shampoo Pantene 400ml'),
+                ('Desinfetante Pinho Sol 1L'),
+                ('Papel Higiênico Neve 30m'),
+                ('Salmão Fresco Filé 500g'),
+                ('Queijo Mussarela Fresco 1kg'),
+                ('Pão de Forma Integral 500g'),
+                ('Ração para Cães Adultos 15kg'),
+                ('Vinho Tinto Chileno 750ml');
             """,
             """
             INSERT INTO "_PRODUCT_CATEGORY" ("id_product", "category_name") VALUES
