@@ -858,7 +858,7 @@ class DBController:
     # TODO #5: complexo (vai precisar de um SELECT com 2 JOINs)
     # (talvez possa ser quebrado em 2 funções, uma de informações principais e 
     # outra de avaliaões)                
-    def get_product(self, id:int):
+    def get_product(self, id_product:int):
         """! Busca o produto no BD e retorna todas suas informações.
 
         Reúne informações de ID, nome do produto e a média de suas notas.
@@ -871,7 +871,7 @@ class DBController:
             return
         
         query = "SELECT * FROM v_products_general WHERE id_product = ?"
-        params = [id]
+        params = [id_product]
 
         try:
             cursor = self.get_cursor()
@@ -880,7 +880,7 @@ class DBController:
         except sqlite3.Error as e:
             print_error("[Erro BD]", "falha na busca de produto especifico", e)
 
-    def get_product_sellers(self, id):
+    def get_product_sellers(self, id_product):
         """! Lista dos diferentes vendedores de um produto especifico, incluindo suas localizações e preços.
         
         @param id_product ID do produto
@@ -890,7 +890,7 @@ class DBController:
             return
         
         query = "SELECT * FROM v_product_sellers WHERE id_product = ?"
-        params = [id]
+        params = [id_product]
 
         try:
             cursor = self.get_cursor()
@@ -916,6 +916,35 @@ class DBController:
             })
         return formatted
     
+    def get_product_reviews(self, id_product:int):
+        """! Busca os Reviews de um produto.
+
+        @param  id_product  ID do  produto.
+        """
+
+        if not self.is_db_ok():
+            return
+        query = "SELECT * FROM PRODUCT_REVIEW WHERE id_product = ?"
+        params = [id_product]
+
+        try:
+            cursor = self.get_cursor()
+            cursor.execute(query, params)
+            return self.format_product_reviews(cursor.fetchall())
+        
+        except sqlite3.Error as e:
+            print_error("[Erro BD]", "falha na busca reviews de produto", e)
+
+    def format_product_reviews(self, rows):
+        """ Organiza os dados brutos em uma estrutura mais útil"""
+        formatted = []
+        for row in rows:
+            formatted.append({
+                "id_review": row[0],
+                "rating": row[2],
+                "comment": row[3]
+            })
+        return formatted
     # TODO #10: médio
     # def format_product_data(self, data:list):
         """! Formata informações de produto em um dicionário.
