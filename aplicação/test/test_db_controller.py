@@ -43,7 +43,34 @@ def test_database():
     resultados = db.search_products(filters=filtros, limit = 5)
     print("Resultados da busca por ---:", resultados)
 
-    # 5. Fechamento
+
+    #5. Teste cria lista
+    db.create_shopping_list("lista qualquer", 1)
+
+    #6. Teste consulta listas
+    print("\n======================\nListas apos criação:\n")
+    print(db.get_all_shopping_lists(1))
+    #7. Teste adicionar produto em lista
+    db.add_product_to_list(3, 3, 3)
+    db.add_product_to_list(3, 6, 1)
+    db.add_product_to_list(3, 4, 10)
+    #8. Teste consulta lista especifica
+    print("\n======================\nLista apos adds:\n")
+    print(db.get_shopping_list(3))
+
+    #9. Teste set_taken
+    db.set_product_taken(3, 3, 'TRUE')
+    print("\n======================\nLista apos set_taken:\n")
+    print(db.get_shopping_list(3))
+
+
+    #10. Teste remove da lista
+    db.remove_product_from_list(3, 3)
+    print("\n======================\nLista apos remove:\n")
+    print(db.get_shopping_list(3))
+
+
+    # 11. Fechamento
     db.close()
 
     # Verificação final
