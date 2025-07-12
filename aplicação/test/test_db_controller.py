@@ -69,6 +69,17 @@ def test_database():
     print("\n======================\nLista apos remove:\n")
     print(db.get_shopping_list(3))
 
+    #11. Teste get_product_sellers
+    print("\n======================\nVendedores do produto 2:\n")
+    print(db.get_product_sellers(2))
+
+    #12. Teste get_product
+    print("\n======================\nVProduto 2:\n")
+    print(db.get_product(2))
+
+    #12. Teste get_product_reviews
+    print("\n======================\nVReviews Produto 2:\n")
+    print(db.get_product_reviews(2))
 
     # 11. Fechamento
     db.close()

@@ -240,6 +240,7 @@ class DBController:
         view_script = """
             DROP VIEW IF EXISTS v_products_general;
             DROP VIEW IF EXISTS v_shopping_list;
+            DROP VIEW IF EXISTS v_product_sellers;
 
 
             CREATE VIEW v_products_general AS
@@ -267,6 +268,20 @@ class DBController:
 				li.taken
 			FROM _LIST_ITEM li 
 			LEFT JOIN PRODUCT P ON li.id_product = p.id_product;
+
+            CREATE VIEW IF NOT EXISTS v_product_sellers AS
+            SELECT 
+				p.id_product,
+                m.id_market,
+                m.name AS market_name,
+                mp.price,
+                m.rating AS market_rating,
+                m.latitude,
+                m.longitude
+            FROM PRODUCT p
+            LEFT JOIN _MARKET_PRODUCT mp ON p.id_product = mp.id_product
+            LEFT JOIN MARKET m ON mp.id_market = m.id_market
+            GROUP BY p.id_product, m.id_market;
         """
 
         try:
@@ -553,12 +568,12 @@ class DBController:
         try:
             cursor = self.get_cursor()
             cursor.execute(query, params)
-            return self.format_results_search(cursor.fetchall())
+            return self.format_product_search(cursor.fetchall())
 
         except sqlite3.Error as e:
             print_error("[Erro BD]", "falha na pesquisa de produtos", e)
 
-    def format_results_search(self, rows):
+    def format_product_search(self, rows):
         """! Organiza os dados brutos em uma estrutura mais útil
 
         @param  rows  Lista de linhas resultantes de consulta.
@@ -685,14 +700,6 @@ class DBController:
             print_error(
                 "[Erro BD]", "falha na busca de listas de compras de usuário", e)
 
-    # TODO #12: tranquilo
-    # def format_shopping_lists(self, shopping_lists:list[dict]):
-        """! Formata e retorna listas de compras em uma lista de dicionários.
-        
-        @param shopping_lists  Lista com listas de compras.
-
-        @return Lista de dicionários com informações de lista de compras.
-        """
 
     def get_shopping_list(self, id_list) -> list:
         """! Busca os dados de dada lista de compras.
@@ -847,29 +854,95 @@ class DBController:
         @param  rating      Nota para o produto.
         @param  comment     Comentário sobre o produto.
         """
-
-    # TODO #5: complexo (vai precisar de um SELECT com 2 JOINs)
-    # (talvez possa ser quebrado em 2 funções, uma de informações principais e 
-    # outra de avaliaões)                
-    # def get_product(self, id_product:int):
+              
+    def get_product(self, id_product:int):
         """! Busca o produto no BD e retorna todas suas informações.
 
-        Reúne informações de ID, nome do produto, seus preços em cada mercado, a
-        média de suas notas e todas suas avaliações.
+        Reúne informações de ID, nome do produto e a média de suas notas.
 
         @param  id_product  ID do produto.
 
         @return Informações do produto.
         """
+        if not self.is_db_ok():
+            return
+        
+        query = "SELECT * FROM v_products_general WHERE id_product = ?"
+        params = [id_product]
 
-    # TODO #10: médio
-    # def format_product_data(self, data:list):
-        """! Formata informações de produto em um dicionário.
+        try:
+            cursor = self.get_cursor()
+            cursor.execute(query, params)
+            return self.format_product_search(cursor.fetchall())
+        except sqlite3.Error as e:
+            print_error("[Erro BD]", "falha na busca de produto especifico", e)
 
-        @param  data  Lista com todas as informações de produto.
-
-        @return Dicionário com informações de produto.
+    def get_product_sellers(self, id_product):
+        """! Lista dos diferentes vendedores de um produto especifico, incluindo suas localizações e preços.
+        
+        @param id_product ID do produto
         """
+
+        if not self.is_db_ok():
+            return
+        
+        query = "SELECT * FROM v_product_sellers WHERE id_product = ?"
+        params = [id_product]
+
+        try:
+            cursor = self.get_cursor()
+            cursor.execute(query, params)
+            return self.format_product_sellers(cursor.fetchall())
+        
+        except sqlite3.Error as e:
+            print_error("[Erro BD]", "falha na busca vendedores de produto", e)
+
+
+    def format_product_sellers(self, rows):
+        """ Organiza os dados brutos em uma estrutura mais útil"""
+        formatted = []
+        for row in rows:
+            formatted.append({
+                "id_product": row[0],
+                "id_market": row[1],
+                "market_name": row[2],
+                "price": row[3],
+                "market_rating": row[4],
+                "latitude": row[5],
+                "longitude": row[6]
+            })
+        return formatted
+    
+    def get_product_reviews(self, id_product:int):
+        """! Busca os Reviews de um produto.
+
+        @param  id_product  ID do  produto.
+        """
+
+        if not self.is_db_ok():
+            return
+        query = "SELECT * FROM PRODUCT_REVIEW WHERE id_product = ?"
+        params = [id_product]
+
+        try:
+            cursor = self.get_cursor()
+            cursor.execute(query, params)
+            return self.format_product_reviews(cursor.fetchall())
+        
+        except sqlite3.Error as e:
+            print_error("[Erro BD]", "falha na busca reviews de produto", e)
+
+    def format_product_reviews(self, rows):
+        """ Organiza os dados brutos em uma estrutura mais útil"""
+        formatted = []
+        for row in rows:
+            formatted.append({
+                "id_review": row[0],
+                "rating": row[2],
+                "comment": row[3]
+            })
+        return formatted
+
 
     # TODO #11: tranquilo (baixa prioridade, talvez n necessário)
     # def create_market(self, name:str, latitude:int, longitude:int):
