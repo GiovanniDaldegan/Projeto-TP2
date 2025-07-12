@@ -29,4 +29,5 @@ def send_categories():
 
     @sa db_controller.DBController.get_categories()
     """
+
     socketio.emit("categories", db_controller.get_categories())

@@ -700,7 +700,6 @@ class DBController:
             print_error(
                 "[Erro BD]", "falha na busca de listas de compras de usuário", e)
 
-
     def get_shopping_list(self, id_list) -> list:
         """! Busca os dados de dada lista de compras.
 
@@ -754,11 +753,12 @@ class DBController:
             #self.connection.rollback() #Em caso de erro retorna para estado anterior o arquivo
 
     # TODO #2: tranquilo
+    # def delete_product_list(self, id_list:int)
         """! Deleta lista de compras.
 
         @param  id_list  ID da lista de compras a ser deletada
         """
-    
+
     def add_product_to_list(self, id_list:int, id_product:int, quantity:int):
         """! Adiciona dado produto a dada lista.
 
@@ -847,14 +847,14 @@ class DBController:
         """
 
     # TODO #4: tranquilin
-    # def create_review(self, id_product:int, rating:int, comment:str):
+    # def add_product_review(self, id_product:int, rating:int, comment:str):
         """! Registra avaliação de produto.
 
         @param  id_product  ID do produto.
         @param  rating      Nota para o produto.
         @param  comment     Comentário sobre o produto.
         """
-              
+
     def get_product(self, id_product:int):
         """! Busca o produto no BD e retorna todas suas informações.
 
@@ -866,7 +866,7 @@ class DBController:
         """
         if not self.is_db_ok():
             return
-        
+
         query = "SELECT * FROM v_products_general WHERE id_product = ?"
         params = [id_product]
 

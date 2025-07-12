@@ -2,12 +2,43 @@ import { socketio, user } from "./index.js";
 
 // Emissores de eventos ao servidor
 
-function getLists() {
+function getAllLists() {
   socketio.emit("get-all-shopping-lists")
 }
 
 function createList(listName, userId) {
   socketio.emit("create-shopping-list", {"user_id": userId, "list_name": listName});
+}
+
+function deleteList(listId) {
+  socketio.emti("delete-list", listId);
+}
+
+function getList(listId) {
+  socketio.emit("get-shopping-list", listId);
+}
+
+function addToList(listId, productId, quantity) {
+  socketio.emit("add-to-list", {
+      "id_list": listId,
+      "id_product": productId,
+      "quantity": quantity
+  });
+}
+
+function removeFromList(listId, productId) {
+  socketio.emit("remove-from-list", {
+      "id_list": listId,
+      "id_product": productId
+  });
+}
+
+function setProductTaken(listId, productId, taken) {
+  socketio.emit("set-product-taken", {
+      "id_list": listId,
+      "id_product": productId,
+      "taken": taken
+  })
 }
 
 // TODO #15: médio - adicionar as listas fornecidas ao painel de listas de compras
@@ -170,7 +201,7 @@ export function shoppingListSetupListeners() {
 // setup dos eventos do HTML da tela
 export function shoppingListSetupHTML() {
   // requisição inicial
-  getLists();
+  getAllLists();
 
   setupListPanel();
   setupAddToListModal();
