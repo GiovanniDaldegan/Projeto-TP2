@@ -73,6 +73,10 @@ def test_database():
     print("\n======================\nVendedores do produto 2:\n")
     print(db.get_product_sellers(2))
 
+    #12. Teste get_product
+    print("\n======================\nVProduto 2:\n")
+    print(db.get_product(2))
+
     # 11. Fechamento
     db.close()
 
