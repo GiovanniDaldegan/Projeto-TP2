@@ -65,6 +65,15 @@ function feedShoppingLists(shoppingLists) {
       const listItem = document.createElement("article");
       listItem.classList.add("item-shopping-list");
 
+      const listBtn = document.createElement("button");
+      listBtn.classList.add("open-list");
+      listBtn.id = list["id"]; 
+      listBtn.textContent = list["name"];
+
+      listBtn.addEventListener("click", () => {
+        getList(list["id"]);
+      });
+
       const deleteBtn = document.createElement("button");
       deleteBtn.classList.add("delete-list");
       deleteBtn.id = list["id"];
@@ -74,12 +83,10 @@ function feedShoppingLists(shoppingLists) {
         deleteList(user["userId"], list["id"]);
       });
   
-      listItem.innerHTML = `
-        <span class="list-name">${list["name"]}</span>
-      `;
-
+      listItem.appendChild(listBtn);
       listItem.appendChild(deleteBtn);
       listContainer.appendChild(listItem);
+
 
       // Atualiza botões de adicionar a lista
       existingListsContainer.innerHTML = "";

@@ -44,10 +44,10 @@ def send_product_list(id_list):
 
     @param  id_list  ID da lista requerida.
 
-    @sa db_controller.DBController.get_product_list()
+    @sa db_controller.DBController.get_shopping_list()
     """
 
-    shopping_list = db_controller.get_product_list(id_list)
+    shopping_list = db_controller.get_shopping_list(id_list)
 
     socketio.emit("shopping-list", shopping_list)
 
