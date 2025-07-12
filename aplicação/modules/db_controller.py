@@ -595,10 +595,13 @@ class DBController:
                 INSERT INTO ACCOUNT ('acc_type', 'username', 'password')
                 VALUES ('{acc_type}', '{username}', '{password}')""")
 
+            #self.connection.commit() #Sobe mudanças para o arquivo
+            # comentado para os testes se manterem em memoria apenas
             return True
 
         except sqlite3.Error as e:
             print(f"[Erro BD]: falha ao criar conta.\n{e}")
+            #self.connection.rollback() #Em caso de erro retorna para estado anterior o arquivo
 
 
     def account_exists(self, username):
@@ -719,9 +722,12 @@ class DBController:
             cursor = self.get_cursor()
             cursor.execute(f"""INSERT INTO SHOPPING_LIST (id_user, name) VALUES ({user_id}, '{name}')""")
 
+            #self.connection.commit() #Sobe mudanças para o arquivo
+            # comentado para os testes se manterem em memoria apenas
         except sqlite3.Error as e:
             print_error("[Erro BD]", "falha na inserção de lista de compras", e)
-    
+            #self.connection.rollback() #Em caso de erro retorna para estado anterior o arquivo
+
     # TODO #2: tranquilo
         """! Deleta lista de compras.
 
@@ -746,9 +752,13 @@ class DBController:
                 INSERT INTO _LIST_ITEM VALUES
                 ({id_list}, {id_product}, {quantity}, FALSE)
                 """)
+            
+            #self.connection.commit() #Sobe mudanças para o arquivo
+            # comentado para os testes se manterem em memoria apenas
 
         except sqlite3.Error as e:
             print_error("[Erro BD]", "falha na inserção de produto na lista de compras", e)
+            #self.connection.rollback() #Em caso de erro retorna para estado anterior o arquivo
 
     def remove_product_from_list(self, id_list:int, id_product:int):
         """! Remove produto de lista de compras.
@@ -765,9 +775,12 @@ class DBController:
                 WHERE id_list={id_list}
                     AND id_product={id_product}
                 """)
-
+            
+            #self.connection.commit() #Sobe mudanças para o arquivo
+            # comentado para os testes se manterem em memoria apenas
         except sqlite3.Error as e:
             print_error("[Erro BD]", "falha na inserção de produto na lista de compras", e)
+            #self.connection.rollback() #Em caso de erro retorna para estado anterior o arquivo
 
     def set_product_taken(self, id_list:int, id_product:int, taken:bool):
         """! Define o status do produto de lista como "pego".
@@ -790,9 +803,12 @@ class DBController:
                     AND id_product={id_product}
                 """)
 
+            #self.connection.commit() #Sobe mudanças para o arquivo
+            # comentado para os testes se manterem em memoria apenas
         except sqlite3.Error as e:
             print_error("[Erro BD]", "falha na atualização de produto na lista de compras", e)
-
+            #self.connection.rollback() #Em caso de erro retorna para estado anterior o arquivo
+            
     # TODO #3: médio
     # def create_product(self, name:str, id_market:int, price:int):
         """! Cadastra produto no BD.
