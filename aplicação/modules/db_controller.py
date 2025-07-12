@@ -568,12 +568,12 @@ class DBController:
         try:
             cursor = self.get_cursor()
             cursor.execute(query, params)
-            return self.format_results_search(cursor.fetchall())
+            return self.format_product_search(cursor.fetchall())
 
         except sqlite3.Error as e:
             print_error("[Erro BD]", "falha na pesquisa de produtos", e)
 
-    def format_results_search(self, rows):
+    def format_product_search(self, rows):
         """! Organiza os dados brutos em uma estrutura mais útil
 
         @param  rows  Lista de linhas resultantes de consulta.
@@ -858,16 +858,28 @@ class DBController:
     # TODO #5: complexo (vai precisar de um SELECT com 2 JOINs)
     # (talvez possa ser quebrado em 2 funções, uma de informações principais e 
     # outra de avaliaões)                
-    # def get_product(self, id_product:int):
+    def get_product(self, id:int):
         """! Busca o produto no BD e retorna todas suas informações.
 
-        Reúne informações de ID, nome do produto, seus preços em cada mercado, a
-        média de suas notas e todas suas avaliações.
+        Reúne informações de ID, nome do produto e a média de suas notas.
 
         @param  id_product  ID do produto.
 
         @return Informações do produto.
         """
+        if not self.is_db_ok():
+            return
+        
+        query = "SELECT * FROM v_products_general WHERE id_product = ?"
+        params = [id]
+
+        try:
+            cursor = self.get_cursor()
+            cursor.execute(query, params)
+            return self.format_product_search(cursor.fetchall())
+        except sqlite3.Error as e:
+            print_error("[Erro BD]", "falha na busca de produto especifico", e)
+
     def get_product_sellers(self, id):
         """! Lista dos diferentes vendedores de um produto especifico, incluindo suas localizações e preços.
         
@@ -903,7 +915,7 @@ class DBController:
                 "longitude": row[6]
             })
         return formatted
-
+    
     # TODO #10: médio
     # def format_product_data(self, data:list):
         """! Formata informações de produto em um dicionário.
