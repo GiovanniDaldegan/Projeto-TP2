@@ -1,42 +1,61 @@
-import { socketio } from "./index.js";
+import { socketio, user } from "./index.js";
 
-// setup dos listeners de eventos da tela
-export function shoppingListSetupListeners() {}
+// Emissores de eventos ao servidor
 
 function getLists() {
-  socketio.emit("get-shopping-lists")
+  socketio.emit("get-all-shopping-lists")
 }
 
-// setup dos eventos do HTML da tela
-export function shoppingListSetupHTML() {
-  setupListPanel();
-  setupAddToListModal();
+function createList(listName, userId) {
+  socketio.emit("create-shopping-list", {"user_id": userId, "list_name": listName});
 }
 
-// Listas de Teste
-const listasExistentes = [
-  "Lista do Mercado",
-  "Lista de Produtos de Limpeza",
-  "Lista de Compras Rápidas"
-];
+// TODO #15: médio - adicionar as listas fornecidas ao painel de listas de compras
+// (melhorar o html de listItem)
+function feedShoppingLists(shoppingLists) {
+  const listContainer = document.getElementById("shopping-list-items");
+  const existingListsContainer = document.getElementById("existing-lists");
+
+  if (shoppingLists.length == 0) {
+    listContainer.innerHTML = "Você não possui listas.";
+    existingListsContainer.innerHTML = "Você não possui listas."
+  }
+  else {
+    listContainer.innerHTML = "";
+
+    shoppingLists.forEach(list => {
+      // Atualiza listas do painel de listas de compras
+      const listItem = document.createElement("article");
+      listItem.classList.add("item-shopping-list");
+  
+      listItem.innerHTML = `
+        <h3 class="list-name">${list["name"]}</h3>
+        <span class="list-size">${list["size"]} itens</span>
+      `;
+  
+      console.log(listItem);
+      listContainer.appendChild(listItem);
+
+      // Atualiza botões de adicionar a lista
+      existingListsContainer.innerHTML = "";
+
+      shoppingLists.forEach((lista) => {
+        const btn = document.createElement("button");
+        btn.textContent = lista["name"];
+        btn.addEventListener("click", () => {
+          alert(`Produto adicionado à lista "${lista["name"]}"`);
+          closeAddToListModal();
+        });
+        existingListsContainer.appendChild(btn);
+      });
+    });
+  }
+}
 
 
 // Abre o modal "Adicionar à Lista"
-export function openAddToListModal() {
+export function openAddToListModal(shoppingLists) {
   const modal = document.getElementById("modal-add-to-list");
-  const existingListsContainer = document.getElementById("existing-lists");
-
-  existingListsContainer.innerHTML = "";
-
-  listasExistentes.forEach((nomeLista) => {
-    const btn = document.createElement("button");
-    btn.textContent = nomeLista;
-    btn.addEventListener("click", () => {
-      alert(`Produto adicionado à lista "${nomeLista}"`);
-      closeAddToListModal();
-    });
-    existingListsContainer.appendChild(btn);
-  });
 
   modal.classList.remove("hidden");
   document.body.classList.add("list-open"); // ativa o overlay + bloqueia scroll
@@ -50,7 +69,7 @@ function closeAddToListModal() {
 }
 
 // Setup do Modal 
-export function setupAddToListModal() {
+function setupAddToListModal() {
   const modalAdd = document.getElementById("modal-add-to-list");
   const modalNew = document.getElementById("modal-new-list");
 
@@ -94,7 +113,7 @@ export function setupAddToListModal() {
 }
 
 // Setup do Painel de Listas
-export function setupListPanel() {
+function setupListPanel() {
   const btnMinhasListas = document.getElementById("btn-minhas-listas");
   const listPanel = document.getElementById("list-panel");
   const closeListPanelBtn = document.getElementById("close-list-panel");
@@ -137,6 +156,22 @@ export function setupListPanel() {
     e.preventDefault();
     modalNewList.style.display = "none";
     document.body.classList.remove("list-open");
-    createList(listName.value);
+    createList(user["user_id"], listName.value);
   });
+}
+
+// setup dos listeners de eventos da tela
+export function shoppingListSetupListeners() {
+  socketio.on("all-shopping-lists", (lists) => {
+    feedShoppingLists(lists);
+  });
+}
+
+// setup dos eventos do HTML da tela
+export function shoppingListSetupHTML() {
+  // requisição inicial
+  getLists();
+
+  setupListPanel();
+  setupAddToListModal();
 }

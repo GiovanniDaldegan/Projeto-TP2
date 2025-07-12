@@ -1,6 +1,7 @@
 import { socketio } from "./index.js";
 import { openAddToListModal} from "./shopping_list.js";
-// Funções emissoras de requisição
+
+// Emissores de eventos ao servidor
 
 function requestProductList(params) {
   socketio.emit("get-product-list", params);
@@ -10,8 +11,6 @@ function requestCategories() {
     socketio.emit("get-categories");
 }
 
-
-// Funções próprias do módulo
 
 // Função para criar os cards dos produtos
 function createProductCard(product) {
@@ -101,8 +100,7 @@ export function productSearchSetupListeners() {
   // Faz requisição inicial da lista de produtos
   requestProductList(getSearchParams());
 
-  // inserção das categorias fornecidos pelo servidor no select de filtros de
-  // pesquisa por categoria
+  // inserção de categorias no select de categoria
   socketio.on("categories", (categories) => {
     const categorySelect = document.getElementById("category-filters");
     var categoriesHTML = "<option value=\"todos\" selected>Todos</option>";

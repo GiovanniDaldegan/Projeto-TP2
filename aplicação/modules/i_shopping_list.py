@@ -5,11 +5,11 @@
 from __main__ import socketio, db_controller
 
 
-@socketio.on("shopping-lists")
-def send_shopping_lists(user_id):
-    lists = db_controller.get_shopping_lists(user_id)
+@socketio.on("get-all-shopping-lists")
+def send_shopping_lists():#user_id):
+    #lists = db_controller.get_shopping_lists(user_id)
 
-    socketio.emit("shopping-lists", lists)
+    socketio.emit("all-shopping-lists", [])
 
 
 @socketio.on("get-shopping-list")

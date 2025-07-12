@@ -20,7 +20,7 @@ db_controller = DBController(os.path.dirname(os.path.realpath(__file__)))
 
 
 # listeners
-from modules import i_product_search
+from modules import i_product_search, i_shopping_list, i_account, i_product
 
 
 def create_app():

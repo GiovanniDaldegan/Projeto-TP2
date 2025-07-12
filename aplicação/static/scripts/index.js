@@ -1,7 +1,6 @@
 import { productSearchSetupHTML, productSearchSetupListeners} from "./product_search.js";
-import { shoppingListSetupHTML, shoppingListSetupListeners, setupListPanel } from "./shopping_list.js";
-import { registerSetupHTML, registerSetupListeners } from "./register.js";
-import { loginSetupHTML, loginSetupListeners} from "./login.js";
+import { shoppingListSetupHTML, shoppingListSetupListeners } from "./shopping_list.js";
+import { accountSetupHTML, accountSetupListeners } from "./account.js";
 
 export var socketio = io();
 
@@ -17,21 +16,15 @@ function setupShoppingList() {
   shoppingListSetupListeners();
 }
 
-function setupRegister() {
-  registerSetupHTML();
-  registerSetupListeners();
-}
-
-function setupLogin() {
-  loginSetupHTML();
-  loginSetupListeners();
+function setupAccount() {
+  accountSetupHTML();
+  accountSetupListeners();
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-
-  // TODO: eventos de ativação chamam as funções de inicialização de outras telas
   setupProductSearch();
   setupShoppingList();
+  //setupAccount();
 });
 
 

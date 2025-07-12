@@ -25,3 +25,4 @@ def register_account(data):
 
 #@socketio.on("login")
 # def log_user(data)
+#    socketio.emit("logged")
