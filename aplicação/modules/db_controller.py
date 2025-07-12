@@ -854,10 +854,7 @@ class DBController:
         @param  rating      Nota para o produto.
         @param  comment     Comentário sobre o produto.
         """
-
-    # TODO #5: complexo (vai precisar de um SELECT com 2 JOINs)
-    # (talvez possa ser quebrado em 2 funções, uma de informações principais e 
-    # outra de avaliaões)                
+              
     def get_product(self, id_product:int):
         """! Busca o produto no BD e retorna todas suas informações.
 
@@ -945,14 +942,7 @@ class DBController:
                 "comment": row[3]
             })
         return formatted
-    # TODO #10: médio
-    # def format_product_data(self, data:list):
-        """! Formata informações de produto em um dicionário.
 
-        @param  data  Lista com todas as informações de produto.
-
-        @return Dicionário com informações de produto.
-        """
 
     # TODO #11: tranquilo (baixa prioridade, talvez n necessário)
     # def create_market(self, name:str, latitude:int, longitude:int):
