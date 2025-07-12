@@ -700,14 +700,6 @@ class DBController:
             print_error(
                 "[Erro BD]", "falha na busca de listas de compras de usuário", e)
 
-    # TODO #12: tranquilo
-    # def format_shopping_lists(self, shopping_lists:list[dict]):
-        """! Formata e retorna listas de compras em uma lista de dicionários.
-        
-        @param shopping_lists  Lista com listas de compras.
-
-        @return Lista de dicionários com informações de lista de compras.
-        """
 
     def get_shopping_list(self, id_list) -> list:
         """! Busca os dados de dada lista de compras.
@@ -876,6 +868,41 @@ class DBController:
 
         @return Informações do produto.
         """
+    def get_product_sellers(self, id):
+        """! Lista dos diferentes vendedores de um produto especifico, incluindo suas localizações e preços.
+        
+        @param id_product ID do produto
+        """
+
+        if not self.is_db_ok():
+            return
+        
+        query = "SELECT * FROM v_product_sellers WHERE id_product = ?"
+        params = [id]
+
+        try:
+            cursor = self.get_cursor()
+            cursor.execute(query, params)
+            return self.format_product_sellers(cursor.fetchall())
+        
+        except sqlite3.Error as e:
+            print_error("[Erro BD]", "falha na busca vendedores de produto", e)
+
+
+    def format_product_sellers(self, rows):
+        """ Organiza os dados brutos em uma estrutura mais útil"""
+        formatted = []
+        for row in rows:
+            formatted.append({
+                "id_product": row[0],
+                "id_market": row[1],
+                "market_name": row[2],
+                "price": row[3],
+                "market_rating": row[4],
+                "latitude": row[5],
+                "longitude": row[6]
+            })
+        return formatted
 
     # TODO #10: médio
     # def format_product_data(self, data:list):
