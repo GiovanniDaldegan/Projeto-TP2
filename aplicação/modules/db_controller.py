@@ -240,6 +240,7 @@ class DBController:
         view_script = """
             DROP VIEW IF EXISTS v_products_general;
             DROP VIEW IF EXISTS v_shopping_list;
+            DROP VIEW IF EXISTS v_product_sellers;
 
 
             CREATE VIEW v_products_general AS
@@ -267,6 +268,20 @@ class DBController:
 				li.taken
 			FROM _LIST_ITEM li 
 			LEFT JOIN PRODUCT P ON li.id_product = p.id_product;
+
+            CREATE VIEW IF NOT EXISTS v_product_sellers AS
+            SELECT 
+				p.id_product,
+                m.id_market,
+                m.name AS market_name,
+                mp.price,
+                m.rating AS market_rating,
+                m.latitude,
+                m.longitude
+            FROM PRODUCT p
+            LEFT JOIN _MARKET_PRODUCT mp ON p.id_product = mp.id_product
+            LEFT JOIN MARKET m ON mp.id_market = m.id_market
+            GROUP BY p.id_product, m.id_market;
         """
 
         try:
