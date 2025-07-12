@@ -261,10 +261,10 @@ class DBController:
             CREATE VIEW v_shopping_list AS
             SELECT 
 				li.id_list,
+                p.id_product,
 				p.name,
 				li.quantity,
-				li.taken,
-				COUNT(*) OVER (PARTITION BY li.id_list) AS num_products
+				li.taken
 			FROM _LIST_ITEM li 
 			LEFT JOIN PRODUCT P ON li.id_product = p.id_product;
         """
@@ -675,12 +675,12 @@ class DBController:
                 f"SELECT name FROM SHOPPING_LIST WHERE id_user={user_id}")
             
             list_names = cursor.fetchall()
-            return list_names
-            '''
+            #return list_names
+            
             if len(list_names) == 0:
                 return
             return [i[0] for i in list_names]
-            '''
+            
         except sqlite3.Error as e:
             print_error(
                 "[Erro BD]", "falha na busca de listas de compras de usuário", e)
@@ -707,10 +707,28 @@ class DBController:
             cursor = self.get_cursor()
             cursor.execute(
                 f"SELECT * FROM v_shopping_list WHERE id_list={id_list}")
-            return cursor.fetchall()
+            return self.format_shopping_list(cursor.fetchall())
 
         except sqlite3.Error as e:
             print_error("[Erro BD]", "falha na busca de lista de compras", e)
+
+    def format_shopping_list(self, shopping_list:list[dict]):
+        """! Formata e retorna uma lista de compras em uma lista de dicionários.
+        
+        @param shopping_lists  Lista com infomações da listas de compras.
+
+        @return uma lista de dicionários com informações de lista de compras.
+        """
+        formatted = []
+        for item in shopping_list:
+            formatted.append({
+                "product_id" : item[1],
+                "product_name" : item[2],
+                "quantity" : item[3],
+                "taken" : item[4] 
+                })
+        #o tamanho da lista é a quantidade de produtos diferentes nela
+        return formatted
 
     def create_shopping_list(self, name:str, user_id:int):
         """! Registra uma nova lista de compras de um usuário."""
