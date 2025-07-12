@@ -4,38 +4,39 @@
 
 from __main__ import socketio, db_controller
 
-def send_all_lists(user_id:int):
-    lists = db_controller.get_all_shopping_lists(user_id)
-
-    socketio.emit("all-shopping-lists", lists)
+def send_all_lists(id_user:int):
+    lists = db_controller.get_all_shopping_lists(id_user)
     print(lists)
+    socketio.emit("all-shopping-lists", lists)
 
 @socketio.on("get-all-shopping-lists")
-def send_shopping_lists(user_id):
-    send_all_lists(user_id)
+def send_shopping_lists(id_user):
+    send_all_lists(id_user)
 
 @socketio.on("create-shopping-list")
 def create_list(data):
     """! Responde ao evento "create-list" e cria lista de compras
 
-    @param  data  Dicionário com "name" - nome da lista, "user_id".
+    @param  data  Dicionário com "name" - nome da lista, "id_user".
 
     @sa db_controller.DBController.create_shopping_list()
     """
-    print(data)
-    db_controller.create_shopping_list(data["user_id"], data["name"])
-    send_all_lists(data["user_id"])
+
+    db_controller.create_shopping_list(data["id_user"], data["name"])
+    send_all_lists(data["id_user"])
 
 @socketio.on("delete-list")
-def delete_list(id_list):
+def delete_list(data):
     """! Responde ao evento "delete-list" e deleta lista de compras.
 
-    @param  id_list  ID da lista a ser deletada.
+    @param  data  Dicionário com "id_user" e "id_list".
 
     @sa db_controller.DBController.delete_product_list()
     """
 
-    db_controller.delete_product_list(id_list)
+    db_controller.delete_product_list(data["id_list"])
+    send_all_lists(data["id_user"])
+
 
 @socketio.on("get-shopping-list")
 def send_product_list(id_list):

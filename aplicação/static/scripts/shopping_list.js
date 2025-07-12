@@ -8,13 +8,16 @@ function getAllLists(userId) {
 
 function createList(userId, listName) {
   socketio.emit("create-shopping-list", {
-    "user_id": userId,
+    "id_user": userId,
     "name": listName
   });
 }
 
-function deleteList(listId) {
-  socketio.emti("delete-list", listId);
+function deleteList(userId, listId) {
+  socketio.emit("delete-list", {
+    "id_user": userId,
+    "id_list": listId
+  });
 }
 
 function getList(listId) {
@@ -45,39 +48,47 @@ function setProductTaken(listId, productId, taken) {
 }
 
 // TODO #15: médio - adicionar as listas fornecidas ao painel de listas de compras
-// (melhorar o html de listItem)
+// (melhorar e estilizar o html de listItem)
 function feedShoppingLists(shoppingLists) {
   const listContainer = document.getElementById("shopping-list-items");
   const existingListsContainer = document.getElementById("existing-lists");
 
-  if (shoppingLists.length == 0) {
+  if (!shoppingLists) {
     listContainer.innerHTML = "Você não possui listas.";
     existingListsContainer.innerHTML = "Você não possui listas."
   }
   else {
     listContainer.innerHTML = "";
 
-    shoppingLists.forEach(listName => {
+    shoppingLists.forEach(list => {
       // Atualiza listas do painel de listas de compras
       const listItem = document.createElement("article");
       listItem.classList.add("item-shopping-list");
+
+      const deleteBtn = document.createElement("button");
+      deleteBtn.classList.add("delete-list");
+      deleteBtn.id = list["id"];
+      deleteBtn.textContent = "X";
+
+      deleteBtn.addEventListener("click", () => {
+        deleteList(user["userId"], list["id"]);
+      });
   
       listItem.innerHTML = `
-        <h3 class="list-name">${listName}</h3>
-        <button>X</button>
+        <span class="list-name">${list["name"]}</span>
       `;
-  
-      console.log(listItem);
+
+      listItem.appendChild(deleteBtn);
       listContainer.appendChild(listItem);
 
       // Atualiza botões de adicionar a lista
       existingListsContainer.innerHTML = "";
 
-      shoppingLists.forEach((listName) => {
+      shoppingLists.forEach((list) => {
         const btn = document.createElement("button");
-        btn.textContent = listName;
+        btn.textContent = list["name"];
         btn.addEventListener("click", () => {
-          alert(`Produto adicionado à lista."${listName}"`);
+          alert(`Produto adicionado à lista."${list["name"]}"`);
           closeAddToListModal();
         });
         existingListsContainer.appendChild(btn);
