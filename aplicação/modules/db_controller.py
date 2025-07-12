@@ -736,7 +736,7 @@ class DBController:
         #o tamanho da lista é a quantidade de produtos diferentes nela
         return formatted
 
-    def create_shopping_list(self, name:str, user_id:int):
+    def create_shopping_list(self, user_id:int, name:str):
         """! Registra uma nova lista de compras de um usuário."""
 
         if not self.is_db_ok():

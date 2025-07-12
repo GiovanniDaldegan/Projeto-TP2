@@ -2,12 +2,15 @@ import { socketio, user } from "./index.js";
 
 // Emissores de eventos ao servidor
 
-function getAllLists() {
-  socketio.emit("get-all-shopping-lists")
+function getAllLists(userId) {
+  socketio.emit("get-all-shopping-lists", userId)
 }
 
-function createList(listName, userId) {
-  socketio.emit("create-shopping-list", {"user_id": userId, "list_name": listName});
+function createList(userId, listName) {
+  socketio.emit("create-shopping-list", {
+    "user_id": userId,
+    "name": listName
+  });
 }
 
 function deleteList(listId) {
@@ -54,14 +57,14 @@ function feedShoppingLists(shoppingLists) {
   else {
     listContainer.innerHTML = "";
 
-    shoppingLists.forEach(list => {
+    shoppingLists.forEach(listName => {
       // Atualiza listas do painel de listas de compras
       const listItem = document.createElement("article");
       listItem.classList.add("item-shopping-list");
   
       listItem.innerHTML = `
-        <h3 class="list-name">${list["name"]}</h3>
-        <span class="list-size">${list["size"]} itens</span>
+        <h3 class="list-name">${listName}</h3>
+        <button>X</button>
       `;
   
       console.log(listItem);
@@ -70,11 +73,11 @@ function feedShoppingLists(shoppingLists) {
       // Atualiza botões de adicionar a lista
       existingListsContainer.innerHTML = "";
 
-      shoppingLists.forEach((lista) => {
+      shoppingLists.forEach((listName) => {
         const btn = document.createElement("button");
-        btn.textContent = lista["name"];
+        btn.textContent = listName;
         btn.addEventListener("click", () => {
-          alert(`Produto adicionado à lista "${lista["name"]}"`);
+          alert(`Produto adicionado à lista."${listName}"`);
           closeAddToListModal();
         });
         existingListsContainer.appendChild(btn);
@@ -187,7 +190,7 @@ function setupListPanel() {
     e.preventDefault();
     modalNewList.style.display = "none";
     document.body.classList.remove("list-open");
-    createList(user["user_id"], listName.value);
+    createList(user["userId"], listName.value);
   });
 }
 
@@ -201,7 +204,7 @@ export function shoppingListSetupListeners() {
 // setup dos eventos do HTML da tela
 export function shoppingListSetupHTML() {
   // requisição inicial
-  getAllLists();
+  getAllLists(user["userId"]);
 
   setupListPanel();
   setupAddToListModal();
