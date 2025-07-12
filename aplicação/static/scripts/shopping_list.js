@@ -47,11 +47,15 @@ function setProductTaken(listId, productId, taken) {
   })
 }
 
+
 // TODO #15: médio - adicionar as listas fornecidas ao painel de listas de compras
 // (melhorar e estilizar o html de listItem)
-function feedShoppingLists(shoppingLists) {
+function renderAllShoppingLists(shoppingLists) {
+  const panelTitle = document.getElementById("list-panel-title");
   const listContainer = document.getElementById("shopping-list-items");
   const existingListsContainer = document.getElementById("existing-lists");
+
+  panelTitle.innerHTML = "Listas de Compras";
 
   if (!shoppingLists) {
     listContainer.innerHTML = "Você não possui listas.";
@@ -72,6 +76,7 @@ function feedShoppingLists(shoppingLists) {
 
       listBtn.addEventListener("click", () => {
         getList(list["id"]);
+        renderShoppingListName(list["name"]);
       });
 
       const deleteBtn = document.createElement("button");
@@ -94,6 +99,8 @@ function feedShoppingLists(shoppingLists) {
       shoppingLists.forEach((list) => {
         const btn = document.createElement("button");
         btn.textContent = list["name"];
+        btn.name = list["name"];
+
         btn.addEventListener("click", () => {
           alert(`Produto adicionado à lista."${list["name"]}"`);
           closeAddToListModal();
@@ -104,6 +111,47 @@ function feedShoppingLists(shoppingLists) {
   }
 }
 
+// Apresenta o nome da lista no título do painel de listas
+function renderShoppingListName(listName) {
+
+}
+
+// Apresenta os preços total e do carrinho (itens pegos)
+function renderShoppingListPrices(totalPrice, cartPrice) {
+  const totalPriceTag = document.getElementById("total-price");
+  const cartPriceTag = document.getElementById("cart-price");
+
+  totalPriceTag.innerHTML = `R$ ${totalPrice.toFixed(2).replace('.', ',')}`;
+  cartPriceTag.innerHTML = `R$ ${cartPrice.toFixed(2).replace('.', ',')}`;
+}
+
+// Apresenta os itens da lista de compras (salvando id e nome do produto nos objs)
+function renderShoppingListItems(listItems) {
+  const listContainer = document.getElementById("shopping-list-items");
+  listContainer.innerHTML = "";
+
+  
+  // preenche a lista com os produtos
+  listItems.forEach((product) => {
+    const itemProduct = document.createElement("button");
+    itemProduct.classList.add("product-item");
+    itemProduct.id = product["product_id"];
+    itemProduct.name = product["product_name"];
+
+    itemProduct.addEventListener("click", () => {
+      // ir p página de produto (import)
+    });
+
+    itemProduct.innerHTML = `
+      <p>${product["product_name"]}</p>
+      <span id="price-${product["product_id"]}">R$ preço</span>
+      <span id="quant-${product["quantity"]}">${product["quantity"]}</span>
+      <input type="checkbox" value="false"></input>
+    `;
+
+    listContainer.appendChild(itemProduct);
+  });
+}
 
 // Abre o modal "Adicionar à Lista"
 export function openAddToListModal(shoppingLists) {
@@ -208,6 +256,7 @@ function setupListPanel() {
     e.preventDefault();
     modalNewList.style.display = "none";
     document.body.classList.remove("list-open");
+
     createList(user["userId"], listName.value);
   });
 }
@@ -215,7 +264,11 @@ function setupListPanel() {
 // setup dos listeners de eventos da tela
 export function shoppingListSetupListeners() {
   socketio.on("all-shopping-lists", (lists) => {
-    feedShoppingLists(lists);
+    renderAllShoppingLists(lists);
+  });
+
+  socketio.on("shopping-list", (listItems) => {
+    renderShoppingListItems(listItems)
   });
 }
 

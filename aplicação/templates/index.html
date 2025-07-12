@@ -11,7 +11,7 @@
 </head>
 <body>
 
-    <!-- CABEÇALHO -->
+    <!-- #region CABEÇALHO -->
     <header id="main-header">
     <div class="top-bar">
 
@@ -50,8 +50,9 @@
         </div>
 
     </div>
+    <!-- #endregion -->
 
-    <!-- Categorias -->
+    <!-- #region Categorias -->
     <nav class="category-bar" aria-label="Categorias">
         <ul>
         <li>
@@ -66,8 +67,9 @@
         </ul>
     </nav>
     </header>
+    <!-- #endregion -->
 
-    <!-- PAINEL DE LISTAS -->
+    <!-- #region PAINEL DE LISTAS -->
     <aside id="list-panel" class="list-panel">
         <div class="list-header">
             <h2 id="list-panel-title">Listas de Compras</h2>
@@ -79,11 +81,16 @@
         </div>
 
         <div class="list-footer">
+            <!-- sugestão de apresentação de preços (n sei q tags botar) -->
+            <div>
+                Preço total:  <span id="total-price">R$XX,XX</span> <br>
+                Preço do carrinho:  <span id="cart-price">R$XX,XX</span>
+            </div>
             <button id="btn-create-list" class="btn-create-list">+ Nova Lista</button>
         </div>
     </aside>
 
-    <!--Criando Nova Lista de Compras-->
+    <!-- Criando Nova Lista de Compras-->
     <div id="modal-new-list" class="modal-new-list">
         <div class="modal-content">
             <form id="form-new-list">
@@ -115,9 +122,9 @@
         </div>
         </div>
     </div>
-  
+    <!-- #endregion -->
 
-    <!-- FILTROS DE BUSCA -->
+    <!-- #region FILTROS DE BUSCA -->
     <button id="filter-toggle" class="filter-toggle">Filtros</button>
     <!-- Painel de seleção de filtros -->
     <aside id="filter-panel" class="filter-panel">
@@ -134,11 +141,13 @@
           <button id="apply-price-filters">Aplicar Filtros</button>
         </div>
     </aside>
+    <!-- #endregion -->
 
-    <!-- FEED DE PRODUTOS -->
+    <!-- #region FEED DE PRODUTOS -->
     <section class="product-feed" id="product-feed" aria-live="polite" aria-label="Lista de produtos">
         <!-- Os cards dos produtos serão criados dinamicamente com o JS-->
     </section>
+    <!-- #endregion -->
 
     <script type="module" src="{{ url_for('static', filename='scripts/index.js') }}"></script>
 </body>
