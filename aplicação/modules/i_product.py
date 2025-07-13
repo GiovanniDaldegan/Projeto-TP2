@@ -5,19 +5,18 @@
 from __main__ import socketio, db_controller
 
 
-# TODO #6: tranquilin. listener que registra produto
-# - dicionário data deve ter chaves "id_product", "id_market", "price"
-# - chamar db_controller.create_product() para registrar
+@socketio.on("register-product")
+def register_product(data):
+    # sem checagem de erros! cuidado. Quando escrito, TODO#3 não tava pronto.
+    db_controller.create_product(
+        name=data["name"], id_market=int(data["id_market"]), price=int(data["price"]))
 
-# @socketio.on("register-product")
-# def register_product():
 
-
-# TODO #7 tranquilin. listener que registra avaliação de produto
-# - dicionário data: "id_product", "rating", "comment"
-
-# @socketio.on("review-product")
-# def review_produc(data):
+@socketio.on("review-product")
+def review_product(data):
+    # sem checagem de erros! cuidado. Quando escrito, TODO#4 não tava pronto.
+    db_controller.create_product(
+        id_product=int(data["id_product"]), rating=int(data["rating"]), comment=data["comment"])
 
 
 # TODO #8: tranquilin. listener que envia detalhes de produto.
@@ -25,5 +24,7 @@ from __main__ import socketio, db_controller
 # - buscar produto com db_controller.get_product()
 # - enviar ao cliente o dicionário resultante
 
-# @socketio.on("get-product")
-# def send_product(data):
+@socketio.on("get-product")
+def send_product(data):
+    product = db_controller.get_product(product_id=int(data["product_id"]))
+    socketio.emit("product", product)
