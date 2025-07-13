@@ -627,7 +627,7 @@ class DBController:
         """
 
         if not self.is_db_ok():
-            return -1
+            return
 
         try:
             cursor = self.get_cursor()
@@ -636,11 +636,26 @@ class DBController:
                 WHERE username='{username}'"""
             ).fetchone()
             
-            return record is not None
+            return self.format_account(record)
 
         except sqlite3.Error as e:
             print(f"[Erro BD]: falha ao consultar conta.\n{e}")
 
+    def delete_account(self, id_user:int, no_commit=False):
+        """! Deleta registro de conta.
+
+        @param  id_user  ID da conta a ser deletada.
+        """
+
+        if not self.is_db_ok():
+            return
+        
+        try:
+            self.get_cursor().execute(f"DELETE FROM ACCOUNT WHERE id_user={id_user}")
+            if not no_commit:
+                self.connection.commit()
+        except sqlite3.Error as e:
+            print(f"[Erro BD]: falha ao deletar conta.\n{e}")        
 
     def get_account(self, username, password):
         """! Consulta e retorna nome e tipo de usuário
@@ -665,14 +680,19 @@ class DBController:
             if not record:
                 return
 
-            return {
-                "id"       : record[0],
-                "username" : record[1],
-                "type"     : record[2]
-            }
+            return self.format_account(record)
 
         except sqlite3.Error as e:
             print(f"[Erro BD]: falha ao consultar conta.\n{e}")
+    
+    def format_account(self, acc):
+        if acc:
+            if len(acc) >= 3:
+                return {
+                        "id_user"  : acc[0],
+                        "acc_type" : acc[1],
+                        "username" : acc[2]
+                }
 
     def get_all_shopping_lists(self, user_id) -> list[str]:
         """! Busca todas as listas de um usuário, dado seu ID.
