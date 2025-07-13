@@ -610,8 +610,7 @@ class DBController:
                 INSERT INTO ACCOUNT ('acc_type', 'username', 'password')
                 VALUES ('{acc_type}', '{username}', '{password}')""")
 
-            #self.connection.commit() #Sobe mudanças para o arquivo
-            # comentado para os testes se manterem em memoria apenas
+            self.connection.commit()
             return True
 
         except sqlite3.Error as e:
@@ -687,19 +686,28 @@ class DBController:
         try:
             cursor = self.get_cursor()
             cursor.execute(
-                f"SELECT name FROM SHOPPING_LIST WHERE id_user={user_id}")
-            
-            list_names = cursor.fetchall()
-            #return list_names
-            
-            if len(list_names) == 0:
+                f"SELECT id_list, name FROM SHOPPING_LIST WHERE id_user={user_id}")
+
+            lists = cursor.fetchall()
+
+            if len(lists) == 0:
                 return
-            return [i[0] for i in list_names]
+            return self.format_shopping_lists(lists)
             
         except sqlite3.Error as e:
             print_error(
                 "[Erro BD]", "falha na busca de listas de compras de usuário", e)
 
+    def format_shopping_lists(self, lists:list) -> list[dict]:
+        """! Formata uma lista de listas de compras em um dicionário com id e
+        nome de cada lista
+
+        @param  lists  Listas de compras.
+
+        @return Lista com dicionários de lista de compras.
+        """
+
+        return [{"id": l[0], "name": l[1]} for l in lists]
 
     def get_shopping_list(self, id_list) -> list:
         """! Busca os dados de dada lista de compras.
@@ -737,7 +745,7 @@ class DBController:
         #o tamanho da lista é a quantidade de produtos diferentes nela
         return formatted
 
-    def create_shopping_list(self, name:str, user_id:int):
+    def create_shopping_list(self, user_id:int, name:str):
         """! Registra uma nova lista de compras de um usuário."""
 
         if not self.is_db_ok():
@@ -747,18 +755,30 @@ class DBController:
             cursor = self.get_cursor()
             cursor.execute(f"""INSERT INTO SHOPPING_LIST (id_user, name) VALUES ({user_id}, '{name}')""")
 
-            #self.connection.commit() #Sobe mudanças para o arquivo
-            # comentado para os testes se manterem em memoria apenas
+            self.connection.commit() #Sobe mudanças para o arquivo
+
         except sqlite3.Error as e:
             print_error("[Erro BD]", "falha na inserção de lista de compras", e)
             #self.connection.rollback() #Em caso de erro retorna para estado anterior o arquivo
 
-    # TODO #2: tranquilo
+    def delete_product_list(self, id_list:int):
         """! Deleta lista de compras.
 
         @param  id_list  ID da lista de compras a ser deletada
         """
-    
+
+        if not self.is_db_ok():
+            return
+
+        try:
+            cursor = self.get_cursor()
+            cursor.execute(f"DELETE FROM SHOPPING_LIST WHERE id_list={id_list}")
+
+            self.connection.commit()
+
+        except sqlite3.Error as e:
+            print_error("[Erro BD]", "falha na remoção de lista de compras", e)
+
     def add_product_to_list(self, id_list:int, id_product:int, quantity:int):
         """! Adiciona dado produto a dada lista.
 
@@ -777,8 +797,8 @@ class DBController:
                 INSERT INTO _LIST_ITEM VALUES
                 ({id_list}, {id_product}, {quantity}, FALSE)
                 """)
-            
-            #self.connection.commit() #Sobe mudanças para o arquivo
+
+            self.connection.commit()
             # comentado para os testes se manterem em memoria apenas
 
         except sqlite3.Error as e:
@@ -801,7 +821,7 @@ class DBController:
                     AND id_product={id_product}
                 """)
             
-            #self.connection.commit() #Sobe mudanças para o arquivo
+            self.connection.commit()
             # comentado para os testes se manterem em memoria apenas
         except sqlite3.Error as e:
             print_error("[Erro BD]", "falha na inserção de produto na lista de compras", e)
@@ -828,7 +848,7 @@ class DBController:
                     AND id_product={id_product}
                 """)
 
-            #self.connection.commit() #Sobe mudanças para o arquivo
+            self.connection.commit()
             # comentado para os testes se manterem em memoria apenas
         except sqlite3.Error as e:
             print_error("[Erro BD]", "falha na atualização de produto na lista de compras", e)
@@ -847,14 +867,14 @@ class DBController:
         """
 
     # TODO #4: tranquilin
-    # def create_review(self, id_product:int, rating:int, comment:str):
+    # def add_product_review(self, id_product:int, rating:int, comment:str):
         """! Registra avaliação de produto.
 
         @param  id_product  ID do produto.
         @param  rating      Nota para o produto.
         @param  comment     Comentário sobre o produto.
         """
-              
+
     def get_product(self, id_product:int):
         """! Busca o produto no BD e retorna todas suas informações.
 
@@ -866,7 +886,7 @@ class DBController:
         """
         if not self.is_db_ok():
             return
-        
+
         query = "SELECT * FROM v_products_general WHERE id_product = ?"
         params = [id_product]
 
