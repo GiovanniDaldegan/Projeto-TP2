@@ -198,7 +198,7 @@ class DBController:
             );
 
             CREATE TABLE ACCOUNT (
-                id_acc    INTEGER  PRIMARY KEY,
+                id_user   INTEGER  PRIMARY KEY,
                 acc_type  TEXT     NOT NULL,
                 username  TEXT     NOT NULL  UNIQUE,
                 password  TEXT     NOT NULL
@@ -606,8 +606,9 @@ class DBController:
             if self.account_exists(username):
                 return
 
-            self.cursor.execute(f"""
-                INSERT INTO ACCOUNT ('acc_type', 'username', 'password')
+            cursor = self.get_cursor()
+            cursor.execute(f"""
+                INSERT INTO ACCOUNT (acc_type, username, password)
                 VALUES ('{acc_type}', '{username}', '{password}')""")
 
             self.connection.commit()
@@ -629,7 +630,8 @@ class DBController:
             return -1
 
         try:
-            record = self.cursor.execute(f"""
+            cursor = self.get_cursor()
+            record = cursor.execute(f"""
                 SELECT * FROM ACCOUNT
                 WHERE username='{username}'"""
             ).fetchone()
@@ -653,12 +655,12 @@ class DBController:
             return -1
 
         try:
-            print(self.cursor.execute("SELECT * from account").fetchall())
-
-            record = self.cursor.execute(f"""
-                SELECT id_acc, username, type FROM ACCOUNT
-                WHERE username='{username}' AND password='{password}'"""
-            ).fetchone()
+            cursor = self.get_cursor()
+            record = cursor.execute(f"""
+                SELECT id_user, acc_type, username FROM ACCOUNT
+                WHERE username='{username}'
+                    AND password='{password}'
+            """).fetchone()
 
             if not record:
                 return
@@ -709,7 +711,7 @@ class DBController:
 
         return [{"id": l[0], "name": l[1]} for l in lists]
 
-    def get_shopping_list(self, id_list) -> list:
+    def get_shopping_list(self, id_list) -> list[dict]:
         """! Busca os dados de dada lista de compras.
 
         @param  id_list  ID da lista.
@@ -727,7 +729,7 @@ class DBController:
         except sqlite3.Error as e:
             print_error("[Erro BD]", "falha na busca de lista de compras", e)
 
-    def format_shopping_list(self, shopping_list:list[dict]):
+    def format_shopping_list(self, shopping_list:list) -> list[dict]:
         """! Formata e retorna uma lista de compras em uma lista de dicionários.
         
         @param shopping_lists  Lista com infomações da listas de compras.
@@ -753,7 +755,10 @@ class DBController:
 
         try:
             cursor = self.get_cursor()
-            cursor.execute(f"""INSERT INTO SHOPPING_LIST (id_user, name) VALUES ({user_id}, '{name}')""")
+            cursor.execute(f"""
+                INSERT INTO SHOPPING_LIST (id_user, name)
+                VALUES ({user_id}, "{name}")
+                """)
 
             self.connection.commit() #Sobe mudanças para o arquivo
 
@@ -761,7 +766,7 @@ class DBController:
             print_error("[Erro BD]", "falha na inserção de lista de compras", e)
             #self.connection.rollback() #Em caso de erro retorna para estado anterior o arquivo
 
-    def delete_product_list(self, id_list:int):
+    def delete_shopping_list(self, id_list:int, no_commit:bool=False):
         """! Deleta lista de compras.
 
         @param  id_list  ID da lista de compras a ser deletada
