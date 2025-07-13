@@ -888,7 +888,8 @@ class DBController:
         @param  id_market   ID do mercado do produto.
         @param  id_product  ID do produto a ser removido.
         """
-
+        if not self.is_db_ok():
+            return False
         try:
             cursor = self.get_cursor()
             cursor.execute(f"""
@@ -899,10 +900,14 @@ class DBController:
             
             self.connection.commit()
             # comentado para os testes se manterem em memoria apenas
+            return True
         except sqlite3.Error as e:
             print_error("[Erro BD]", "falha na inserção de produto na lista de compras", e)
             #self.connection.rollback() #Em caso de erro retorna para estado anterior o arquivo
-
+            return False
+        except Exception as e:
+            print_error("[Erro Genérico]", "erro inesperado ao remover produto da lista", e)
+            return False
     def set_product_taken(self, id_list:int, id_product:int, taken:bool):
         """! Define o status do produto de lista como "pego".
 
@@ -912,7 +917,7 @@ class DBController:
         """
 
         if not self.is_db_ok():
-            return
+            return False
 
         try:
             cursor = self.get_cursor()
@@ -926,9 +931,14 @@ class DBController:
 
             self.connection.commit()
             # comentado para os testes se manterem em memoria apenas
+            return True
         except sqlite3.Error as e:
             print_error("[Erro BD]", "falha na atualização de produto na lista de compras", e)
             #self.connection.rollback() #Em caso de erro retorna para estado anterior o arquivo
+            return False
+        except Exception as e:
+            print_error("[Erro Genérico]", "erro inesperado ao atualizar produto na lista", e)
+            return False
             
     # TODO #3: médio
     # def create_product(self, name:str, id_market:int, price:int):
@@ -997,7 +1007,7 @@ class DBController:
         @return Informações do produto.
         """
         if not self.is_db_ok():
-            return
+            return None
 
         query = "SELECT * FROM v_products_general WHERE id_product = ?"
         params = [id_product]
@@ -1008,6 +1018,10 @@ class DBController:
             return self.format_product_search(cursor.fetchall())
         except sqlite3.Error as e:
             print_error("[Erro BD]", "falha na busca de produto especifico", e)
+            return None
+        except Exception as e:
+            print_error("[Erro Genérico]", "erro inesperado na busca de produto", e)
+            return None
 
     def get_product_sellers(self, id_product):
         """! Lista dos diferentes vendedores de um produto especifico, incluindo suas localizações e preços.
@@ -1016,7 +1030,7 @@ class DBController:
         """
 
         if not self.is_db_ok():
-            return
+            return None
         
         query = "SELECT * FROM v_product_sellers WHERE id_product = ?"
         params = [id_product]
@@ -1028,7 +1042,10 @@ class DBController:
         
         except sqlite3.Error as e:
             print_error("[Erro BD]", "falha na busca vendedores de produto", e)
-
+            return None
+        except  Exception as e:
+            print_error("[Erro Genérico]", "erro inesperado na busca de produto", e)
+            return None
 
     def format_product_sellers(self, rows):
         """ Organiza os dados brutos em uma estrutura mais útil"""
@@ -1052,7 +1069,7 @@ class DBController:
         """
 
         if not self.is_db_ok():
-            return
+            return None
         query = "SELECT * FROM PRODUCT_REVIEW WHERE id_product = ?"
         params = [id_product]
 
@@ -1063,6 +1080,10 @@ class DBController:
         
         except sqlite3.Error as e:
             print_error("[Erro BD]", "falha na busca reviews de produto", e)
+            return None
+        except Exception as e:
+            print_error("[Erro Genérico]", "erro inesperado na busca de reviews", e)
+            return None
 
     def format_product_reviews(self, rows):
         """ Organiza os dados brutos em uma estrutura mais útil"""
