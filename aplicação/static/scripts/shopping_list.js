@@ -52,10 +52,13 @@ function setProductTaken(listId, productId, taken) {
 // (melhorar e estilizar o html de listItem)
 function renderAllShoppingLists(shoppingLists) {
   const panelTitle = document.getElementById("list-panel-title");
+  const listPanelFooter = document.getElementById("list-footer");
+
   const listContainer = document.getElementById("shopping-list-items");
   const existingListsContainer = document.getElementById("existing-lists");
 
   panelTitle.innerHTML = "Listas de Compras";
+  listPanelFooter.innerHTML = `<button id="btn-create-list" class="btn-create-list">+ Nova Lista</button>`;
 
   if (!shoppingLists) {
     listContainer.innerHTML = "Você não possui listas.";
@@ -118,11 +121,12 @@ function renderShoppingListName(listName) {
 
 // Apresenta os preços total e do carrinho (itens pegos)
 function renderShoppingListPrices(totalPrice, cartPrice) {
-  const totalPriceTag = document.getElementById("total-price");
-  const cartPriceTag = document.getElementById("cart-price");
+  const listPanelFooter = document.getElementById("list-footer");
 
-  totalPriceTag.innerHTML = `R$ ${totalPrice.toFixed(2).replace('.', ',')}`;
-  cartPriceTag.innerHTML = `R$ ${cartPrice.toFixed(2).replace('.', ',')}`;
+  listPanelFooter.innerHTML = `
+    Preço total: <span>R$ ${totalPrice.toFixed(2).replace('.', ',')}</span> <br>
+    Preço do carrinho: <span>R$ ${cartPrice.toFixed(2).replace('.', ',')}</span>
+  `;
 }
 
 // Apresenta os itens da lista de compras (salvando id e nome do produto nos objs)
@@ -130,6 +134,7 @@ function renderShoppingListItems(listItems) {
   const listContainer = document.getElementById("shopping-list-items");
   listContainer.innerHTML = "";
 
+  renderShoppingListPrices(1.2, 141411.233);
   
   // preenche a lista com os produtos
   listItems.forEach((product) => {
@@ -238,6 +243,8 @@ function setupListPanel() {
     listPanel.classList.remove("active");
     document.body.classList.remove("list-open");
     filterToggle.style.display = "block";
+
+    getAllLists(user["userId"]);
   });
 
   // Cria uma nova lista

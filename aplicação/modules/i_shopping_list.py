@@ -6,7 +6,6 @@ from __main__ import socketio, db_controller
 
 def send_all_lists(id_user:int):
     lists = db_controller.get_all_shopping_lists(id_user)
-    print(lists)
     socketio.emit("all-shopping-lists", lists)
 
 @socketio.on("get-all-shopping-lists")
