@@ -717,6 +717,10 @@ class DBController:
 
         except sqlite3.Error as e:
             print(f"[Erro BD]: falha ao consultar conta.\n{e}")
+            return None
+        except Exception as e:
+            print_error("[Erro Genérico]", "erro inesperado ao consultar conta", e)
+            return None
 
     def get_all_shopping_lists(self, user_id) -> list[str]:
         """! Busca todas as listas de um usuário, dado seu ID.
@@ -727,7 +731,7 @@ class DBController:
         """
 
         if not self.is_db_ok():
-            return
+            return []
 
         try:
             cursor = self.get_cursor()
@@ -737,12 +741,16 @@ class DBController:
             lists = cursor.fetchall()
 
             if len(lists) == 0:
-                return
+                return []
             return self.format_shopping_lists(lists)
             
         except sqlite3.Error as e:
             print_error(
                 "[Erro BD]", "falha na busca de listas de compras de usuário", e)
+            return []
+        except Exception as e:
+            print_error("[Erro Genérico]", "erro inesperado ao consultar conta", e)
+            return []
 
     def format_shopping_lists(self, lists:list) -> list[dict]:
         """! Formata uma lista de listas de compras em um dicionário com id e
@@ -762,7 +770,7 @@ class DBController:
         """
 
         if not self.is_db_ok():
-            return
+            return []
 
         try:
             cursor = self.get_cursor()
@@ -772,6 +780,10 @@ class DBController:
 
         except sqlite3.Error as e:
             print_error("[Erro BD]", "falha na busca de lista de compras", e)
+            return []
+        except Exception as e:
+            print_error("[Erro Genérico]", "erro inesperado ao consultar conta", e)
+            return []
 
     def format_shopping_list(self, shopping_list:list[dict]):
         """! Formata e retorna uma lista de compras em uma lista de dicionários.
@@ -795,18 +807,25 @@ class DBController:
         """! Registra uma nova lista de compras de um usuário."""
 
         if not self.is_db_ok():
-            return
+            return False
 
         try:
             cursor = self.get_cursor()
             cursor.execute(f"""INSERT INTO SHOPPING_LIST (id_user, name) VALUES ({user_id}, '{name}')""")
 
             self.connection.commit() #Sobe mudanças para o arquivo
-
+            return True
+        except sqlite3.IntegrityError as e:
+            print_error("[Violação de Integridade]", "erro de integridade ao criar lista", e)
+            return False
         except sqlite3.Error as e:
             print_error("[Erro BD]", "falha na inserção de lista de compras", e)
             #self.connection.rollback() #Em caso de erro retorna para estado anterior o arquivo
-
+            return False
+        except Exception as e:
+            print_error("[Erro Genérico]", "erro inesperado ao consultar conta", e)
+            return False
+        
     def delete_product_list(self, id_list:int):
         """! Deleta lista de compras.
 
@@ -814,17 +833,20 @@ class DBController:
         """
 
         if not self.is_db_ok():
-            return
+            return False
 
         try:
             cursor = self.get_cursor()
             cursor.execute(f"DELETE FROM SHOPPING_LIST WHERE id_list={id_list}")
 
             self.connection.commit()
-
+            return True
         except sqlite3.Error as e:
             print_error("[Erro BD]", "falha na remoção de lista de compras", e)
-
+            return False
+        except Exception as e:
+            print_error("[Erro Genérico]", "erro inesperado ao remover lista de compras", e)
+            return False
     def add_product_to_list(self, id_list:int, id_product:int, quantity:int):
         """! Adiciona dado produto a dada lista.
 
@@ -855,6 +877,9 @@ class DBController:
             print_error("[Erro BD]", "falha na inserção de produto na lista de compras", e)
             return False
             #self.connection.rollback() #Em caso de erro retorna para estado anterior o arquivo
+        except Exception as e:
+            print_error("[Erro Genérico]", "erro inesperado ao adicionar produto à lista", e)
+            return False
 
     def remove_product_from_list(self, id_list:int, id_product:int):
         """! Remove produto de lista de compras.
