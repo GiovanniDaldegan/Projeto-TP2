@@ -116,7 +116,8 @@ function renderAllShoppingLists(shoppingLists) {
 
 // Apresenta o nome da lista no título do painel de listas
 function renderShoppingListName(listName) {
-
+  const listPanelTitle = document.getElementById("list-panel-title");
+  listPanelTitle.innerHTML = listName;
 }
 
 // Apresenta os preços total e do carrinho (itens pegos)
@@ -134,7 +135,6 @@ function renderShoppingListItems(listItems) {
   const listContainer = document.getElementById("shopping-list-items");
   listContainer.innerHTML = "";
 
-  renderShoppingListPrices(1.2, 141411.233);
   
   // preenche a lista com os produtos
   listItems.forEach((product) => {
