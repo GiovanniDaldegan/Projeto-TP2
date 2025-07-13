@@ -87,14 +87,18 @@ o início da execução
 
 ## Executar testes
 
-### Teste geral
+### Teste geral (com verificação de cobertura)
+```bash
+pytest --ignore=aplicação/test/test_requests.py --cov-config=aplicação/test/.coveragerc --cov=aplicação --cov-fail-under=80
+```
 
+### Teste de requisições
 ```bash
 # 1. Iniciar servidor
 python aplicação/app.py test
 
 # 2. Executar testes em outro servidor
-pytest --cov-config=aplicação/test/.coveragerc --cov=aplicação --cov-fail-under=80
+pytest aplicação/test/test_requests.py
 ```
 
 ## Documentação
