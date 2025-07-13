@@ -44,7 +44,7 @@ def test_database():
 
 
     #5. Teste cria lista
-    db.create_shopping_list("lista qualquer", 1)
+    db.create_shopping_list(1, "lista-qualquer")
 
     #6. Teste consulta listas
     print("\n======================\nListas apos criação:\n")
