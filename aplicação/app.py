@@ -47,6 +47,16 @@ def create_app():
     def index():
         return render_template("index.html")
 
+    # rota para a tela de login
+    @app.route("/login")
+    def login():
+        return render_template("login.html")
+    
+    # rota para tela de cadastro
+    @app.route("/cadastro")
+    def create_product():
+        return render_template("create_product.html") 
+        
     return app
 
 

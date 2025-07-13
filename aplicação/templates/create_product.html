@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro</title>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js" integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA==" crossorigin="anonymous"></script>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='create_product.css') }}">
+</head>
+<body>
+
+    <header class="creation-header">
+        <h1>Cadastrar Novo Produto</h1>
+        <a href="{{ url_for('index') }}" class="btn-home" title="Voltar para a página inicial">
+            <img src="{{ url_for('static', filename='img/home.png') }}" alt="Página Inicial">
+        </a>
+    </header>
+
+    <main>
+        <div class="form-container">
+            <form action="{{ url_for('create_product') }}" method="post">
+                <div class="form-group">
+                    <label for="product_name">Nome do Produto</label>
+                    <input type="text" id="product_name" name="product_name" placeholder="Ex: Leite Integral Pirancanjuba 1L" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="supermarket">Supermercado</label>
+                    <input type="text" id="supermarket" name="supermarket" placeholder="Ex: Atacadão" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="price">Preço</label>
+                    <input type="number" step="0.01" id="price" name="price" placeholder="Ex: 5,49" required>
+                </div>
+
+                <div class="form-buttons">
+                    <a href="{{ url_for('index') }}" class="btn-cancel">Cancelar</a>
+                    <button type="submit" class="btn-save">Cadastrar</button>
+                </div>
+            </form>
+        </div>
+    </main>
+
+</body>
+</html>

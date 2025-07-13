@@ -44,9 +44,9 @@
 
         <!-- Ações do usuário -->
         <div class="user-actions">
-        <button id="btn-usuario" type="button" aria-label="Usuário">
-            <img src="{{ url_for('static', filename='img/user.png') }}" alt="Usuário" />
-        </button>
+            <a href="{{ url_for('login') }}" id="btn-usuario" title="Página de Login">
+                <img src="{{ url_for('static', filename='img/user.png') }}" alt="Usuário" />
+            </a>
         </div>
 
     </div>
@@ -64,6 +64,7 @@
         <li><button class="btn-categoria" type="button">Mais Vendidos</button></li>
         <li><button class="btn-categoria" type="button">Eletrônicos</button></li>
         <li><button class="btn-categoria" type="button">Casa</button></li>
+        <li><a href="{{ url_for('create_product') }}" class="btn-categoria" title="Cadastro de produtos"> Cadastrar Produtos</a></li>
         </ul>
     </nav>
     </header>

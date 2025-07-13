@@ -1,0 +1,8 @@
+/*CONFIGURAÇÕES GERAIS PARA A TELA DE LOGIN*/
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #F5FAFF;
+}

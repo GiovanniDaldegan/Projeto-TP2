@@ -13,6 +13,12 @@ body {
     color: #1A1A1A;
 }
 
+a {
+  text-decoration: none;
+  color: inherit;         
+}
+
+
 /*==================================================
 |             ESTILIZAÇÃO DO CABEÇALHO             |
 =================================================*/
@@ -812,5 +818,162 @@ body.list-open {
     background-color: #d0d3d6;
 }
 
+/*=====================================================
+|          ESTILIZAÇÃO DA TELA DE LOGIN               |
+=====================================================*/
 
-  
+/* Formulário */
+.login-container {
+    background-color: #ffffff;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 500px;
+    text-align: center;
+}
+
+/* Icon do Usuário*/
+.login-container .user-icon {
+    width: 80px;
+    height: 80px;
+    margin-bottom: 20px;
+    object-fit: cover; 
+}
+
+/*Inputs*/
+.login-container input {
+    width: 80%;
+    padding: 8px 10px;
+    border: 1.5px solid #ccc;
+    border-radius: 8px;
+    font-size: 16px;
+    margin-bottom: 16px;
+    transition: border-color 0.3s;
+}
+
+.login-container input:focus {
+    border-color: #0078d4;
+    outline: none;
+}
+
+/* Botão de login (Entrar) */
+.btn-login {
+    width: 80%;
+    padding: 10px;
+    background-color: #0078d4;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin-top: 10px;
+}
+
+.btn-login:hover {
+    background-color: #005a9e;
+}
+
+/*======================================================
+|        ESTILIZAÇÃO DA TELA DE CADASTRO DE PRODUTOS    |
+=======================================================*/
+.creation-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    background-color: #0078d4;
+    color: #ffffff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.creation-header h1 {
+    font-size: 25px;
+    font-weight: 600;
+    margin: 0;
+    color: #ffffff; 
+}
+
+.btn-home {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px;
+    border-radius: 50%;
+    transition: background-color 0.2s;
+}
+
+.btn-home:hover {
+    background-color: rgba(255, 255, 255, 0.15); 
+}
+
+.btn-home img {
+    width: 30px;
+    height: 30px;
+}
+
+.form-container {
+    max-width: 700px;
+    margin: 40px auto;
+    padding: 32px 40px;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+.form-group {
+    margin-bottom: 24px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 16px;
+    font-weight: 500;
+    margin-bottom: 8px;
+    color: #066bb8;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 12px 14px;
+    font-size: 16px;
+    border: 1.5px solid #ccc;
+    border-radius: 8px;
+    box-sizing: border-box;
+    transition: border-color 0.3s;
+}
+
+.form-group input:focus {
+    border-color: #0078d4;
+    outline: none;
+}
+
+.form-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 20px;
+    padding-top: 20px;
+}
+
+.form-buttons .btn-cancel {
+    text-decoration: none;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    max-width: 150px;
+    height: 100%;
+    max-height: 150px;
+}
+
+.form-buttons .btn-save{
+    text-decoration: none;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    max-width: 150px;
+    height: 100%;
+    max-height: 150px;
+}
