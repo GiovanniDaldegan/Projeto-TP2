@@ -109,6 +109,7 @@ class DBController:
 
         if self.connection:
             return self.connection.cursor()
+        return None
 
     def initialize(self):
         """! Inicializa o Banco de dados garantindo que as tabelas existam"""
@@ -290,13 +291,21 @@ class DBController:
             cursor.executescript(create_script)
             cursor.executescript(index_script)
             cursor.executescript(view_script)
-
             self.connection.commit()
-
+            return True # sucesso!
+        except sqlite3.OperationalError as e:
+            print_error("[Erro Operacional]", "erro operacional ao estruturar o BD", e)
+            return False
+        except sqlite3.IntegrityError as e:
+            print_error("[Violação de Integridade]", "violação de integridade ao estruturar o BD", e)
+            return False
             # TODO: adicionar atributo de imagens ao produto
 
         except sqlite3.Error as e:
             print_error("[Erro BD]", "falha ao estruturar o BD", e)
+        except  Exception as e:
+            print_error("[Erro Genérico]", "erro inesperado ao estruturar o BD", e)
+            return False
 
     def is_db_ok(self):
         """! Checa se o banco de dados está correto.
@@ -790,7 +799,7 @@ class DBController:
         """
 
         if not self.is_db_ok():
-            return
+            return False
 
         try:
             cursor = self.get_cursor()
@@ -800,10 +809,15 @@ class DBController:
                 """)
 
             self.connection.commit()
+            return True
             # comentado para os testes se manterem em memoria apenas
+        except sqlite3.IntegrityError as e:
+            print_error("[Violação de Integridade]", "Produto já está na lista ou violação de chave", e)
+            return False
 
         except sqlite3.Error as e:
             print_error("[Erro BD]", "falha na inserção de produto na lista de compras", e)
+            return False
             #self.connection.rollback() #Em caso de erro retorna para estado anterior o arquivo
 
     def remove_product_from_list(self, id_list:int, id_product:int):
@@ -893,9 +907,15 @@ class DBController:
 
             self.connection.commit()
             return id_product
+        except sqlite3.IntegrityError as e:
+            print_error("[Violação de Integridade]", "Produto já existe ou violação de chave", e)
+            return None
         except sqlite3.Error as e:
             print_error("[Erro BD]", "falha ao cadastrar produto", e)
-
+            return None
+        except sqlite3.Error as e:
+            print_error("[Erro BD]", "Erro inesperado no banco de dados", e)
+            return None
 
     # TODO #4: tranquilin
     # def add_product_review(self, id_product:int, rating:int, comment:str):
