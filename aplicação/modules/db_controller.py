@@ -174,6 +174,7 @@ class DBController:
             CREATE TABLE "PRODUCT" (
                 "id_product"  INTEGER,
                 "name"        TEXT     NOT NULL,
+                "image_path" TEXT,
 
                 PRIMARY KEY("id_product" AUTOINCREMENT)
             );
@@ -865,6 +866,36 @@ class DBController:
         @param  id_market  ID do mercado que oferece o produto.
         @param  price      Preço oferecido pelo produto (em centavos),
         """
+    #ADICIONANDO O MÉTODO CREATE_PRODUCT
+    def create_product(self, name: str, id_market: int, price: float, image_path: str = None):
+        """Cadastra produto no BD, incluindo o caminho da imagem e o relacionamento com o mercado."""
+        if not self.is_db_ok():
+            return
+        try:
+            cursor = self.get_cursor()
+            # Verifica se o produto já existe pelo nome
+            cursor.execute("SELECT id_product FROM PRODUCT WHERE name = ?", (name,))
+            result = cursor.fetchone()
+            if result:
+                id_product = result[0]
+            else:
+                cursor.execute(
+                    "INSERT INTO PRODUCT (name, image_path) VALUES (?, ?)",
+                    (name, image_path)
+                )
+                id_product = cursor.lastrowid
+
+            # Relaciona produto ao mercado e preço na tabela _MARKET_PRODUCT
+            cursor.execute(
+                "INSERT OR IGNORE INTO _MARKET_PRODUCT (id_market, id_product, price) VALUES (?, ?, ?)",
+                (id_market, id_product, price)
+            )
+
+            self.connection.commit()
+            return id_product
+        except sqlite3.Error as e:
+            print_error("[Erro BD]", "falha ao cadastrar produto", e)
+
 
     # TODO #4: tranquilin
     # def add_product_review(self, id_product:int, rating:int, comment:str):
