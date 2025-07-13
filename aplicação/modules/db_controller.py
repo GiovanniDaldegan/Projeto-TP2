@@ -919,7 +919,10 @@ class DBController:
 
 
     def format_product_sellers(self, rows):
-        """ Organiza os dados brutos em uma estrutura mais útil"""
+        """! Organiza os dados brutos de vendedores de produto em uma estrutura
+        mais útil
+        """
+
         formatted = []
         for row in rows:
             formatted.append({
@@ -953,7 +956,9 @@ class DBController:
             print_error("[Erro BD]", "falha na busca reviews de produto", e)
 
     def format_product_reviews(self, rows):
-        """ Organiza os dados brutos em uma estrutura mais útil"""
+        """! Organiza os dados brutos de avaliações de produto em uma estrutura
+        mais útil"""
+
         formatted = []
         for row in rows:
             formatted.append({
