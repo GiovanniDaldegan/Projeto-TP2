@@ -148,6 +148,19 @@
         <!-- Os cards dos produtos serão criados dinamicamente com o JS-->
     </section>
     <!-- #endregion -->
+    
+    </section>
+    <!-- Formulário para cadastrar novo produto -->
+    <form action="/produto/novo" method="post" enctype="multipart/form-data" style="margin: 2rem 0;">
+        <label for="nome-produto">Nome do produto:</label>
+        <input type="text" id="nome-produto" name="nome" required>
+
+        <label for="imagem-produto">Imagem do produto:</label>
+        <input type="file" id="imagem-produto" name="imagem" accept="image/*" required>
+
+        <button type="submit">Cadastrar Produto</button>
+    </form>
+
 
     <script type="module" src="{{ url_for('static', filename='scripts/index.js') }}"></script>
 </body>
