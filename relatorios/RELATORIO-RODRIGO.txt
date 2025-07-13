@@ -1,2 +1,4 @@
 DATA        | HORAS |  TIPO TAREFA  |  DESCRIÇÃO DA TAREFA REALIZADA
-
+2025.07.12  |   4h  |  Codificar    | Scripts de automação para configuração de ambiente
+            |       |               |
+            |   2h  |  Documentar   | Documentação acerca da utilização dos scripts de automação, e de como executar o projeto
