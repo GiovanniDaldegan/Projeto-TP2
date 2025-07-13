@@ -295,17 +295,19 @@ class DBController:
             return True # sucesso!
         except sqlite3.OperationalError as e:
             print_error("[Erro Operacional]", "erro operacional ao estruturar o BD", e)
-            return False
+            return False #OperationalError: problemas de sintaxe ou operação SQL.
         except sqlite3.IntegrityError as e:
             print_error("[Violação de Integridade]", "violação de integridade ao estruturar o BD", e)
-            return False
+            return False #IntegrityError: problemas de restrição, chave duplicada, etc.
+            
             # TODO: adicionar atributo de imagens ao produto
 
         except sqlite3.Error as e:
             print_error("[Erro BD]", "falha ao estruturar o BD", e)
+            return False # sqlite3.Error: qualquer erro do SQLite.
         except  Exception as e:
             print_error("[Erro Genérico]", "erro inesperado ao estruturar o BD", e)
-            return False
+            return False # Exception: qualquer outro erro inesperado do Python.
 
     def is_db_ok(self):
         """! Checa se o banco de dados está correto.
@@ -342,12 +344,16 @@ class DBController:
 
         except sqlite3.Error as e:
             print_error("[Erro BD]", "falha na checagem do BD", e)
+            return False
+        except Exception as e:
+            print_error("[Erro Genérico]", "erro inesperado na checagem do BD", e)
+            return False
 
     def populate(self):
         """! Popula as tabelas para fins de teste e demonstração."""
 
         if self.populated or not self.is_db_ok():
-            return
+            return False
 
         inserts = [
             """
@@ -485,9 +491,19 @@ class DBController:
             # sobe os inserts para o arquivo .db, se quiser manter apenas em memoria remova
             self.connection.commit()
             self.populated = True
-
+            return True
+        except sqlite3.IntegrityError as e:
+            print_error("[Violação de Integridade]", "erro de integridade ao popular o BD", e)
+            return False
+        except sqlite3.OperationalError as e:
+            print_error("[Erro Operacional]", "erro operacional ao popular o BD", e)
+            return False
         except sqlite3.Error as e:
             print_error("[Erro BD]", "falha ao tentar popular o BD", e)
+            return False
+        except Exception as e:
+            print_error("[Erro Genérico]", "erro inesperado ao popular o BD", e)
+            return False
 
     def get_categories(self):
         """! Consulta quais são as categorias registradas.
@@ -496,7 +512,7 @@ class DBController:
         """
 
         if not self.is_db_ok():
-            return
+            return []
 
         try:
             cursor = self.get_cursor()
@@ -504,6 +520,10 @@ class DBController:
 
         except sqlite3.Error as e:
             print_error("[Erro BD]", "falha ao consultar categorias", e)
+            return []
+        except Exception as e:
+            print_error("[Erro Genérico]", "erro inesperado ao consultar categorias", e)
+            return []
 
     def search_products(self, search_term=None, filters=None, limit=20):
         """!
@@ -538,7 +558,7 @@ class DBController:
         """
 
         if not self.is_db_ok():
-            return
+            return []
 
         query = "SELECT * FROM v_products_general"
         params = []  # valores que entram nos placeholders(?)
@@ -582,6 +602,10 @@ class DBController:
 
         except sqlite3.Error as e:
             print_error("[Erro BD]", "falha na pesquisa de produtos", e)
+            return []
+        except Exception as e:
+            print_error("[Erro Genérico]", "erro inesperado na pesquisa de produtos", e)
+            return []
 
     def format_product_search(self, rows):
         """! Organiza os dados brutos em uma estrutura mais útil
@@ -610,21 +634,30 @@ class DBController:
         """
 
         if not self.is_db_ok():
-            return
+            return False
 
         try:
             if self.account_exists(username):
-                return
-
-            self.cursor.execute(f"""
+                print_error("[Erro BD]", "usuário já existe", "")
+                return False
+            
+            cursor = self.get_cursor()
+            cursor.execute(f"""
                 INSERT INTO ACCOUNT ('acc_type', 'username', 'password')
                 VALUES ('{acc_type}', '{username}', '{password}')""")
 
             self.connection.commit()
             return True
-
+        
+        except sqlite3.IntegrityError as e:
+            print_error("[Violação de Integridade]", "usuário já existe ou violação de chave", e)
+            return False
         except sqlite3.Error as e:
             print(f"[Erro BD]: falha ao criar conta.\n{e}")
+            return False
+        except Exception as e:
+            print_error("[Erro Genérico]", "erro inesperado ao criar conta", e)
+            return False
             #self.connection.rollback() #Em caso de erro retorna para estado anterior o arquivo
 
 
@@ -648,7 +681,10 @@ class DBController:
 
         except sqlite3.Error as e:
             print(f"[Erro BD]: falha ao consultar conta.\n{e}")
-
+            return None
+        except Exception as e:
+            print_error("[Erro Genérico]", "erro inesperado ao consultar conta", e)
+            return None
 
     def get_account(self, username, password):
         """! Consulta e retorna nome e tipo de usuário
