@@ -82,7 +82,8 @@ python test/test_db_controller.py
 
 ### Acessar a aplicação
 - URL: http://localhost:5000
-- A aplicação também está disponível em outras interfaces de rede
+- Também pode ser acessada no endereço IP e porta exibidos no terminal durante
+o início da execução
 
 ## Executar testes
 
@@ -118,22 +119,22 @@ geradas as páginas da documentação. Acesse em:
 ## Estrutura do projeto
 ```
 Projeto-TP2/
-├── aplicação/                 # Código da aplicação Flask
+├── aplicação/                # Código da aplicação Flask
 │   ├── app.py                # Arquivo principal do servidor
 │   ├── modules/              # Módulos Python
 │   │   ├── db_controller.py  # Controlador do banco de dados
-│   │   ├── i_*.py           # Interfaces SocketIO
-│   │   └── utils.py         # Utilitários
-│   ├── static/              # Arquivos estáticos (CSS, JS, imagens)
-│   ├── templates/           # Templates HTML
-│   ├── test/               # Testes unitários
-│   └── databases/          # Banco de dados SQLite
-├── artefatos/              # Documentação e artefatos
-├── requirements.txt        # Dependências Python
-├── dev.py                 # Script de desenvolvimento
-├── setup.sh              # Script de configuração
-├── Makefile              # Automação de tarefas
-└── README.md             # Este arquivo
+│   │   ├── i_*.py            # Interfaces SocketIO
+│   │   └── utils.py          # Utilitários
+│   ├── static/               # Arquivos estáticos (CSS, JS, imagens)
+│   ├── templates/            # Templates HTML
+│   ├── test/                 # Testes unitários
+│   └── databases/            # Banco de dados SQLite
+├── artefatos/                # Documentação e artefatos
+├── requirements.txt          # Dependências Python
+├── dev.py                    # Script de desenvolvimento
+├── setup.sh                  # Script de configuração
+├── Makefile                  # Automação de tarefas
+└── README.md                 # Este arquivo
 ```
 
 ## Dependências
