@@ -87,27 +87,18 @@ o início da execução
 
 ## Executar testes
 
-### Teste do banco de dados
+### Teste geral (com verificação de cobertura)
 ```bash
-# Usando dev.py
-python3 dev.py test --test-type db
-
-# Ou manualmente
-cd aplicação
-python test/test_db_controller.py
+pytest --cov-config=aplicação/test/.coveragerc --cov=aplicação aplicação/test/test_db.py
 ```
 
 ### Teste de requisições
 ```bash
-# 1. Iniciar servidor primeiro
-python3 dev.py server
+# 1. Iniciar servidor
+python aplicação/app.py test
 
-# 2. Em outro terminal
-python3 dev.py test --test-type requests
-
-# Ou manualmente
-cd aplicação
-python test/test_requests.py
+# 2. Executar testes em outro servidor
+pytest --cov-config=aplicação/test/.coveragerc aplicação/test/test_requests.py
 ```
 
 ## Documentação
