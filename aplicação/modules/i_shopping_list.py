@@ -38,7 +38,7 @@ def delete_list(data):
     @sa db_controller.DBController.delete_product_list()
     """
 
-    db_controller.delete_product_list(data["id_list"])
+    db_controller.delete_shopping_list(data["id_list"])
     send_all_lists(data["id_user"])
 
 
