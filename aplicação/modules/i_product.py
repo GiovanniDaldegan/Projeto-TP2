@@ -7,10 +7,14 @@ from __main__ import socketio, db_controller
 
 @socketio.on("register-product")
 def register_product(data):
-    # sem checagem de erros! cuidado. Quando escrito, TODO#3 não tava pronto.
-    db_controller.create_product(
-        name=data["name"], id_market=int(data["id_market"]), price=int(data["price"]))
 
+    if "id_product" in data:
+        db_controller.create_product(
+            name=data["name"], id_market=int(data["id_market"]), price=int(data["price"]))
+    else:
+        db_controller.create_product(name=data["name"])
+
+    # adicionar categorias do produto
 
 @socketio.on("review-product")
 def review_product(data):
@@ -26,5 +30,5 @@ def review_product(data):
 
 @socketio.on("get-product")
 def send_product(data):
-    product = db_controller.get_product(product_id=int(data["product_id"]))
+    product = db_controller.get_product(id_product=int(data["id_product"]))
     socketio.emit("product", product)
