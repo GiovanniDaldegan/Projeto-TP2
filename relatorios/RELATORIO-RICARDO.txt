@@ -3,4 +3,5 @@ DATA        | HORAS |  TIPO TAREFA  |  DESCRIÇÃO DA TAREFA REALIZADA
             |   1h  |  Codificar    | Adicionar imagens ao BD
             |   2h  |  Codificar    | Testes formalizados com pytest para o BD controler
 2025.07.13
-            |   2h  |  Documentar   | Documentação acerca da utilização dos scripts de automação, e de como executar o projeto
+            |   2h  |  Documentar   | Documentação acerca do bD controller
+            |   2h  |  Documentar   | Documentação dos diagramas
