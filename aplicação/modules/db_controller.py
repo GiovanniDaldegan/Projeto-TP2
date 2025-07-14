@@ -27,13 +27,8 @@ class DBController:
     ## @var path_databases
     # String que guarda o caminho do diretório dos bancos de dados.
 
-    ## @var tables_dict
-    # Dicionário com os nomes das tabelas e o nome de suas colunas.
-    #
-    # Sua estrutura é a seguinte:
-    # tables_dict = {
-    #     "nome_tabela" : ["nome_coluna0", "nome_coluna1"],
-    # }
+    ## @var tables_list
+    # Lista com nomes de tabelas que devem existir no BD.
 
     def __init__(self, app_root_dir):
         """! Construtor de DBController
@@ -49,33 +44,7 @@ class DBController:
         self.connection = None
         self.populated = False  # variável exclusiva para testes e demonstração
 
-        self.tables_dict = {
-            "PRODUCT": [
-                "id_product",
-                "name",
-                "price",
-                "rating"
-            ],
-            "MARKET": [
-                "id_market",
-                "name",
-                "latitude",
-                "longitude",
-                "rating"
-            ],
-            "CATEGORY": [
-                "id_category",
-                "name"
-            ],
-            "_MARKET_PRODUCT": [
-                "id_market",
-                "id_product"
-            ],
-            "_PRODUCT_CATEGORY": [
-                "id_product",
-                "id_category"
-            ]
-        }
+        self.tables_list = ["PRODUCT", "MARKET", "CATEGORY", "_MARKET_PRODUCT", "_PRODUCT_CATEGORY"]
 
     def connect(self):
         """! Define o cursor e a conexão do BD.
@@ -138,7 +107,7 @@ class DBController:
         """! Cria todas as tabelas da aplicação.
 
         Cria as tabelas (nomes precedidos por _ são relacionamentos):
-        - PRODUCT (id_product:PK, name, rating)
+        - PRODUCT (id_product:PK, name)
         - MARKET (id_market:PK, name, latitude, longitude, rating)
         - CATEGORY (name: PK)
         - _MARKET_PRODUCT (id_market:PK:FK, id_product:PK:FK, price)
@@ -198,7 +167,7 @@ class DBController:
             );
 
             CREATE TABLE ACCOUNT (
-                id_acc    INTEGER  PRIMARY KEY,
+                id_user   INTEGER  PRIMARY KEY,
                 acc_type  TEXT     NOT NULL,
                 username  TEXT     NOT NULL  UNIQUE,
                 password  TEXT     NOT NULL
@@ -313,7 +282,7 @@ class DBController:
 
         try:
             cursor = self.get_cursor()
-            for table_name in self.tables_dict.keys():
+            for table_name in self.tables_list:
                 result = cursor.execute(
                     f"""
                     SELECT name
@@ -325,7 +294,7 @@ class DBController:
                 if result:
                     present_tables += 1
 
-            if len(self.tables_dict.keys()) != present_tables:
+            if len(self.tables_list) != present_tables:
                 print_error("[BD Inconsistente]", "falta(m) tabela(s)")
                 return False
             return True
@@ -591,7 +560,7 @@ class DBController:
             })
         return formatted
 
-    def create_account(self, acc_type, username, password):
+    def create_account(self, acc_type, username, password, no_commit:bool=False):
         """! Cadastra uma conta no BD.
 
         @param  acc_type  Tipo de conta (adm, user).
@@ -606,11 +575,13 @@ class DBController:
             if self.account_exists(username):
                 return
 
-            self.cursor.execute(f"""
-                INSERT INTO ACCOUNT ('acc_type', 'username', 'password')
+            cursor = self.get_cursor()
+            cursor.execute(f"""
+                INSERT INTO ACCOUNT (acc_type, username, password)
                 VALUES ('{acc_type}', '{username}', '{password}')""")
 
-            self.connection.commit()
+            if not no_commit:
+                self.connection.commit()
             return True
 
         except sqlite3.Error as e:
@@ -626,19 +597,35 @@ class DBController:
         """
 
         if not self.is_db_ok():
-            return -1
+            return
 
         try:
-            record = self.cursor.execute(f"""
+            cursor = self.get_cursor()
+            record = cursor.execute(f"""
                 SELECT * FROM ACCOUNT
                 WHERE username='{username}'"""
             ).fetchone()
             
-            return record is not None
+            return self.format_account(record)
 
         except sqlite3.Error as e:
             print(f"[Erro BD]: falha ao consultar conta.\n{e}")
 
+    def delete_account(self, id_user:int, no_commit=False):
+        """! Deleta registro de conta.
+
+        @param  id_user  ID da conta a ser deletada.
+        """
+
+        if not self.is_db_ok():
+            return
+        
+        try:
+            self.get_cursor().execute(f"DELETE FROM ACCOUNT WHERE id_user={id_user}")
+            if not no_commit:
+                self.connection.commit()
+        except sqlite3.Error as e:
+            print(f"[Erro BD]: falha ao deletar conta.\n{e}")        
 
     def get_account(self, username, password):
         """! Consulta e retorna nome e tipo de usuário
@@ -653,24 +640,29 @@ class DBController:
             return -1
 
         try:
-            print(self.cursor.execute("SELECT * from account").fetchall())
-
-            record = self.cursor.execute(f"""
-                SELECT id_acc, username, type FROM ACCOUNT
-                WHERE username='{username}' AND password='{password}'"""
-            ).fetchone()
+            cursor = self.get_cursor()
+            record = cursor.execute(f"""
+                SELECT id_user, acc_type, username FROM ACCOUNT
+                WHERE username='{username}'
+                    AND password='{password}'
+            """).fetchone()
 
             if not record:
                 return
 
-            return {
-                "id"       : record[0],
-                "username" : record[1],
-                "type"     : record[2]
-            }
+            return self.format_account(record)
 
         except sqlite3.Error as e:
             print(f"[Erro BD]: falha ao consultar conta.\n{e}")
+    
+    def format_account(self, acc):
+        if acc:
+            if len(acc) >= 3:
+                return {
+                        "id_user"  : acc[0],
+                        "acc_type" : acc[1],
+                        "username" : acc[2]
+                }
 
     def get_all_shopping_lists(self, user_id) -> list[str]:
         """! Busca todas as listas de um usuário, dado seu ID.
@@ -709,7 +701,7 @@ class DBController:
 
         return [{"id": l[0], "name": l[1]} for l in lists]
 
-    def get_shopping_list(self, id_list) -> list:
+    def get_shopping_list(self, id_list) -> list[dict]:
         """! Busca os dados de dada lista de compras.
 
         @param  id_list  ID da lista.
@@ -727,7 +719,7 @@ class DBController:
         except sqlite3.Error as e:
             print_error("[Erro BD]", "falha na busca de lista de compras", e)
 
-    def format_shopping_list(self, shopping_list:list[dict]):
+    def format_shopping_list(self, shopping_list:list) -> list[dict]:
         """! Formata e retorna uma lista de compras em uma lista de dicionários.
         
         @param shopping_lists  Lista com infomações da listas de compras.
@@ -745,7 +737,7 @@ class DBController:
         #o tamanho da lista é a quantidade de produtos diferentes nela
         return formatted
 
-    def create_shopping_list(self, user_id:int, name:str):
+    def create_shopping_list(self, user_id:int, name:str, no_commit:bool=False):
         """! Registra uma nova lista de compras de um usuário."""
 
         if not self.is_db_ok():
@@ -753,15 +745,19 @@ class DBController:
 
         try:
             cursor = self.get_cursor()
-            cursor.execute(f"""INSERT INTO SHOPPING_LIST (id_user, name) VALUES ({user_id}, '{name}')""")
+            cursor.execute(f"""
+                INSERT INTO SHOPPING_LIST (id_user, name)
+                VALUES ({user_id}, "{name}")
+                """)
 
-            self.connection.commit() #Sobe mudanças para o arquivo
+            if not no_commit:
+                self.connection.commit() #Sobe mudanças para o arquivo
 
         except sqlite3.Error as e:
             print_error("[Erro BD]", "falha na inserção de lista de compras", e)
             #self.connection.rollback() #Em caso de erro retorna para estado anterior o arquivo
 
-    def delete_product_list(self, id_list:int):
+    def delete_shopping_list(self, id_list:int, no_commit:bool=False):
         """! Deleta lista de compras.
 
         @param  id_list  ID da lista de compras a ser deletada
@@ -774,12 +770,13 @@ class DBController:
             cursor = self.get_cursor()
             cursor.execute(f"DELETE FROM SHOPPING_LIST WHERE id_list={id_list}")
 
-            self.connection.commit()
+            if not no_commit:
+                self.connection.commit()
 
         except sqlite3.Error as e:
             print_error("[Erro BD]", "falha na remoção de lista de compras", e)
 
-    def add_product_to_list(self, id_list:int, id_product:int, quantity:int):
+    def add_product_to_list(self, id_list:int, id_product:int, quantity:int, no_commit:bool=False):
         """! Adiciona dado produto a dada lista.
 
         @param  id_list     ID da lista.
@@ -798,14 +795,14 @@ class DBController:
                 ({id_list}, {id_product}, {quantity}, FALSE)
                 """)
 
-            self.connection.commit()
-            # comentado para os testes se manterem em memoria apenas
+            if not no_commit:
+                self.connection.commit()
 
         except sqlite3.Error as e:
             print_error("[Erro BD]", "falha na inserção de produto na lista de compras", e)
             #self.connection.rollback() #Em caso de erro retorna para estado anterior o arquivo
 
-    def remove_product_from_list(self, id_list:int, id_product:int):
+    def remove_product_from_list(self, id_list:int, id_product:int, no_commit:bool=False):
         """! Remove produto de lista de compras.
 
         @param  id_list     ID da lista de compras.
@@ -821,13 +818,14 @@ class DBController:
                     AND id_product={id_product}
                 """)
             
-            self.connection.commit()
-            # comentado para os testes se manterem em memoria apenas
+            if not no_commit:
+                self.connection.commit()
+
         except sqlite3.Error as e:
             print_error("[Erro BD]", "falha na inserção de produto na lista de compras", e)
             #self.connection.rollback() #Em caso de erro retorna para estado anterior o arquivo
 
-    def set_product_taken(self, id_list:int, id_product:int, taken:bool):
+    def set_product_taken(self, id_list:int, id_product:int, taken:bool, no_commit:bool=False):
         """! Define o status do produto de lista como "pego".
 
         @param id_list     ID da lista.
@@ -848,14 +846,15 @@ class DBController:
                     AND id_product={id_product}
                 """)
 
-            self.connection.commit()
-            # comentado para os testes se manterem em memoria apenas
+            if not no_commit:
+                self.connection.commit()
+            return True
+
         except sqlite3.Error as e:
             print_error("[Erro BD]", "falha na atualização de produto na lista de compras", e)
             #self.connection.rollback() #Em caso de erro retorna para estado anterior o arquivo
-            
-    # TODO #3: médio
-    # def create_product(self, name:str, id_market:int, price:int):
+
+    def create_product(self, name: str, id_categories: list = None, id_market: int =None, price: int =None, no_commit: bool =None):
         """! Cadastra produto no BD.
 
         Se o produto já existir mas em outro mercado, apenas cria registro na
@@ -865,6 +864,65 @@ class DBController:
         @param  id_market  ID do mercado que oferece o produto.
         @param  price      Preço oferecido pelo produto (em centavos),
         """
+
+        if not self.is_db_ok():
+            return
+
+        try:
+            cursor = self.get_cursor()
+
+            # Verifica se o produto já existe pelo nome
+            cursor.execute("SELECT id_product FROM PRODUCT WHERE name = ?", (name,))
+            result = cursor.fetchone()
+            if result:
+                id_product = result[0]
+            else:
+                cursor.execute("INSERT INTO PRODUCT (name) VALUES (?)", (name))
+                id_product = cursor.lastrowid
+
+            if id_categories:
+                self.add_product_category(id_product, id_categories, no_commit)
+            if id_market:
+                self.set_product_seller(id_product, id_market, price, no_commit)
+
+            if not no_commit:
+                self.connection.commit()
+
+            return id_product
+
+        except sqlite3.Error as e:
+            print_error("[Erro BD]", "falha ao cadastrar produto", e)
+
+    def set_product_seller(self, id_product: int, id_market: int, price: int, no_commit: bool =None):
+        """! Registra que mercado vende o produto pelo preço fornecido."""
+
+        try:
+            # Relaciona produto ao mercado e preço na tabela _MARKET_PRODUCT
+            self.get_cursor().execute(
+                "INSERT OR IGNORE INTO _MARKET_PRODUCT (id_market, id_product, price) VALUES (?, ?, ?)",
+                (id_market, id_product, price)
+            )
+
+            if not no_commit:
+                self.connection.commit()
+
+        except sqlite3.Error as e:
+            print_error("[Erro BD]", "falha ao relacionar mercado e produto", e)
+
+    def add_product_category(self, id_product :int, categories :list[str], no_commit :bool =None):
+        """! Adiciona categoria de produto."""
+
+        try:
+            cursor = self.get_cursor()
+            for category in categories:
+                # NOTE se pá isso aq quebra (⚆_⚆)
+                cursor.execute(f"INSERT INTO _PRODUCT_CATEGORY VALUES ({id_product}, {category})")
+            
+            if not no_commit:
+                self.connection.commit()
+
+        except sqlite3.Error as e:
+            print_error("[Erro BD]", "falha ao relacionar mercado e produto", e)
 
     # TODO #4: tranquilin
     # def add_product_review(self, id_product:int, rating:int, comment:str):
@@ -894,18 +952,19 @@ class DBController:
             cursor = self.get_cursor()
             cursor.execute(query, params)
             return self.format_product_search(cursor.fetchall())
+
         except sqlite3.Error as e:
             print_error("[Erro BD]", "falha na busca de produto especifico", e)
 
     def get_product_sellers(self, id_product):
         """! Lista dos diferentes vendedores de um produto especifico, incluindo suas localizações e preços.
-        
+
         @param id_product ID do produto
         """
 
         if not self.is_db_ok():
             return
-        
+
         query = "SELECT * FROM v_product_sellers WHERE id_product = ?"
         params = [id_product]
 
@@ -917,9 +976,11 @@ class DBController:
         except sqlite3.Error as e:
             print_error("[Erro BD]", "falha na busca vendedores de produto", e)
 
-
     def format_product_sellers(self, rows):
-        """ Organiza os dados brutos em uma estrutura mais útil"""
+        """! Organiza os dados brutos de vendedores de produto em uma estrutura
+        mais útil
+        """
+
         formatted = []
         for row in rows:
             formatted.append({
@@ -953,7 +1014,9 @@ class DBController:
             print_error("[Erro BD]", "falha na busca reviews de produto", e)
 
     def format_product_reviews(self, rows):
-        """ Organiza os dados brutos em uma estrutura mais útil"""
+        """! Organiza os dados brutos de avaliações de produto em uma estrutura
+        mais útil"""
+
         formatted = []
         for row in rows:
             formatted.append({
