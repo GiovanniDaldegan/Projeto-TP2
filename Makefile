@@ -82,6 +82,20 @@ status: ## Mostra status do ambiente
 	fi
 	@echo "Banco de dados: $(if $(wildcard $(APP_DIR)/databases/tables.db),$(GREEN)✅ Existe$(NC),$(YELLOW)⚠️ Será criado no primeiro uso$(NC))"
 
+format: setup ## Formata o código com Black
+	@echo "$(GREEN)Formatando código com Black...$(NC)"
+	@$(PYTHON) -m black $(APP_DIR)
+
+coverage: setup ## Roda testes com relatório de cobertura
+	@echo "$(GREEN)Executando testes com cobertura...$(NC)"
+	@$(PYTHON) -m pytest --cov=aplicação --cov-report=term --cov-report=html
+	@echo "$(GREEN)✅ Relatório gerado em: htmlcov/index.html$(NC)"
+
+dynapyt-db: setup ## Executa Dynapyt no teste do banco de dados
+	@echo "$(GREEN)Executando análise dinâmica com Dynapyt...$(NC)"
+	@.venv\Scripts\dynapyt.exe --policy dynapyt.policies.timing_analysis ./aplicação/test/test_db_controller.py || true
+
+
 # Comandos de conveniência
 run: dev ## Alias para dev
 start: dev ## Alias para dev

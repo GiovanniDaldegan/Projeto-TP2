@@ -14,9 +14,9 @@ import socketio
 
 sio = socketio.SimpleClient()
 assert sio.sid == None
-sio.connect('http://localhost:5000', transports=['websocket'])
+sio.connect("http://localhost:5000", transports=["websocket"])
 assert sio.sid != None
-assert sio.transport() == 'websocket'
+assert sio.transport() == "websocket"
 
 
 def test_category_list_request():
@@ -34,8 +34,8 @@ def test_product_list_request():
             "max_price": 40.79,
             "min_rating": 2.2,
             "category": "Bebidas",
-            "sort": "min_price"
-        }
+            "sort": "min_price",
+        },
     }
     sio.emit("get-product-list", search_query)
     event = sio.receive()

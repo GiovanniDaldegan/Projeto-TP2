@@ -17,8 +17,7 @@ def send_product_list(data):
     @sa db_controller.DBController.search_products()
     """
 
-    product_list = db_controller.search_products(
-        search_term=data["search_term"], filters=data["filters"])
+    product_list = db_controller.search_products(search_term=data["search_term"], filters=data["filters"])
 
     socketio.emit("product-list", product_list)
 

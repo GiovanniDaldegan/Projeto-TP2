@@ -39,7 +39,6 @@ def create_app():
     db_controller.connect()
     db_controller.initialize()
 
-
     # inicialização da aplicação
 
     app = Flask(__name__)
@@ -67,7 +66,6 @@ def create_app():
     def product_page(product_id):
         return render_template("index.html")
     return app
-
 
 
 if __name__ == "__main__":

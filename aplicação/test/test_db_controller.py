@@ -5,6 +5,7 @@ sys.path.append(str(Path(__file__).parent.parent))
 
 from modules.db_controller import DBController
 
+
 def test_database():
     # 1. Inicialização
     db = DBController(Path(__file__).parent)
@@ -31,52 +32,50 @@ def test_database():
     print("\n=== Testando consulta ===")
 
     filtros = {}
-    #filtros["category"] ="mercearia"
-    #filtros["min_price"] = 3
-    #filtros["max_price"] = 5
-    #filtros["min_rating"] = 4.8
-    #filtros["sort"] = "rating"
-    #filtros["sort"] = "min_price"
+    # filtros["category"] ="mercearia"
+    # filtros["min_price"] = 3
+    # filtros["max_price"] = 5
+    # filtros["min_rating"] = 4.8
+    # filtros["sort"] = "rating"
+    # filtros["sort"] = "min_price"
 
-
-    resultados = db.search_products(filters=filtros, limit = 5)
+    resultados = db.search_products(filters=filtros, limit=5)
     print("Resultados da busca por ---:", resultados)
 
 
     #5. Teste cria lista
     db.create_shopping_list(1, "lista-qualquer")
 
-    #6. Teste consulta listas
+    # 6. Teste consulta listas
     print("\n======================\nListas apos criação:\n")
     print(db.get_all_shopping_lists(1))
-    #7. Teste adicionar produto em lista
+    # 7. Teste adicionar produto em lista
     db.add_product_to_list(3, 3, 3)
     db.add_product_to_list(3, 6, 1)
     db.add_product_to_list(3, 4, 10)
-    #8. Teste consulta lista especifica
+    # 8. Teste consulta lista especifica
     print("\n======================\nLista apos adds:\n")
     print(db.get_shopping_list(3))
 
-    #9. Teste set_taken
-    db.set_product_taken(3, 3, 'TRUE')
+    # 9. Teste set_taken
+    db.set_product_taken(3, 3, "TRUE")
     print("\n======================\nLista apos set_taken:\n")
     print(db.get_shopping_list(3))
 
-
-    #10. Teste remove da lista
+    # 10. Teste remove da lista
     db.remove_product_from_list(3, 3)
     print("\n======================\nLista apos remove:\n")
     print(db.get_shopping_list(3))
 
-    #11. Teste get_product_sellers
+    # 11. Teste get_product_sellers
     print("\n======================\nVendedores do produto 2:\n")
     print(db.get_product_sellers(2))
 
-    #12. Teste get_product
+    # 12. Teste get_product
     print("\n======================\nVProduto 2:\n")
     print(db.get_product(2))
 
-    #12. Teste get_product_reviews
+    # 12. Teste get_product_reviews
     print("\n======================\nVReviews Produto 2:\n")
     print(db.get_product_reviews(2))
 
@@ -86,6 +85,7 @@ def test_database():
     # Verificação final
     assert product_count > 0, "O banco não foi populado corretamente"
     assert len(resultados) > 0, "A consulta não retornou resultados"
+
 
 if __name__ == "__main__":
     test_database()
