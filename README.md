@@ -1,6 +1,22 @@
 # Projeto-TP2
 Projeto da disciplina Técnicas de Programação 2 do semestre 2025/1.
 
+Este projeto tem como finalidade aplicar as técnicas estudadas em aula de
+metodologias ágeis, desenvolvimento orientado a testes, análise de requisitos,
+confecção de diagramas, entre outras.
+
+A aplicação desenvolvida consiste em um site de gerenciamento de compras e
+compartilhamento de preços, na qual seus usuários podem buscar produtos para
+planejar suas compras, consultar preços atualizados por outros usuários,
+gerenciar listas de compras, etc.
+
+Para isso, desenvolvemos o servidor utilizando Python e as bibliotecas Flask e
+Flask-SocketIO para estabelecer a conexão por web-sockets; e a aplicação do
+cliente usando JavaScript e SocketIO.
+
+#### Link para o repositório do projeto no GitHub
+https://github.com/GiovanniDaldegan/Projeto-TP2
+
 ## Como executar o projeto
 
 ### Opção 1: Menu interativo (Mais fácil)
