@@ -17,6 +17,13 @@ function createProductCard(product) {
   const card = document.createElement("article");
   card.classList.add("card-produto");
 
+  card.dataset.id = product.id; 
+  card.dataset.name = product.name;
+  card.dataset.supermarket = product.market;
+  card.dataset.price = product.price_range[0].toFixed(2);
+  card.dataset.imageUrl = `static/img/products/${product.name}.png`;
+
+
   card.innerHTML = `
     <img class="produto-img" src="static/img/products/${product["name"]}.png" alt="${product["name"]}">
     <div class="produto-info">
