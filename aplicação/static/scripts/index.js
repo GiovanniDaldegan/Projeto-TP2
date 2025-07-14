@@ -4,7 +4,7 @@ import { accountSetupHTML, accountSetupListeners } from "./account.js";
 
 export var socketio = io();
 
-export var user = {user_id : null, username : null};
+export var user = {userId : 1, username : "Jorge da Capadócia"};
 
 function setupProductSearch() {
   productSearchSetupListeners();

@@ -3,14 +3,13 @@ from pathlib import Path
 
 sys.path.append(str(Path(__file__).parent.parent))
 
-project_root = Path(__file__).parent.parent  # Volta da pasta tests para a raiz
-
 from modules.db_controller import DBController
 
 def test_database():
     # 1. Inicialização
-    db = DBController(project_root)
+    db = DBController(Path(__file__).parent)
     db.connect()
+    print(db.path_databases)
 
     # 2. Verificação da criação do banco
     print("\n=== Verificando inicialização do banco ===")
@@ -45,7 +44,7 @@ def test_database():
 
 
     #5. Teste cria lista
-    db.create_shopping_list("lista qualquer", 1)
+    db.create_shopping_list(1, "lista-qualquer")
 
     #6. Teste consulta listas
     print("\n======================\nListas apos criação:\n")

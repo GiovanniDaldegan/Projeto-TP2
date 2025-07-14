@@ -39,6 +39,8 @@ function createProductCard(product) {
 
 // Renderização do Feed
 function renderFeed(products) {
+  if (!products) return;
+
   const productFeedContainer = document.getElementById("product-feed");
   //const filterToggleBtn = document.getElementById("filter-toggle");
   const filterPanel = document.getElementById("filter-panel");
