@@ -1,6 +1,7 @@
 """! Script principal da aplicação"""
 
-import os
+import sys
+from pathlib import Path
 
 from flask import Flask, render_template
 from flask_socketio import SocketIO
@@ -16,7 +17,11 @@ from modules.db_controller import DBController
 
 ## @var db_controller
 # Objeto controlador do banco de dados da aplicação
-db_controller = DBController(os.path.dirname(os.path.realpath(__file__)))
+
+if sys.argv[0] == 'test':
+    db_controller = DBController(str(Path(__file__).parent))
+else:
+    db_controller = DBController(str(Path(__file__).parent / "test"))
 
 
 # listeners
@@ -46,6 +51,20 @@ def create_app():
     def index():
         return render_template("index.html")
 
+    # rota para a tela de login
+    @app.route("/login")
+    def login():
+        return render_template("login.html")
+    
+    # rota para tela de cadastro
+    @app.route("/cadastro")
+    def create_product():
+        return render_template("create_product.html") 
+    
+    # rota para URL dos produtos
+    @app.route("/produto/<int:product_id>")
+    def product_page(product_id):
+        return render_template("index.html")
     return app
 
 

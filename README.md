@@ -1,6 +1,22 @@
 # Projeto-TP2
 Projeto da disciplina Técnicas de Programação 2 do semestre 2025/1.
 
+Este projeto tem como finalidade aplicar as técnicas estudadas em aula de
+metodologias ágeis, desenvolvimento orientado a testes, análise de requisitos,
+confecção de diagramas, entre outras.
+
+A aplicação desenvolvida consiste em um site de gerenciamento de compras e
+compartilhamento de preços, na qual seus usuários podem buscar produtos para
+planejar suas compras, consultar preços atualizados por outros usuários,
+gerenciar listas de compras, etc.
+
+Para isso, desenvolvemos o servidor utilizando Python e as bibliotecas Flask e
+Flask-SocketIO para estabelecer a conexão por web-sockets; e a aplicação do
+cliente usando JavaScript e SocketIO.
+
+#### Link para o repositório do projeto no GitHub
+https://github.com/GiovanniDaldegan/Projeto-TP2
+
 ## Como executar o projeto
 
 ### Opção 1: Menu interativo (Mais fácil)
@@ -87,27 +103,18 @@ o início da execução
 
 ## Executar testes
 
-### Teste do banco de dados
+### Teste geral (com verificação de cobertura)
 ```bash
-# Usando dev.py
-python3 dev.py test --test-type db
-
-# Ou manualmente
-cd aplicação
-python test/test_db_controller.py
+pytest --cov-config=aplicação/test/.coveragerc --cov=aplicação aplicação/test/test_db.py
 ```
 
 ### Teste de requisições
 ```bash
-# 1. Iniciar servidor primeiro
-python3 dev.py server
+# 1. Iniciar servidor
+python aplicação/app.py test
 
-# 2. Em outro terminal
-python3 dev.py test --test-type requests
-
-# Ou manualmente
-cd aplicação
-python test/test_requests.py
+# 2. Executar testes em outro servidor
+pytest --cov-config=aplicação/test/.coveragerc aplicação/test/test_requests.py
 ```
 
 ## Documentação

@@ -42,8 +42,9 @@ def test_database():
     resultados = db.search_products(filters=filtros, limit=5)
     print("Resultados da busca por ---:", resultados)
 
-    # 5. Teste cria lista
-    db.create_shopping_list("lista qualquer", 1)
+
+    #5. Teste cria lista
+    db.create_shopping_list(1, "lista-qualquer")
 
     # 6. Teste consulta listas
     print("\n======================\nListas apos criação:\n")
