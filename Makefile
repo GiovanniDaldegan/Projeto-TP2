@@ -82,6 +82,10 @@ status: ## Mostra status do ambiente
 	fi
 	@echo "Banco de dados: $(if $(wildcard $(APP_DIR)/databases/tables.db),$(GREEN)✅ Existe$(NC),$(YELLOW)⚠️ Será criado no primeiro uso$(NC))"
 
+format: setup ## Formata o código com Black
+	@echo "$(GREEN)Formatando código com Black...$(NC)"
+	@$(PYTHON) -m black $(APP_DIR)
+
 # Comandos de conveniência
 run: dev ## Alias para dev
 start: dev ## Alias para dev

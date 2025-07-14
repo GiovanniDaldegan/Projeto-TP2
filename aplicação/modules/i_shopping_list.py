@@ -4,13 +4,16 @@
 
 from __main__ import socketio, db_controller
 
-def send_all_lists(id_user:int):
+
+def send_all_lists(id_user: int):
     lists = db_controller.get_all_shopping_lists(id_user)
     socketio.emit("all-shopping-lists", lists)
+
 
 @socketio.on("get-all-shopping-lists")
 def send_shopping_lists(id_user):
     send_all_lists(id_user)
+
 
 @socketio.on("create-shopping-list")
 def create_list(data):
@@ -23,6 +26,7 @@ def create_list(data):
 
     db_controller.create_shopping_list(data["id_user"], data["name"])
     send_all_lists(data["id_user"])
+
 
 @socketio.on("delete-list")
 def delete_list(data):
@@ -50,6 +54,7 @@ def send_product_list(id_list):
 
     socketio.emit("shopping-list", shopping_list)
 
+
 @socketio.on("add-to-list")
 def add_to_list(data):
     """! Responde ao evento "add-to-list" e adiciona produto a lista ou atualiza
@@ -63,6 +68,7 @@ def add_to_list(data):
 
     db_controller.add_product_to_list(data["id_list"], data["id_product"], data["quantity"])
 
+
 @socketio.on("remove-from-list")
 def remove_from_list(data):
     """! Responde ao evento "remove-from-list" e remove item de lista.
@@ -71,8 +77,9 @@ def remove_from_list(data):
 
     @sa db_controller.DBController.remove_product_from_list()
     """
-    
+
     db_controller.remove_product_from_list(data["id_list"], data["id_product"])
+
 
 @socketio.on("set-product-taken")
 def set_taken(data):

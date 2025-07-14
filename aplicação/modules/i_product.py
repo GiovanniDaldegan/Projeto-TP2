@@ -28,6 +28,7 @@ from __main__ import socketio, db_controller
 # @socketio.on("get-product")
 # def send_product(data):
 
+
 @socketio.on("add-review")
 def add_reivew(data):
     """! Responde ao evento "add-review" e adiciona avaliação de produto
