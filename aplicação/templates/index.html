@@ -144,6 +144,35 @@
     </aside>
     <!-- #endregion -->
 
+    <!-- #region PÁGINA DO PRODUTO -->
+    <section id="product-detail-view" class="product-detail-section hidden">
+    
+        <div class="product-detail-container">
+            <!-- Imagem do Produto -->
+            <div class="product-image-column">
+                <img id="detail-product-image" src="{{ url_for('static', filename='img/products/amaciante.png') }}" alt="Imagem do Produto">
+            </div>
+
+            <!-- Informações do Produto -->
+            <div class="product-info-column">
+                <span id="product-supermarket" class="supermarket-tag">Supermercado</span>
+                <h1 id="product-name">Nome do Produto</h1>
+                
+                <div class="price-and-rating">
+                    <span id="product-price" class="product-price">R$ 7,80</span>
+                    <div class="rating-summary">
+                        <span class="stars">★★★★★</span>
+                        <span>5 (246 avaliações)</span>
+                    </div>
+                </div>
+
+                <button class="btn-add-to-list">+ Lista</button>
+            </div>
+        </div>
+    </section>
+    <!-- #endregion -->
+
+
     <!-- #region FEED DE PRODUTOS -->
     <section class="product-feed" id="product-feed" aria-live="polite" aria-label="Lista de produtos">
         <!-- Os cards dos produtos serão criados dinamicamente com o JS-->

@@ -1,8 +1,10 @@
-DATA        | HORAS |  TIPO TAREFA                      |  DESCRIÇÃO DA TAREFA REALIZADA
-2025.06.24  |   1h  | projetar                          | criação de protótipo de design para o site
-            |       |                                   |
-2025.06.26  |   2h  ! codificar                         | montagem da estrutura básica da interface com HTML e CSS
-            |       |                                   |         
-2025.06.27  |   2h  | codificar                         | implementação de funcionalidades interativas com JavaScript
-            |       |                                   |                                                               
-2025.07.05  |   3h  | codificar                         | implementação do painel de listas e modal de criação de listas                                                 
+DATA        | HORAS |  TIPO TAREFA   |  DESCRIÇÃO DA TAREFA REALIZADA
+2025.06.24  |   1h  | Projetar       | criação de protótipo de design para o site
+            |       |                |
+2025.06.26  |   2h  ! Codificar      | montagem da estrutura básica da interface com HTML e CSS
+            |       |                |         
+2025.06.27  |   2h  | Codificar      | implementação de funcionalidades interativas com JavaScript
+            |       |                |                                                               
+2025.07.05  |   3h  | Codificar      | implementação do painel de listas e modal de criação de listas     
+            |       |                |                                   
+2025.07.13  |   6h  |  Codificar     | implementação das telas de login, cadastro de produtos e página inidividual do produto

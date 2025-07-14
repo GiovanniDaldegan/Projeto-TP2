@@ -173,6 +173,76 @@ function closeAddToListModal() {
   document.body.classList.remove("list-open");
 }
 
+// Setup dos painel de informações do produto
+function setupProductDetailView() {
+    const productFeed = document.getElementById('product-feed');
+    const productDetailView = document.getElementById('product-detail-view');
+    const filterToggleBtn = document.getElementById('filter-toggle');
+
+    if (!productFeed || !productDetailView) {
+        return;
+    }
+
+    const detailImage = document.getElementById('detail-product-image');
+    const detailSupermarket = document.getElementById('product-supermarket');
+    const detailName = document.getElementById('product-name');
+    const detailPrice = document.getElementById('product-price');
+    
+    // Função para mostrar as informações do produto
+    function showProductDetails(card) {
+        const productData = card.dataset;
+        
+        detailImage.src = productData.imageUrl || 'static/img/placeholder_produto.png';
+        detailSupermarket.textContent = productData.supermarket || 'Supermercado';
+        detailName.textContent = productData.name || 'Nome do Produto';
+        detailPrice.textContent = `R$ ${(productData.price || '0.00').replace('.', ',')}`;
+
+        productFeed.classList.add('hidden');
+        productDetailView.classList.remove('hidden');
+        if (filterToggleBtn) filterToggleBtn.classList.add('hidden');
+        
+        window.scrollTo(0, 0);
+
+        const newState = { view: 'detail', productId: productData.id };
+        const newUrl = `/produto/${productData.id}`;
+        history.pushState(newState, '', newUrl);
+    }
+
+    // Função para voltar ao feed de produtos
+    function showProductFeed() {
+        productDetailView.classList.add('hidden');
+        productFeed.classList.remove('hidden');
+        if (filterToggleBtn) filterToggleBtn.classList.remove('hidden');
+    }
+
+    // Evento para abrir a tela de informações
+    productFeed.addEventListener('click', (event) => {
+        const card = event.target.closest('.card-produto');
+        if (card && card.dataset.id) {
+            showProductDetails(card);
+        }
+    });
+
+    // Evento 'popstate' (botão "voltar" do navegador)
+    window.addEventListener('popstate', (event) => {
+        if (!event.state || event.state.view === 'feed') {
+            showProductFeed();
+        }
+    });
+
+    const initialPath = window.location.pathname;
+
+    // Se a página for carregada em uma URL de produto
+    if (initialPath.startsWith('/produto/')) {
+        // Ação: Força a URL a voltar para o feed
+        history.replaceState({ view: 'feed' }, '', '/');
+        showProductFeed();
+    } else {
+        history.replaceState({ view: 'feed' }, '', '/');
+    }
+}
+
+
 // Setup do Modal 
 function setupAddToListModal() {
   const modalAdd = document.getElementById("modal-add-to-list");
@@ -286,4 +356,5 @@ export function shoppingListSetupHTML() {
 
   setupListPanel();
   setupAddToListModal();
+  setupProductDetailView();
 }
