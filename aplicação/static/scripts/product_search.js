@@ -1,6 +1,7 @@
 import { socketio } from "./index.js";
 import { openAddToListModal} from "./shopping_list.js";
-// Funções emissoras de requisição
+
+// Emissores de eventos ao servidor
 
 function requestProductList(params) {
   socketio.emit("get-product-list", params);
@@ -11,12 +12,17 @@ function requestCategories() {
 }
 
 
-// Funções próprias do módulo
-
 // Função para criar os cards dos produtos
 function createProductCard(product) {
   const card = document.createElement("article");
   card.classList.add("card-produto");
+
+  card.dataset.id = product.id; 
+  card.dataset.name = product.name;
+  card.dataset.supermarket = product.market;
+  card.dataset.price = product.price_range[0].toFixed(2);
+  card.dataset.imageUrl = `static/img/products/${product.name}.png`;
+
 
   card.innerHTML = `
     <img class="produto-img" src="static/img/products/${product["name"]}.png" alt="${product["name"]}">
@@ -40,6 +46,8 @@ function createProductCard(product) {
 
 // Renderização do Feed
 function renderFeed(products) {
+  if (!products) return;
+
   const productFeedContainer = document.getElementById("product-feed");
   //const filterToggleBtn = document.getElementById("filter-toggle");
   const filterPanel = document.getElementById("filter-panel");
@@ -101,8 +109,7 @@ export function productSearchSetupListeners() {
   // Faz requisição inicial da lista de produtos
   requestProductList(getSearchParams());
 
-  // inserção das categorias fornecidos pelo servidor no select de filtros de
-  // pesquisa por categoria
+  // inserção de categorias no select de categoria
   socketio.on("categories", (categories) => {
     const categorySelect = document.getElementById("category-filters");
     var categoriesHTML = "<option value=\"todos\" selected>Todos</option>";

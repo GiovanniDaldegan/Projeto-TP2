@@ -11,7 +11,7 @@
 </head>
 <body>
 
-    <!-- CABEÇALHO -->
+    <!-- #region CABEÇALHO -->
     <header id="main-header">
     <div class="top-bar">
 
@@ -44,14 +44,15 @@
 
         <!-- Ações do usuário -->
         <div class="user-actions">
-        <button id="btn-usuario" type="button" aria-label="Usuário">
-            <img src="{{ url_for('static', filename='img/user.png') }}" alt="Usuário" />
-        </button>
+            <a href="{{ url_for('login') }}" id="btn-usuario" title="Página de Login">
+                <img src="{{ url_for('static', filename='img/user.png') }}" alt="Usuário" />
+            </a>
         </div>
 
     </div>
+    <!-- #endregion -->
 
-    <!-- Categorias -->
+    <!-- #region Categorias -->
     <nav class="category-bar" aria-label="Categorias">
         <ul>
         <li>
@@ -63,11 +64,13 @@
         <li><button class="btn-categoria" type="button">Mais Vendidos</button></li>
         <li><button class="btn-categoria" type="button">Eletrônicos</button></li>
         <li><button class="btn-categoria" type="button">Casa</button></li>
+        <li><a href="{{ url_for('create_product') }}" class="btn-categoria" title="Cadastro de produtos"> Cadastrar Produtos</a></li>
         </ul>
     </nav>
     </header>
+    <!-- #endregion -->
 
-    <!-- PAINEL DE LISTAS -->
+    <!-- #region PAINEL DE LISTAS -->
     <aside id="list-panel" class="list-panel">
         <div class="list-header">
             <h2 id="list-panel-title">Listas de Compras</h2>
@@ -78,12 +81,17 @@
             Você não possui listas.
         </div>
 
-        <div class="list-footer">
+        <div class="list-footer" id="list-footer">
+            <!-- sugestão de apresentação de preços (n sei q tags botar) -->
+            <div>
+                Preço total:  <span id="total-price">R$XX,XX</span> <br>
+                Preço do carrinho:  <span id="cart-price">R$XX,XX</span>
+            </div>
             <button id="btn-create-list" class="btn-create-list">+ Nova Lista</button>
         </div>
     </aside>
 
-    <!--Criando Nova Lista de Compras-->
+    <!-- Criando Nova Lista de Compras-->
     <div id="modal-new-list" class="modal-new-list">
         <div class="modal-content">
             <form id="form-new-list">
@@ -115,9 +123,9 @@
         </div>
         </div>
     </div>
-  
+    <!-- #endregion -->
 
-    <!-- FILTROS DE BUSCA -->
+    <!-- #region FILTROS DE BUSCA -->
     <button id="filter-toggle" class="filter-toggle">Filtros</button>
     <!-- Painel de seleção de filtros -->
     <aside id="filter-panel" class="filter-panel">
@@ -134,11 +142,42 @@
           <button id="apply-price-filters">Aplicar Filtros</button>
         </div>
     </aside>
+    <!-- #endregion -->
 
-    <!-- FEED DE PRODUTOS -->
+    <!-- #region PÁGINA DO PRODUTO -->
+    <section id="product-detail-view" class="product-detail-section hidden">
+    
+        <div class="product-detail-container">
+            <!-- Imagem do Produto -->
+            <div class="product-image-column">
+                <img id="detail-product-image" src="{{ url_for('static', filename='img/products/amaciante.png') }}" alt="Imagem do Produto">
+            </div>
+
+            <!-- Informações do Produto -->
+            <div class="product-info-column">
+                <span id="product-supermarket" class="supermarket-tag">Supermercado</span>
+                <h1 id="product-name">Nome do Produto</h1>
+                
+                <div class="price-and-rating">
+                    <span id="product-price" class="product-price">R$ 7,80</span>
+                    <div class="rating-summary">
+                        <span class="stars">★★★★★</span>
+                        <span>5 (246 avaliações)</span>
+                    </div>
+                </div>
+
+                <button class="btn-add-to-list">+ Lista</button>
+            </div>
+        </div>
+    </section>
+    <!-- #endregion -->
+
+
+    <!-- #region FEED DE PRODUTOS -->
     <section class="product-feed" id="product-feed" aria-live="polite" aria-label="Lista de produtos">
         <!-- Os cards dos produtos serão criados dinamicamente com o JS-->
     </section>
+    <!-- #endregion -->
 
     <script type="module" src="{{ url_for('static', filename='scripts/index.js') }}"></script>
 </body>

@@ -10,6 +10,8 @@ def register_account(data):
     
     Chama a função do controlador do BD que cria registro de conta e comunica ao
     cliente se a conta foi criada com sucesso.
+
+    @sa db_controller.DBController.create_account()
     """
 
     if not db_controller.create_account(data["acc_type"], data["username", data["password"]]):
@@ -25,3 +27,4 @@ def register_account(data):
 
 #@socketio.on("login")
 # def log_user(data)
+#    socketio.emit("logged")
