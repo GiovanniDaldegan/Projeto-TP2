@@ -1,4 +1,7 @@
 DATA        | HORAS |  TIPO TAREFA  |  DESCRIÇÃO DA TAREFA REALIZADA
+2025.07.02  |  3h   |  Planejar     | Planejar e esquematizar a Arquitetura e Diagramas do PROJETO
+2025.07.11  |  2h   |  Codificar    | Auxílio no Backend 
+
 2025.07.12  |   1h  |  Codificar    | Tratamento de exceções no BD controler
             |   1h  |  Codificar    | Adicionar imagens ao BD
             |   2h  |  Codificar    | Testes formalizados com pytest para o BD controler
