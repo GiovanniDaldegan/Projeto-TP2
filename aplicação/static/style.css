@@ -412,8 +412,6 @@ body.list-open {
     gap: 14px;
   }
   
-  /* Botões já existem no seu CSS, só replicando para contexto */
-  
   .btn-save {
     background-color: #0078d4;
     color: white;
