@@ -2,3 +2,6 @@ flask==3.0.0
 flask-socketio==5.3.6
 python-socketio==5.10.0
 black==24.3.0
+pytest==8.0.2
+pytest-cov==4.1.0
+dynapyt==0.3.1
