@@ -217,12 +217,15 @@ function setupProductDetailView() {
 
     // Evento para abrir a tela de informações
     productFeed.addEventListener('click', (event) => {
-        const card = event.target.closest('.card-produto');
-        if (card && card.dataset.id) {
-            showProductDetails(card);
-        }
+      if (event.target.closest('.btn-adicionar-lista')) {
+          return;
+      }
+      const card = event.target.closest('.card-produto');
+      if (card && card.dataset.id) {
+          showProductDetails(card);
+      }
     });
-
+    
     // Evento 'popstate' (botão "voltar" do navegador)
     window.addEventListener('popstate', (event) => {
         if (!event.state || event.state.view === 'feed') {
