@@ -19,9 +19,9 @@ from modules.db_controller import DBController
 # Objeto controlador do banco de dados da aplicação
 
 if sys.argv[0] == 'test':
-    db_controller = DBController(str(Path(__file__).parent))
-else:
     db_controller = DBController(str(Path(__file__).parent / "test"))
+else:
+    db_controller = DBController(str(Path(__file__).parent))
 
 
 # listeners
