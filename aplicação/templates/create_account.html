@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Criar Conta</title>
+   
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='login.css') }}">
+</head>
+<body>
+
+    <div class="account-container">
+        
+        <img src="{{ url_for('static', filename='img/user_login.png') }}" alt="Ícone de Usuário" class="user-icon">
+
+        <h2>Crie sua Conta</h2>
+
+        <form>
+            <div class="input-group">
+                <input type="text" id="username" name="username" placeholder="Nome de usuário" required>
+            </div>
+            <div class="input-group">
+                <input type="password" id="password" name="password" placeholder="Senha" required>
+            </div>
+            <div class="input-group">
+                <input type="password" id="confirm_password" name="confirm_password" placeholder="Confirmar senha" required>
+            </div>
+            
+            <div class="form-buttons">
+                <a href="{{ url_for('index') }}" class="btn-cancel">Cancelar</a>
+                <button type="submit" class="btn-create">Criar Conta</button>
+            </div>
+        </form>
+    </div>
+
+</body>
+</html>

@@ -38,7 +38,7 @@ function createProductCard(product) {
 
     const btnAdd = card.querySelector(".btn-adicionar-lista");
     btnAdd.addEventListener("click", () => {
-      openAddToListModal();
+      openAddToListModal(product.id);
     });
   
     return card;
