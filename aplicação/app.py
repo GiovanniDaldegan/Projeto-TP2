@@ -65,6 +65,11 @@ def create_app():
     @app.route("/produto/<int:product_id>")
     def product_page(product_id):
         return render_template("index.html")
+    
+    # rota para tela de criar conta
+    @app.route("/conta")
+    def register():
+        return render_template("create_account.html")
     return app
 
 

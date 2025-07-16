@@ -44,7 +44,7 @@
 
         <!-- Ações do usuário -->
         <div class="user-actions">
-            <a href="{{ url_for('login') }}" id="btn-usuario" title="Página de Login">
+            <a href="{{ url_for('login') }}" id="btn-usuario" title="Login">
                 <img src="{{ url_for('static', filename='img/user.png') }}" alt="Usuário" />
             </a>
         </div>
@@ -82,10 +82,9 @@
         </div>
 
         <div class="list-footer" id="list-footer">
-            <!-- sugestão de apresentação de preços (n sei q tags botar) -->
             <div>
-                Preço total:  <span id="total-price">R$XX,XX</span> <br>
-                Preço do carrinho:  <span id="cart-price">R$XX,XX</span>
+                <strong>Preço total:</strong>
+                <span id="total-price">R$0,00</span>
             </div>
             <button id="btn-create-list" class="btn-create-list">+ Nova Lista</button>
         </div>
@@ -166,7 +165,7 @@
                     </div>
                 </div>
 
-                <button class="btn-add-to-list">+ Lista</button>
+                <button id="btn-add-to-list"  class="btn-add-to-list">+ Lista</button>
             </div>
         </div>
     </section>

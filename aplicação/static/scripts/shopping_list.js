@@ -47,71 +47,69 @@ function setProductTaken(listId, productId, taken) {
   })
 }
 
-
-// TODO #15: médio - adicionar as listas fornecidas ao painel de listas de compras
-// (melhorar e estilizar o html de listItem)
 function renderAllShoppingLists(shoppingLists) {
   const panelTitle = document.getElementById("list-panel-title");
-  const listPanelFooter = document.getElementById("list-footer");
-
   const listContainer = document.getElementById("shopping-list-items");
   const existingListsContainer = document.getElementById("existing-lists");
 
   panelTitle.innerHTML = "Listas de Compras";
-  listPanelFooter.innerHTML = `<button id="btn-create-list" class="btn-create-list">+ Nova Lista</button>`;
 
-  if (!shoppingLists) {
-    listContainer.innerHTML = "Você não possui listas.";
-    existingListsContainer.innerHTML = "Você não possui listas."
+  if (!shoppingLists || shoppingLists.length === 0) {
+      listContainer.innerHTML = `<p class="empty-list-message">Você ainda não criou nenhuma lista.</p>`;
+      existingListsContainer.innerHTML = `<p class="empty-list-message">Nenhuma lista disponível.</p>`;
+      return;
   }
-  else {
-    listContainer.innerHTML = "";
 
-    shoppingLists.forEach(list => {
-      // Atualiza listas do painel de listas de compras
+  listContainer.innerHTML = "";
+  existingListsContainer.innerHTML = "";
+
+  shoppingLists.forEach(list => {
       const listItem = document.createElement("article");
       listItem.classList.add("item-shopping-list");
 
       const listBtn = document.createElement("button");
       listBtn.classList.add("open-list");
-      listBtn.id = list["id"]; 
-      listBtn.textContent = list["name"];
-
+      listBtn.id = list.id; 
+      listBtn.textContent = list.name;
       listBtn.addEventListener("click", () => {
-        getList(list["id"]);
-        renderShoppingListName(list["name"]);
+          getList(list.id);
+          renderShoppingListName(list.name);
       });
 
       const deleteBtn = document.createElement("button");
       deleteBtn.classList.add("delete-list");
-      deleteBtn.id = list["id"];
-      deleteBtn.textContent = "X";
-
+      deleteBtn.id = list.id;
+      deleteBtn.innerHTML = `<img src="/static/img/lixeira.png" alt="Excluir">`; 
       deleteBtn.addEventListener("click", () => {
-        deleteList(user["userId"], list["id"]);
+        deleteList(user.userId, list.id);
       });
   
       listItem.appendChild(listBtn);
       listItem.appendChild(deleteBtn);
       listContainer.appendChild(listItem);
+  });
 
+  shoppingLists.forEach((list) => {
+      const btn = document.createElement("button");
+      btn.textContent = list.name;
+      btn.name = list.name;
 
-      // Atualiza botões de adicionar a lista
-      existingListsContainer.innerHTML = "";
-
-      shoppingLists.forEach((list) => {
-        const btn = document.createElement("button");
-        btn.textContent = list["name"];
-        btn.name = list["name"];
-
-        btn.addEventListener("click", () => {
-          alert(`Produto adicionado à lista."${list["name"]}"`);
-          closeAddToListModal();
-        });
-        existingListsContainer.appendChild(btn);
+      btn.addEventListener("click", () => {
+          const modal = document.getElementById("modal-add-to-list");
+          const productId = modal.dataset.productId;
+  
+          const listId = list.id;
+  
+          if (productId) {
+              addToList(listId, productId, 1);
+              alert(`Produto adicionado à lista "${list.name}"!`);
+              closeAddToListModal(); 
+          } else {
+              alert("Erro: Não foi possível identificar o produto.");
+          }
       });
-    });
-  }
+      existingListsContainer.appendChild(btn);
+  });
 }
 
 // Apresenta o nome da lista no título do painel de listas
@@ -125,9 +123,7 @@ function renderShoppingListPrices(totalPrice, cartPrice) {
   const listPanelFooter = document.getElementById("list-footer");
 
   listPanelFooter.innerHTML = `
-    Preço total: <span>R$ ${totalPrice.toFixed(2).replace('.', ',')}</span> <br>
-    Preço do carrinho: <span>R$ ${cartPrice.toFixed(2).replace('.', ',')}</span>
-  `;
+    Preço total: <span>R$ ${totalPrice.toFixed(2).replace('.', ',')}</span> <br>`;
 }
 
 // Apresenta os itens da lista de compras (salvando id e nome do produto nos objs)
@@ -159,11 +155,12 @@ function renderShoppingListItems(listItems) {
 }
 
 // Abre o modal "Adicionar à Lista"
-export function openAddToListModal(shoppingLists) {
+export function openAddToListModal(productId) {
   const modal = document.getElementById("modal-add-to-list");
+  modal.dataset.productId = productId;
 
   modal.classList.remove("hidden");
-  document.body.classList.add("list-open"); // ativa o overlay + bloqueia scroll
+  document.body.classList.add("list-open"); 
 }
 
 // Função para fechar o modal de criação de lista
@@ -178,6 +175,7 @@ function setupProductDetailView() {
     const productFeed = document.getElementById('product-feed');
     const productDetailView = document.getElementById('product-detail-view');
     const filterToggleBtn = document.getElementById('filter-toggle');
+    const btnAddList = document.getElementById('btn-add-to-list');
 
     if (!productFeed || !productDetailView) {
         return;
@@ -225,7 +223,7 @@ function setupProductDetailView() {
           showProductDetails(card);
       }
     });
-    
+
     // Evento 'popstate' (botão "voltar" do navegador)
     window.addEventListener('popstate', (event) => {
         if (!event.state || event.state.view === 'feed') {
@@ -243,8 +241,8 @@ function setupProductDetailView() {
     } else {
         history.replaceState({ view: 'feed' }, '', '/');
     }
+  
 }
-
 
 // Setup do Modal 
 function setupAddToListModal() {
@@ -324,6 +322,7 @@ function setupListPanel() {
   criarListaBtn.addEventListener("click", () => {
     modalNewList.style.display = "flex";
     document.body.classList.add("list-open");
+    listName.value = "";
   });
 
   // Cancela a criação da lista
@@ -338,6 +337,7 @@ function setupListPanel() {
     document.body.classList.remove("list-open");
 
     createList(user["userId"], listName.value);
+    listName.value = "";
   });
 }
 
