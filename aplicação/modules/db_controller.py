@@ -816,15 +816,16 @@ class DBController:
             return
 
         cursor = self.get_cursor()
+        cursor.execute(f"INSERT INTO PRODUCT (name) VALUES ('{name}')")
+        print(cursor.execute(f"select * from product where name='{name}'").fetchone())
 
-        # Verifica se o produto já existe pelo nome
-        cursor.execute(f"SELECT id_product FROM PRODUCT WHERE name='{name}'")
-        result = cursor.fetchone()
-        if result:
-            id_product = result[0]
-        else:
-            cursor.execute(f"INSERT INTO PRODUCT (name) VALUES ('{name}')")
-            id_product = cursor.lastrowid
+        ## Verifica se o produto já existe pelo nome
+        #cursor.execute(f"SELECT id_product FROM PRODUCT WHERE name='{name}'")
+        #result = cursor.fetchone()
+        #if result:
+        #    id_product = result[0]
+        #else:
+        #    id_product = cursor.lastrowid
 
         #if id_categories:
         #    self.add_product_category(id_product, id_categories, no_commit)
@@ -833,8 +834,6 @@ class DBController:
 
         if not no_commit:
             self.connection.commit()
-
-        return id_product
 
     def set_product_seller(self, id_product: int, id_market: int, price: int, no_commit: bool = None):
         """! Registra que mercado vende o produto pelo preço fornecido."""

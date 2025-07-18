@@ -88,7 +88,7 @@ format: setup ## Formata o código com Black
 
 coverage: setup ## Roda testes com relatório de cobertura
 	@echo "$(GREEN)Executando testes com cobertura...$(NC)"
-	@$(PYTHON) -m pytest --cov=aplicação --cov-report=term --cov-report=html
+	@$(PYTHON) -m pytest --cov-config=aplicação/test/.coveragerc --cov=aplicação --cov-report=term --cov-report=html aplicação/test/test_db.py
 	@echo "$(GREEN)✅ Relatório gerado em: htmlcov/index.html$(NC)"
 
 dynapyt-db: setup ## Executa Dynapyt no teste do banco de dados

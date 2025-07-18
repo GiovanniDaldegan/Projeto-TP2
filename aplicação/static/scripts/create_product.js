@@ -2,8 +2,7 @@ var socketio = io();
 
 function requestCreateProduct(name, price=null) {
   socketio.emit("register-product", {
-    "name" : name,
-    "price" : price
+    "name" : 'churrasco'
   })
 }
 

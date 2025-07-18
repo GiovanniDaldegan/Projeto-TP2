@@ -8,11 +8,12 @@ from __main__ import socketio, db_controller
 @socketio.on("register-product")
 def register_product(data):
 
-    if "id_market" in data:
-        db_controller.create_product(
-            name=data["name"], id_market=int(data["id_market"]), price=int(data["price"]))
-    else:
-        db_controller.create_product(name=data["name"])
+    #if "id_market" in data:
+    #    db_controller.create_product(
+    #        name=data["name"], id_market=int(data["id_market"]), price=int(data["price"]))
+    #else:
+
+    db_controller.create_product(data["name"])
 
     # adicionar categorias do produto
 

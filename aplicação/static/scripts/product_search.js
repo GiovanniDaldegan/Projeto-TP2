@@ -17,9 +17,11 @@ function createProductCard(product) {
   const card = document.createElement("article");
   card.classList.add("card-produto");
 
-  const price = "0,00";
-  if (product.price_range[0]) {
-    const price = product.price_range[0].toFixed(2).replace('.', ',');
+  if (!product.price_range[0]) {
+    var price = "0,00";
+  }
+  else {
+    var price = product.price_range[0].toFixed(2).replace('.', ',');
   }
 
   card.dataset.id = product.id; 
@@ -27,8 +29,6 @@ function createProductCard(product) {
   card.dataset.supermarket = product.market;
   card.dataset.price = price;
   card.dataset.imageUrl = `static/img/products/${product.name}.png`;
-
-  console.log(product.name);
 
   card.innerHTML = `
     <img class="produto-img" src="static/img/products/${product["name"]}.png" alt="${product["name"]}">
