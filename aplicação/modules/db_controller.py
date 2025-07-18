@@ -534,7 +534,6 @@ class DBController:
 
         query += f" LIMIT {abs(int(limit))}"
 
-        self.connect()
         try:
             cursor = self.get_cursor()
             cursor.execute(query, params)
@@ -623,7 +622,15 @@ class DBController:
             return
         
         try:
-            self.get_cursor().execute(f"DELETE FROM ACCOUNT WHERE id_user={id_user}")
+            cursor = self.get_cursor()
+            lists = self.get_all_shopping_lists(id_user)
+
+            if lists:
+                for i in lists:
+                    self.delete_shopping_list(i["id"], no_commit)
+
+            cursor.execute(f"DELETE FROM ACCOUNT WHERE id_user={id_user}")
+
             if not no_commit:
                 self.connection.commit()
         except sqlite3.Error as e:
@@ -701,10 +708,12 @@ class DBController:
 
         return [{"id": l[0], "name": l[1]} for l in lists]
 
-    def get_shopping_list(self, id_list) -> list[dict]:
+    def get_shopping_list(self, id_list) -> dict:
         """! Busca os dados de dada lista de compras.
 
         @param  id_list  ID da lista.
+
+        @return Dicionário com  as informações da lista.
         """
 
         if not self.is_db_ok():
@@ -713,7 +722,10 @@ class DBController:
         try:
             cursor = self.get_cursor()
             cursor.execute(f"SELECT * FROM v_shopping_list WHERE id_list={id_list}")
-            return self.format_shopping_list(cursor.fetchall())
+
+            list = cursor.fetchone()
+            if list:
+                return self.format_shopping_list(list)
 
         except sqlite3.Error as e:
             print_error("[Erro BD]", "falha na busca de lista de compras", e)
@@ -725,11 +737,13 @@ class DBController:
 
         @return uma lista de dicionários com informações de lista de compras.
         """
-        formatted = []
-        for item in shopping_list:
-            formatted.append({"product_id": item[1], "product_name": item[2], "quantity": item[3], "taken": item[4]})
         # o tamanho da lista é a quantidade de produtos diferentes nela
-        return formatted
+        return {
+            "product_id": shopping_list[1],
+            "product_name": shopping_list[2],
+            "quantity": shopping_list[3],
+            "taken": shopping_list[4]
+        }
 
     def create_shopping_list(self, user_id:int, name:str, no_commit:bool=False):
         """! Registra uma nova lista de compras de um usuário."""
@@ -762,6 +776,7 @@ class DBController:
 
         try:
             cursor = self.get_cursor()
+            cursor.execute(f"DELETE FROM _LIST_ITEM WHERE id_list={id_list}")
             cursor.execute(f"DELETE FROM SHOPPING_LIST WHERE id_list={id_list}")
 
             if not no_commit:
@@ -1023,12 +1038,3 @@ class DBController:
         for row in rows:
             formatted.append({"id_review": row[0], "rating": row[2], "comment": row[3]})
         return formatted
-
-        # TODO #11: tranquilo (baixa prioridade, talvez n necessário)
-        # def create_market(self, name:str, latitude:int, longitude:int):
-        """! Cria novo mercado.
-        
-        @param  name       Nome do novo mercado
-        @param  latitude
-        @param  longitude
-        """
