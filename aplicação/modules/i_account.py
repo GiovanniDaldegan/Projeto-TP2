@@ -5,7 +5,7 @@
 from __main__ import socketio, db_controller
 
 
-@socketio.on("register")
+@socketio.on("register-user")
 def register_account(data):
     """! Solicita a criação de conta.
 
@@ -15,17 +15,17 @@ def register_account(data):
     @sa db_controller.DBController.create_account()
     """
 
-    if not db_controller.create_account(data["acc_type"], data["username", data["password"]]):
+    if not db_controller.create_account(data["acc_type"], data["username"], data["password"]):
         socketio.emit("register-failed")
         return
 
-    socketio.emit("register-success")
+    acc = db_controller.get_account(data["username"], data["password"])
+    socketio.emit("logged", acc)
 
 
-# TODO #1: recebe evento de login, valida a conta no BD e envia p cliente o
-# objeto retornado pelo BD
-# > usar db_controller.get_account()
+@socketio.on("login-user")
+def log_user(data):
+    acc = db_controller.get_account(data["username"], data["password"])
 
-# @socketio.on("login")
-# def log_user(data)
-#    socketio.emit("logged")
+    if acc:
+        socketio.emit("logged", acc)

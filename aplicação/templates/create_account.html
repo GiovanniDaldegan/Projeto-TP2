@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Criar Conta</title>
    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js" integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA==" crossorigin="anonymous"></script>
+
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='login.css') }}">
 </head>
@@ -16,7 +18,7 @@
 
         <h2>Crie sua Conta</h2>
 
-        <form>
+        <form id="register-form">
             <div class="input-group">
                 <input type="text" id="username" name="username" placeholder="Nome de usuário" required>
             </div>
@@ -29,10 +31,11 @@
             
             <div class="form-buttons">
                 <a href="{{ url_for('index') }}" class="btn-cancel">Cancelar</a>
-                <button type="submit" class="btn-create">Criar Conta</button>
+                <button type="submit" class="btn-create" id="btn-create-account">Criar Conta</button>
             </div>
         </form>
     </div>
 
+    <script type="module" src="{{ url_for('static', filename='scripts/account.js') }}"></script>
 </body>
 </html>

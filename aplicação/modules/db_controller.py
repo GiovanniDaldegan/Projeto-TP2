@@ -605,7 +605,7 @@ class DBController:
         """
 
         if not self.is_db_ok():
-            return -1
+            return
 
         cursor = self.get_cursor()
         record = cursor.execute(f"""

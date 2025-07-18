@@ -17,7 +17,7 @@
       
       <img src="{{ url_for('static', filename='img/user_login.png') }}" alt="user" class="user-icon">
 
-      <form>
+      <form id="login-form">
           <div class="input-group">
               <input type="text" id="username" name="username" placeholder="Nome de usuário" required>
           </div>
@@ -35,5 +35,6 @@
 
   </div>
 
+    <script type="module" src="{{ url_for('static', filename='scripts/account.js') }}"></script>
 </body>
 </html>
