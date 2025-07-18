@@ -1,4 +1,5 @@
 import sys
+import os
 from pathlib import Path
 
 sys.path.append(str(Path(__file__).parent.parent))
@@ -6,6 +7,13 @@ sys.path.append(str(Path(__file__).parent.parent))
 from modules.db_controller import DBController
 
 db = DBController(str(Path(__file__).parent))
+
+db_path = Path(__file__).parent / "databases"
+if os.path.isdir(db_path):
+    if os.path.exists(db_path / "tables.db"):
+        os.remove(db_path / "tables.db")
+    os.rmdir(str(Path(__file__).parent / "databases"))
+
 db.connect()
 db.initialize()
 
