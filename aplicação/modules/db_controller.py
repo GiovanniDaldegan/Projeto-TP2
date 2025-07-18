@@ -108,24 +108,22 @@ class DBController:
         - _PRODUCT_CATEGORY (id_product:PK:FK, id_category:PK:FK)
         """
 
+        #DROP TABLE IF EXISTS _PRODUCT_CATEGORY;
+        #DROP TABLE IF EXISTS _MARKET_PRODUCT;
+        #DROP TABLE IF EXISTS PRODUCT;
+        #DROP TABLE IF EXISTS MARKET;
+        #DROP TABLE IF EXISTS CATEGORY;
+        #DROP TABLE IF EXISTS ACCOUNT;
+        #DROP TABLE IF EXISTS SHOPPING_LIST;
+        #DROP TABLE IF EXISTS _LIST_ITEM;
+        #DROP TABLE IF EXISTS PRODUCT_REVIEW;
         create_script = """
-            DROP TABLE IF EXISTS _PRODUCT_CATEGORY;
-            DROP TABLE IF EXISTS _MARKET_PRODUCT;
-            DROP TABLE IF EXISTS PRODUCT;
-            DROP TABLE IF EXISTS MARKET;
-            DROP TABLE IF EXISTS CATEGORY;
-            DROP TABLE IF EXISTS ACCOUNT;
-            DROP TABLE IF EXISTS SHOPPING_LIST;
-            DROP TABLE IF EXISTS _LIST_ITEM;
-            DROP TABLE IF EXISTS PRODUCT_REVIEW;
-
-
-            CREATE TABLE "CATEGORY" (
+            CREATE TABLE IF NOT EXISTS "CATEGORY" (
                 "name"   TEXT   NOT NULL  UNIQUE,
                 PRIMARY KEY("name")
             );
 
-            CREATE TABLE "MARKET" (
+            CREATE TABLE IF NOT EXISTS "MARKET" (
                 "id_market"  INTEGER,
                 "name"       TEXT      NOT NULL,
                 "latitude"   INTEGER,
@@ -134,14 +132,14 @@ class DBController:
                 PRIMARY KEY("id_market" AUTOINCREMENT)
             );
 
-            CREATE TABLE "PRODUCT" (
+            CREATE TABLE IF NOT EXISTS "PRODUCT" (
                 "id_product"  INTEGER,
                 "name"        TEXT     NOT NULL,
 
                 PRIMARY KEY("id_product" AUTOINCREMENT)
             );
 
-            CREATE TABLE "_MARKET_PRODUCT" (
+            CREATE TABLE IF NOT EXISTS "_MARKET_PRODUCT" (
                 "id_market"   INTEGER  NOT NULL,
                 "id_product"  INTEGER  NOT NULL,
                 "price"       INTEGER  NOT NULL,
@@ -151,7 +149,7 @@ class DBController:
                 FOREIGN KEY("id_product") REFERENCES "PRODUCT"("id_product")
             );
 
-            CREATE TABLE "_PRODUCT_CATEGORY" (
+            CREATE TABLE IF NOT EXISTS "_PRODUCT_CATEGORY" (
                 "id_product"     INTEGER  NOT NULL,
                 "category_name"  TEXT     NOT NULL,
 
@@ -160,14 +158,14 @@ class DBController:
                 FOREIGN KEY("id_product") REFERENCES "PRODUCT"("id_product")
             );
 
-            CREATE TABLE ACCOUNT (
+            CREATE TABLE IF NOT EXISTS ACCOUNT (
                 id_user   INTEGER  PRIMARY KEY,
                 acc_type  TEXT     NOT NULL,
                 username  TEXT     NOT NULL  UNIQUE,
                 password  TEXT     NOT NULL
             );
 
-            CREATE TABLE SHOPPING_LIST (
+            CREATE TABLE IF NOT EXISTS SHOPPING_LIST (
                 id_list  INTEGER  PRIMARY KEY AUTOINCREMENT,
                 id_user  INTEGER  NOT NULL,
                 name     TEXT     NOT NULL,
@@ -175,7 +173,7 @@ class DBController:
                 FOREIGN KEY (id_user) REFERENCES ACCOUNT (id_user)
             );
 
-            CREATE TABLE _LIST_ITEM (
+            CREATE TABLE IF NOT EXISTS _LIST_ITEM (
                 id_list     INTEGER,
                 id_product  INTEGER,
                 quantity    INTEGER  NOT NULL,
@@ -184,7 +182,7 @@ class DBController:
                 PRIMARY KEY (id_list, id_product)
             );
 
-            CREATE TABLE PRODUCT_REVIEW (
+            CREATE TABLE IF NOT EXISTS PRODUCT_REVIEW (
                 id_review   INTEGER,
                 id_product  INTEGER,
                 rating      REAL,
@@ -265,6 +263,7 @@ class DBController:
 
         if self.connection is None:
             self.connect()
+            self.setup_db()
 
         present_tables = []
 
