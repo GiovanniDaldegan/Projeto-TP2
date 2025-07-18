@@ -266,7 +266,7 @@ class DBController:
         if self.connection is None:
             self.connect()
 
-        present_tables = 0
+        present_tables = []
 
         cursor = self.get_cursor()
         for table_name in self.tables_list:
@@ -280,11 +280,12 @@ class DBController:
             ).fetchone()
 
             if result:
-                present_tables += 1
+                present_tables.append(result[0])
 
-        if len(self.tables_list) != present_tables:
+        if len(self.tables_list) != len(present_tables):
+            print(self.tables_list, '\n', present_tables)
             print_error("[BD Inconsistente]", "falta(m) tabela(s)")
-            return False
+            #return False
         return True
 
     def populate(self):
@@ -571,7 +572,7 @@ class DBController:
             SELECT * FROM ACCOUNT
             WHERE username='{username}'"""
         ).fetchone()
-        
+
         return self.format_account(record)
 
     def delete_account(self, id_user:int, no_commit=False):
@@ -737,15 +738,26 @@ class DBController:
             return
 
         cursor = self.get_cursor()
-        cursor.execute(
+        already_in_list = cursor.execute(
             f"""
-            INSERT INTO _LIST_ITEM VALUES
-            ({id_list}, {id_product}, {quantity}, FALSE)
+            SELECT * FROM _LIST_ITEM
+            WHERE id_list={id_list}
+                AND id_product={id_product}
             """
-        )
+        ).fetchone()
 
-        if not no_commit:
-            self.connection.commit()
+        if not already_in_list:
+            cursor.execute(
+                f"""
+                INSERT INTO _LIST_ITEM VALUES
+                ({id_list}, {id_product}, {quantity}, FALSE)
+                """
+            )
+
+            if not no_commit:
+                self.connection.commit()
+
+            return True
 
     def remove_product_from_list(self, id_list:int, id_product:int, no_commit:bool=False):
         """! Remove produto de lista de compras.
@@ -762,7 +774,7 @@ class DBController:
             WHERE id_list={id_list}
                 AND id_product={id_product}
             """)
-        
+
         if not no_commit:
             self.connection.commit()
 

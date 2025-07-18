@@ -14,8 +14,10 @@ if os.path.isdir(db_path):
         os.remove(db_path / "tables.db")
     os.rmdir(str(Path(__file__).parent / "databases"))
 
-db.connect()
-db.initialize()
+def test_db_control():
+    db.connect()
+    db.initialize()
+    db.close()
 
 def test_get_categories():
     categories = db.get_categories()

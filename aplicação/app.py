@@ -55,17 +55,17 @@ def create_app():
     @app.route("/login")
     def login():
         return render_template("login.html")
-    
+
     # rota para tela de cadastro
     @app.route("/cadastro")
     def create_product():
         return render_template("create_product.html") 
-    
+
     # rota para URL dos produtos
     @app.route("/produto/<int:product_id>")
     def product_page(product_id):
         return render_template("index.html")
-    
+
     # rota para tela de criar conta
     @app.route("/conta")
     def register():
