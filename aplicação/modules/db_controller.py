@@ -659,7 +659,7 @@ class DBController:
 
         return [{"id": l[1], "name": l[2]} for l in lists]
 
-    def get_shopping_list(self, id_list) -> dict:
+    def get_shopping_list(self, id_list) -> list[dict]:
         """! Busca os dados de dada lista de compras.
 
         @param  id_list  ID da lista.
@@ -818,18 +818,18 @@ class DBController:
         cursor = self.get_cursor()
 
         # Verifica se o produto já existe pelo nome
-        cursor.execute("SELECT id_product FROM PRODUCT WHERE name = ?", (name,))
+        cursor.execute(f"SELECT id_product FROM PRODUCT WHERE name='{name}'")
         result = cursor.fetchone()
         if result:
             id_product = result[0]
         else:
-            cursor.execute("INSERT INTO PRODUCT (name) VALUES (?)", (name))
+            cursor.execute(f"INSERT INTO PRODUCT (name) VALUES ('{name}')")
             id_product = cursor.lastrowid
 
-        if id_categories:
-            self.add_product_category(id_product, id_categories, no_commit)
-        if id_market:
-            self.set_product_seller(id_product, id_market, price, no_commit)
+        #if id_categories:
+        #    self.add_product_category(id_product, id_categories, no_commit)
+        #if id_market:
+        #    self.set_product_seller(id_product, id_market, price, no_commit)
 
         if not no_commit:
             self.connection.commit()

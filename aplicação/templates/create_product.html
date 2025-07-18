@@ -21,7 +21,7 @@
 
     <main>
         <div class="form-container">
-            <form action="{{ url_for('create_product') }}" method="post">
+            <form> <!-- action="{{ url_for('create_product') }}" method="post" -->
                 <div class="form-group">
                     <label for="product_name">Nome do Produto</label>
                     <input type="text" id="product_name" name="product_name" placeholder="Ex: Leite Integral Pirancanjuba 1L" required>
@@ -44,11 +44,12 @@
 
                 <div class="form-buttons">
                     <a href="{{ url_for('index') }}" class="btn-cancel">Cancelar</a>
-                    <button type="submit" class="btn-save">Cadastrar</button>
+                    <button type="submit" class="btn-save" id="btn-create-product">Cadastrar</button>
                 </div>
             </form>
         </div>
     </main>
 
+    <script type="module" src="{{ url_for('static', filename='scripts/create_product.js') }}"></script>
 </body>
 </html>

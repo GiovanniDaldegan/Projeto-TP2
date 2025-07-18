@@ -17,19 +17,25 @@ function createProductCard(product) {
   const card = document.createElement("article");
   card.classList.add("card-produto");
 
+  const price = "0,00";
+  if (product.price_range[0]) {
+    const price = product.price_range[0].toFixed(2).replace('.', ',');
+  }
+
   card.dataset.id = product.id; 
   card.dataset.name = product.name;
   card.dataset.supermarket = product.market;
-  card.dataset.price = product.price_range[0].toFixed(2);
+  card.dataset.price = price;
   card.dataset.imageUrl = `static/img/products/${product.name}.png`;
 
+  console.log(product.name);
 
   card.innerHTML = `
     <img class="produto-img" src="static/img/products/${product["name"]}.png" alt="${product["name"]}">
     <div class="produto-info">
       <span class="supermercado">${product["market"]}</span>
       <h3 class="nome-produto">${product["name"]}</h3>
-      <span class="preco">R$ ${product["price_range"][0].toFixed(2).replace('.', ',')}</span>
+      <span class="preco">R$ ${price}</span>
       <div class="btn-produto">
         <button class="btn-adicionar-lista" type="button">+ Lista</button>
       </div>

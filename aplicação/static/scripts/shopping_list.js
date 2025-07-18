@@ -190,7 +190,7 @@ function setupProductDetailView() {
     function showProductDetails(card) {
         const productData = card.dataset;
         
-        detailImage.src = productData.imageUrl || 'static/img/placeholder_produto.png';
+        detailImage.src = 'static/img/churrasco.png';
         detailSupermarket.textContent = productData.supermarket || 'Supermercado';
         detailName.textContent = productData.name || 'Nome do Produto';
         detailPrice.textContent = `R$ ${(productData.price || '0.00').replace('.', ',')}`;
