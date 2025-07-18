@@ -673,9 +673,7 @@ class DBController:
         cursor = self.get_cursor()
         cursor.execute(f"SELECT * FROM v_shopping_list WHERE id_list={id_list}")
 
-        list = cursor.fetchone()
-        if list:
-            return self.format_shopping_list(list)
+        return self.format_shopping_list(cursor.fetchall())
 
     def format_shopping_list(self, shopping_list:list) -> list[dict]:
         """! Formata e retorna uma lista de compras em uma lista de dicionários.
@@ -685,12 +683,11 @@ class DBController:
         @return uma lista de dicionários com informações de lista de compras.
         """
         # o tamanho da lista é a quantidade de produtos diferentes nela
-        return {
-            "product_id": shopping_list[1],
-            "product_name": shopping_list[2],
-            "quantity": shopping_list[3],
-            "taken": shopping_list[4]
-        }
+        formatted = []
+        for item in shopping_list:
+            formatted.append({"product_id": item[1], "product_name": item[2], "quantity": item[3], "taken": item[4]})
+        # o tamanho da lista é a quantidade de produtos diferentes nela
+        return formatted
 
     def create_shopping_list(self, user_id:int, name:str, no_commit:bool=False):
         """! Registra uma nova lista de compras de um usuário."""
