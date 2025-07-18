@@ -72,25 +72,27 @@ def test_shopping_lists():
 
     test_list = db.get_shopping_list(test_list_id)
 
-    assert test_list["product_id"] == 2
-    assert "product_name"          in test_list.keys()
-    assert test_list["quantity"]   == 3
-    assert test_list["taken"]      == 1
+    assert test_list[0]["product_id"] == 2
+    assert "product_name"          in test_list[0].keys()
+    assert test_list[0]["quantity"]   == 3
+    assert test_list[0]["taken"]      == 1
 
     db.remove_product_from_list(test_list_id, 2, True)
     test_list = db.get_shopping_list(test_list_id)
 
-    assert test_list["product_id"] == 5
-    assert "product_name"          in test_list.keys()
-    assert test_list["quantity"]   == 1
-    assert test_list["taken"]      == 0
+    assert test_list[0]["product_id"] == 5
+    assert "product_name"          in test_list[0].keys()
+    assert test_list[0]["quantity"]   == 1
+    assert test_list[0]["taken"]      == 0
 
     db.delete_shopping_list(test_list_id, True)
 
     assert not db.get_shopping_list(test_list_id)
 
 def test_product():
-    # create product
+    db.create_product("churrasco")
+    db.set_product_seller(17, 1, 23, True)
+    db.add_product_category(17, [1, 2], True)
 
     id_product = 1
     product = db.get_product(id_product)

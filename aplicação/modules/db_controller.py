@@ -657,7 +657,7 @@ class DBController:
         @return Lista com dicionários de lista de compras.
         """
 
-        return [{"id": l[1], "name": l[2]} for l in lists]
+        return [{"id": l[0], "name": l[2]} for l in lists]
 
     def get_shopping_list(self, id_list) -> list[dict]:
         """! Busca os dados de dada lista de compras.
