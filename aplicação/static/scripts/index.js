@@ -3,7 +3,10 @@ import { shoppingListSetupHTML, shoppingListSetupListeners } from "./shopping_li
 
 export var socketio = io();
 
-export var user = {userId : 1, username : "Jorge da Capadócia"};
+export var user = {
+  userId : sessionStorage.getItem("id_user"),
+  username : sessionStorage.getItem("username")
+};
 
 function setupProductSearch() {
   productSearchSetupListeners();
@@ -18,7 +21,7 @@ function setupShoppingList() {
 document.addEventListener("DOMContentLoaded", () => {
   setupProductSearch();
   setupShoppingList();
-  console.log(sessionStorage.getItem("username"));
+  console.log(sessionStorage.getItem("id_user"));
 });
 
 

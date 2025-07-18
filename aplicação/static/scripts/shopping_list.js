@@ -72,8 +72,8 @@ function renderAllShoppingLists(shoppingLists) {
       listBtn.id = list.id; 
       listBtn.textContent = list.name;
       listBtn.addEventListener("click", () => {
-          getList(list.id);
-          renderShoppingListName(list.name);
+        getList(list.id);
+        renderShoppingListName(list.name);
       });
 
       const deleteBtn = document.createElement("button");
@@ -315,7 +315,7 @@ function setupListPanel() {
     document.body.classList.remove("list-open");
     filterToggle.style.display = "block";
 
-    getAllLists(user["userId"]);
+    getAllLists(user.userId);
   });
 
   // Cria uma nova lista
@@ -336,7 +336,7 @@ function setupListPanel() {
     modalNewList.style.display = "none";
     document.body.classList.remove("list-open");
 
-    createList(user["userId"], listName.value);
+    createList(user.userId, listName.value);
     listName.value = "";
   });
 }
@@ -355,7 +355,7 @@ export function shoppingListSetupListeners() {
 // setup dos eventos do HTML da tela
 export function shoppingListSetupHTML() {
   // requisição inicial
-  getAllLists(user["userId"]);
+  getAllLists(user.userId);
 
   setupListPanel();
   setupAddToListModal();

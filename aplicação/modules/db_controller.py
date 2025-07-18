@@ -628,7 +628,7 @@ class DBController:
                         "username" : acc[2]
                 }
 
-    def get_all_shopping_lists(self, user_id) -> list[str]:
+    def get_all_shopping_lists(self, user_id:int) -> list[str]:
         """! Busca todas as listas de um usuário, dado seu ID.
 
         @param  user_id  ID do usuário.
@@ -640,7 +640,7 @@ class DBController:
             return
 
         cursor = self.get_cursor()
-        cursor.execute(f"SELECT id_list, name FROM SHOPPING_LIST WHERE id_user={user_id}")
+        cursor.execute(f"SELECT * FROM SHOPPING_LIST WHERE id_user={user_id}")
 
         lists = cursor.fetchall()
 
@@ -657,7 +657,7 @@ class DBController:
         @return Lista com dicionários de lista de compras.
         """
 
-        return [{"id": l[0], "name": l[1]} for l in lists]
+        return [{"id": l[1], "name": l[2]} for l in lists]
 
     def get_shopping_list(self, id_list) -> dict:
         """! Busca os dados de dada lista de compras.

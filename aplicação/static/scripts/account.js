@@ -24,10 +24,10 @@ function requestLogin(username, password) {
 
 
 // setup dos listeners de eventos SocketIO
-export function accountSetupListeners() {
+function accountSetupListeners() {
   socketio.on("logged", (acc) => {
     sessionStorage.setItem("acc_type", acc["acc_type"]);
-    sessionStorage.setItem("user_id", acc["user_id"]);
+    sessionStorage.setItem("id_user", acc["id_user"]);
     sessionStorage.setItem("username", acc["username"]);
 
     location.href = "/";
@@ -36,7 +36,7 @@ export function accountSetupListeners() {
 
 
 // setup dos eventos do HTML da tela
-export function accountSetupHTML() {
+function accountSetupHTML() {
   const loginForm = document.getElementById("login-form");
   const registerForm = document.getElementById("register-form");
   
