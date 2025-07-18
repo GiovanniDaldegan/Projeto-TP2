@@ -1,4 +1,5 @@
 import sys
+import os
 from pathlib import Path
 
 sys.path.append(str(Path(__file__).parent.parent))
@@ -6,8 +7,17 @@ sys.path.append(str(Path(__file__).parent.parent))
 from modules.db_controller import DBController
 
 db = DBController(str(Path(__file__).parent))
-db.connect()
-db.initialize()
+
+db_path = Path(__file__).parent / "databases"
+if os.path.isdir(db_path):
+    if os.path.exists(db_path / "tables.db"):
+        os.remove(db_path / "tables.db")
+    os.rmdir(str(Path(__file__).parent / "databases"))
+
+def test_db_control():
+    db.connect()
+    db.initialize()
+    db.close()
 
 def test_get_categories():
     categories = db.get_categories()
@@ -42,13 +52,16 @@ def test_account():
     assert "username" in acc.keys()
     assert "acc_type" in acc.keys()
 
+    db.delete_account(acc["id_user"], True)
+
+    assert not db.account_exists("JONAS")
+
 def test_shopping_lists():
     db.create_shopping_list(1, "lista teste", True)
 
     lists = db.get_all_shopping_lists(1)
-    if len(lists) != 0:
-        assert "id"   in lists[0].keys()
-        assert "name" in lists[0].keys()
+    assert "id"   in lists[-1].keys()
+    assert lists[-1]["name"]  == "lista teste"
 
     test_list_id = lists[-1]["id"]
 
@@ -56,22 +69,29 @@ def test_shopping_lists():
     db.add_product_to_list(test_list_id, 5, 1, True)
 
     assert db.set_product_taken(test_list_id, 2, True, True)
+
     test_list = db.get_shopping_list(test_list_id)
 
-    assert test_list[0]["product_id"] == 2
-    assert "product_name"             in test_list[0].keys()
-    assert test_list[0]["quantity"]   == 3
-    assert test_list[0]["taken"]      == 1
+    assert test_list["product_id"] == 2
+    assert "product_name"          in test_list.keys()
+    assert test_list["quantity"]   == 3
+    assert test_list["taken"]      == 1
 
     db.remove_product_from_list(test_list_id, 2, True)
     test_list = db.get_shopping_list(test_list_id)
 
-    assert test_list[0]["product_id"] == 5
-    assert "product_name"             in test_list[0].keys()
-    assert test_list[0]["quantity"]   == 1
-    assert test_list[0]["taken"]      == 0
+    assert test_list["product_id"] == 5
+    assert "product_name"          in test_list.keys()
+    assert test_list["quantity"]   == 1
+    assert test_list["taken"]      == 0
+
+    db.delete_shopping_list(test_list_id, True)
+
+    assert not db.get_shopping_list(test_list_id)
 
 def test_product():
+    # create product
+
     id_product = 1
     product = db.get_product(id_product)
     if len(product) != 0:
